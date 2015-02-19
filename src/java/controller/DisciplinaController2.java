@@ -13,7 +13,6 @@ import javax.inject.Named;
 import model.Afinidades;
 import model.Disciplina;
 import model.Pessoa;
-import util.AfinidadesLazyModel;
 
 @Named(value = "disciplinaController2")
 @SessionScoped

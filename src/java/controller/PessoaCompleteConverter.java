@@ -7,6 +7,7 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 import model.Pessoa;
 
+//Classe utilizada para o Autocomplete dos docentes
 @FacesConverter("pessoaCompleteConverter")
     public class PessoaCompleteConverter implements Converter {
 
