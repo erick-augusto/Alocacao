@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Início</title>
+    </h:head>
+    <h:body>
+
+        <f:view>
+
+            <h:form style="background-color: transparent">
+
+                <p:panel rendered="true" style="width:500px;height:250px; border-color: transparent; position: relative; left: 400px; background-color: transparent">
+                    <br/>
+                    <p:graphicImage library="images" cache="true" name="cmccLogo.png"/>
+                </p:panel>
+
+                <p:panel id="conpnl" style="width:300px;height:300px; border-color: transparent; position: relative; left: 500px; text-align: center; background-color: transparent">
+                    <br/>
+
+                    <p:panelMenu style="width:300px; height: 300px; text-align: justify; position: relative; ">
+                        <p:submenu label="Afinidades">
+                            <p:menuitem value="Definir afinidades" action="/Lista" icon="ui-icon-disk"/>
+                            <p:menuitem value="Ver histórico de afinidades" action="/ListLogs" icon="ui-icon-document"/>
+                        </p:submenu>
+                        <p:submenu  label="Disponibilidade">
+                            <p:menuitem value="Definir disponibilidades" icon="ui-icon-disk" />
+                            <p:menuitem value="Ver histórico de disponibilidade" icon="ui-icon-document" />
+                        </p:submenu>
+                        <p:submenu  label="Cadastros de Dados">
+                            <p:menuitem value="Fazer cadastros" icon="ui-icon-disk" action="/cadastro"/>
+                        </p:submenu>
+
+                    </p:panelMenu>
+                    
+                    
+
+                </p:panel>
+            </h:form>
+        </f:view>
+
+    </h:body>
+</html>
+
+
+
