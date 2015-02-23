@@ -36,7 +36,7 @@ public class TurmasPlanejamento implements Serializable {
     private int p;
     
     //Turno: D/N
-    private char turno;
+    private String turno;
     
     //Campus: SA/SB
     private String campus;
@@ -81,11 +81,11 @@ public class TurmasPlanejamento implements Serializable {
         this.p = p;
     }
 
-    public char getTurno() {
+    public String getTurno() {
         return turno;
     }
 
-    public void setTurno(char turno) {
+    public void setTurno(String turno) {
         this.turno = turno;
     }
 

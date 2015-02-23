@@ -13,6 +13,7 @@
     <mapping class="model.Pessoa"/>
     <mapping class="model.Disciplina"/>
     <mapping class="model.Afinidades"/>
+    <mapping class="model.TurmasPlanejamento"/>
     
     
   </session-factory>
