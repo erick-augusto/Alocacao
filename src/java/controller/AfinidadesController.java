@@ -209,6 +209,29 @@ public class AfinidadesController implements Serializable{
 //    }
     
     //---------------------------LazyData Model--------------------------------------------------------------------
+    private int total;
+
+    public int getTotal() {
+        
+        if(afinidadesLazyModel == null){
+            return 0;
+        }
+        
+        
+        
+        else{
+           return afinidadesLazyModel.getRowCount(); 
+        }
+        
+        
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+    
+    
+    
     
     @PostConstruct
     public void init() {

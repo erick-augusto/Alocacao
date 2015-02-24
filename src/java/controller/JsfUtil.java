@@ -50,7 +50,17 @@ public class JsfUtil {
 
     public static void addSuccessMessage(String msg) {
     
+        
+        
         FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, msg);
+        FacesContext.getCurrentInstance().addMessage("sucessInfo", facesMsg);
+        
+    }
+    
+    public static void addSuccessMessage(String summary, String detail) {
+
+        
+        FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
         FacesContext.getCurrentInstance().addMessage("sucessInfo", facesMsg);
         
     }

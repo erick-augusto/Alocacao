@@ -88,7 +88,6 @@ public class PessoaController implements Serializable{
     }
     
     //---------------------------LazyData Model--------------------------------------------------------------------
-    
     @PostConstruct
     public void init() {
         pessoaDataModel = new PessoaLazyModel(this.listarTodas());
@@ -229,6 +228,8 @@ public class PessoaController implements Serializable{
         }
 
         recriarModelo();
+        
+        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
 
     }
     

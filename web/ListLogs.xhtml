@@ -18,12 +18,11 @@
             </p:layoutUnit>
 
 
-            <p:layoutUnit position="west" size="150" resizable="true" >
+            <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center" resizable="true"  >  
 
-                <p:commandButton    value="Voltar"  action="/index"/>
-
-
-            </p:layoutUnit>
+                <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                <br/>
+            </p:layoutUnit> 
 
 
 
@@ -91,7 +90,8 @@
                                              rowsPerPageTemplate="5,10,15"  id="afinidadeTable" lazy="true"
                                              emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
                                              style="width: 800px; " 
-                                             styleClass="panelCenter" >
+                                             styleClass="panelCenter" 
+                                             paginatorPosition="top">
 
                                     <p:column headerText="Docente">
                                         <h:outputText value="#{af.pessoa.nome}" />
@@ -107,7 +107,13 @@
                                     <p:column headerText="Estado">
                                         <h:outputText value="#{af.estado}"/>
                                     </p:column>
+                                    
+                                    <f:facet name="footer">
+                                        Total: #{afinidadesController.total}
+                                    </f:facet>
+                                   
                                 </p:dataTable>
+                        
                     </p:panel>
                     
                     <p:panel style="border-color: transparent" >

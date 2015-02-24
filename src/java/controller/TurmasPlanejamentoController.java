@@ -6,20 +6,15 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.faces.convert.FacesConverter;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import model.Disciplina;
-import model.Pessoa;
 import model.TurmasPlanejamento;
+import util.TurmasPlanejamentoLazyModel;
 
 
 @Named(value = "turmasPlanejamentoController")
@@ -78,6 +73,26 @@ public class TurmasPlanejamentoController implements Serializable{
 //    }
     
     //---------------------------LazyData Model--------------------------------------------------------------------
+    
+    private TurmasPlanejamentoLazyModel turmasLazyModel;
+    
+    @PostConstruct
+    public void init() {
+        turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
+    }
+
+    public TurmasPlanejamentoLazyModel getTurmasLazyModel() {
+        if(turmasLazyModel == null){
+            turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
+        }
+ 
+        return this.turmasLazyModel;
+    }
+
+    public void setTurmasLazyModel(TurmasPlanejamentoLazyModel turmasLazyModel) {
+        this.turmasLazyModel = turmasLazyModel;
+    }
+
     
 //    @PostConstruct
 //    public void init() {

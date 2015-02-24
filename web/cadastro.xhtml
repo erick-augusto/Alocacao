@@ -21,20 +21,19 @@
 
                 </p:layoutUnit> 
 
-                <p:layoutUnit position="south" size="100" header="Bottom" resizable="true" closable="true" collapsible="true">
-                    <h:outputText value="South unit content." />
-                </p:layoutUnit>
+                <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center" resizable="true"  >  
 
-                <p:layoutUnit position="west" size="200" header="Left" resizable="true" closable="true" collapsible="true">
-                    <h:outputText value="West unit content." />
-                </p:layoutUnit>
+                    <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                    <br/>
+                </p:layoutUnit> 
+
+
 
                 <p:layoutUnit position="center">
 
-                    <p:tabView dynamic="true" cache="true" id="tabV">
+                    <p:tabView dynamic="true" cache="true" id="tabV" style=" border-color: transparent">
                         <p:tab title="Disciplinas">
                             <h:panelGrid columns="1" cellpadding="10">
-
 
                                 <p:dataTable var="disciplina" value="#{disciplinaController.disciplinaLazyModel}" paginator="true" rows="5"
                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -148,20 +147,58 @@
 
                                 <p:commandButton icon="ui-icon-disk"  actionListener="#{pessoaController.cadastrarPessoas()}"
                                                  style="width: 230px; height: 25px; font-size: small" 
-                                                 value="Cadastrar docentes por .csv"  update="pessoaTable" immediate="true">
+                                                 value="Cadastrar docentes por .csv"  update="@all" immediate="true">
                                 </p:commandButton>
 
 
                             </h:panelGrid>
                         </p:tab>
-                        
+
                         <p:tab title="Turmas planejamento">
                             <h:panelGrid columns="1" cellpadding="10">
+                                
+                                <p:dataTable var="turma" value="#{turmasPlanejamentoController.turmasLazyModel}" paginator="true" rows="5"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             rowsPerPageTemplate="5,10,15" 
+                                             selectionMode="single" 
+                                             selection="#{turmasPlanejamentoController.turma}" 
+                                             id="turmaPTable" 
+                                             lazy="true"   rowKey="#{turma.ID}">
+
+
+                                    <p:column headerText="Curso"  sortBy="#{turma.curso}">
+                                        <h:outputText value="#{turma.curso}" />
+                                    </p:column>
+                                    <p:column headerText="Disciplina" >
+                                        <h:outputText value="#{turma.disciplina.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Turno"  style="width: 8%; text-align: center">
+                                        <h:outputText value="#{turma.turno}"/>
+                                    </p:column>
+                                    <p:column headerText="Câmpus"  style="width: 8%; text-align: center">
+                                        <h:outputText value="#{turma.campus}"/>
+                                    </p:column>
+                                    <p:column headerText="Qtd. Turmas"  style="width: 10%; text-align: center">
+                                        <h:outputText value="#{turma.numTurmas}"/>
+                                    </p:column>
+                                    <p:column headerText="T"  style="width: 5%; text-align: center">
+                                        <h:outputText value="#{turma.t}"/>
+                                    </p:column>
+                                    <p:column headerText="P"  style="width: 5%; text-align: center">
+                                        <h:outputText value="#{turma.p}"/>
+                                    </p:column>
+                                    <p:column headerText="Periodicidade"  style="width: 12%; text-align: center">
+                                        <h:outputText value="#{turma.periodicidade}"/>
+                                    </p:column>
+                                    
+
+
+                                </p:dataTable>
 
 
                                 <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.cadastrarTurmasPlanejamento()}"
                                                  style="width: 230px; height: 25px; font-size: small" 
-                                                 value="Cadastrar turmas .csv"  immediate="true">
+                                                 value="Cadastrar turmas .csv"  immediate="true" update="turmaPTable">
                                 </p:commandButton>
 
 
@@ -174,6 +211,12 @@
 
                     </h:panelGrid>
                 </p:layoutUnit>
+
+
+                <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="80"  resizable="true" closable="true" collapsible="true">  
+                    <p:messages id="msgs" showDetail="true"/>   
+                </p:layoutUnit>
+
             </p:layout>
         </h:form>
     </h:body>
