@@ -2,10 +2,10 @@ package util;
 
 import java.lang.reflect.Field;
 import java.util.Comparator;
-import model.TurmasPlanejamento;
+import model.Turma;
 import org.primefaces.model.SortOrder;
 
-public class TurmasPlanejamentoLazySorter implements Comparator<TurmasPlanejamento> {
+public class TurmasPlanejamentoLazySorter implements Comparator<Turma> {
 
     private String sortField;
 
@@ -28,7 +28,7 @@ public class TurmasPlanejamentoLazySorter implements Comparator<TurmasPlanejamen
      * @return
      */
     @Override
-    public int compare(TurmasPlanejamento turma1, TurmasPlanejamento turma2) {
+    public int compare(Turma turma1, Turma turma2) {
         try {
             Field field1 = turma1.getClass().getDeclaredField(this.sortField);
             Field field2 = turma2.getClass().getDeclaredField(this.sortField);

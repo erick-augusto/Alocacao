@@ -28,9 +28,9 @@ import util.DisciplinaLazyModel;
 
 @Named(value = "disciplinaController")
 @SessionScoped
-public class DisciplinaController implements Serializable{
+public class DisciplinaController_NU implements Serializable{
     
-    public DisciplinaController() {
+    public DisciplinaController_NU() {
 //        disciplina = new Disciplina();
         cadastro = new CadastroBean();
     }
@@ -605,7 +605,7 @@ public class DisciplinaController implements Serializable{
             if (value == null || value.length() == 0) {
                 return null;
             }
-            DisciplinaController controller = (DisciplinaController) facesContext.getApplication().getELResolver().
+            DisciplinaController_NU controller = (DisciplinaController_NU) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "disciplinaController");
             return controller.getDisciplina(getKey(value));
         }

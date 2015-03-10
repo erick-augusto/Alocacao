@@ -10,23 +10,19 @@
         <h:head>
             <f:facet name="first">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-                <title>PrimeFaces</title>
+                <title>Afinidades</title>
             </f:facet>
         </h:head>
 
         <h:body>
 
-
-
             <h:outputStylesheet library="css" name="style.css"  />
 
             <h:form id="form">
 
-
-
                 <p:layout fullPage="true">
 
-                    <p:layoutUnit style="text-align:center" position="north" size="75"  resizable="true" closable="true" collapsible="true" >  
+                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
                         <style type="text/css">
                             /*                                                                .ui-widget{font-size:90% !important;}*/
                             .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}
@@ -57,29 +53,29 @@
 
                             <h:outputText value="Disciplinas selecionadas"></h:outputText>
 
-                            <p:selectOneListbox id="disponiveis" value="#{disciplinaController2.disponivel}" filter="true" 
+                            <p:selectOneListbox id="disponiveis" value="#{afinidadesController.paraAdicionar}" filter="true" 
                                                 filterMatchMode="contains" style="width: 400px; height: 235px" >
-                                <o:converter converterId="omnifaces.ListIndexConverter"  list="#{disciplinaController2.disponiveis}" />
-                                <f:selectItems value="#{disciplinaController2.disponiveis}" var="d"
+                                <o:converter converterId="omnifaces.ListIndexConverter"  list="#{afinidadesController.disponiveis}" />
+                                <f:selectItems value="#{afinidadesController.disponiveis}" var="d"
                                                itemLabel="#{d.nome}" itemValue="#{d}" />
                             </p:selectOneListbox>
 
 
 
-                            <p:selectOneListbox id="selecionadas" value="#{disciplinaController2.escolhida}" filter="true" 
+                            <p:selectOneListbox id="selecionadas" value="#{afinidadesController.paraRemover}" filter="true" 
                                                 filterMatchMode="contains" style="width: 400px; height: 235px" >
-                                <o:converter converterId="omnifaces.ListIndexConverter"  list="#{disciplinaController2.escolhidas}" />
-                                <f:selectItems value="#{disciplinaController2.escolhidas}" var="e"
+                                <o:converter converterId="omnifaces.ListIndexConverter"  list="#{afinidadesController.escolhidas}" />
+                                <f:selectItems value="#{afinidadesController.escolhidas}" var="e"
                                                itemLabel="#{e.nome}" itemValue="#{e}" />
                             </p:selectOneListbox>
 
                             <p:commandButton id="buttonS" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                             value="Selecionar" actionListener="#{disciplinaController2.salvarNoBanco()}"
+                                             value="Selecionar" actionListener="#{afinidadesController.salvarAfinidade()}"
                                              update ="selecionadas,disponiveis" icon="ui-icon-disk" > 
                             </p:commandButton>
 
                             <p:commandButton id="buttonR" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"   
-                                             value="Remover" actionListener="#{disciplinaController2.removerDisciplina()}"
+                                             value="Remover" actionListener="#{afinidadesController.removerAfinidade()}"
                                              update ="selecionadas,disponiveis" icon="ui-icon-close" > 
                             </p:commandButton> 
 

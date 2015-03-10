@@ -5,22 +5,22 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import model.TurmasPlanejamento;
+import model.Turma;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SelectableDataModel;
 import org.primefaces.model.SortOrder;
 
-public class TurmasPlanejamentoLazyModel extends LazyDataModel<TurmasPlanejamento> implements SelectableDataModel<TurmasPlanejamento>{
+public class TurmasPlanejamentoLazyModel extends LazyDataModel<Turma> implements SelectableDataModel<Turma>{
 
-    private List<TurmasPlanejamento> datasource;
+    private List<Turma> datasource;
 
-    public TurmasPlanejamentoLazyModel(List<TurmasPlanejamento> datasource) {
+    public TurmasPlanejamentoLazyModel(List<Turma> datasource) {
         this.datasource = datasource;
     }
 
     @Override
-    public TurmasPlanejamento getRowData(String rowKey) {
-        for (TurmasPlanejamento turma : datasource) {
+    public Turma getRowData(String rowKey) {
+        for (Turma turma : datasource) {
             if (turma.getID().equals(rowKey)) {
                 return turma;
             }
@@ -30,16 +30,16 @@ public class TurmasPlanejamentoLazyModel extends LazyDataModel<TurmasPlanejament
     }
 
     @Override
-    public Object getRowKey(TurmasPlanejamento turma) {
+    public Object getRowKey(Turma turma) {
         return turma.getID();
     }
 
     @Override
-    public List<TurmasPlanejamento> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
-        List<TurmasPlanejamento> data = new ArrayList<>();
+    public List<Turma> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+        List<Turma> data = new ArrayList<>();
 
         //filter
-        for (TurmasPlanejamento turma : datasource) {
+        for (Turma turma : datasource) {
             boolean match = true;
 
             if (filters != null) {

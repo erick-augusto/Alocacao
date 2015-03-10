@@ -1,7 +1,7 @@
 package controller;
 
 import facade.DisciplinaFacade;
-import facade.TurmasPlanejamentoFacade;
+import facade.TurmaFacade;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,31 +13,31 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import model.Disciplina;
-import model.TurmasPlanejamento;
+import model.Turma;
 import util.TurmasPlanejamentoLazyModel;
 
 
 @Named(value = "turmasPlanejamentoController")
 @SessionScoped
-public class TurmasPlanejamentoController implements Serializable{
+public class TurmaController implements Serializable{
     
-    public TurmasPlanejamentoController() {
+    public TurmaController() {
         
     }
 
     @EJB
-    private TurmasPlanejamentoFacade turmasPlanejamentoFacade;
+    private TurmaFacade turmasPlanejamentoFacade;
     
     @EJB
     private DisciplinaFacade disciplinaFacade;
     
-    private TurmasPlanejamento turma;
+    private Turma turma;
 
-    public TurmasPlanejamento getTurma() {
+    public Turma getTurma() {
         return turma;
     }
 
-    public void setTurma(TurmasPlanejamento turma) {
+    public void setTurma(Turma turma) {
         this.turma = turma;
     }
     
@@ -118,7 +118,7 @@ public class TurmasPlanejamentoController implements Serializable{
 ////    }
     
     //---------------------------------------------------CRUD-------------------------------------------------------
-    private List<TurmasPlanejamento> listarTodas() {
+    private List<Turma> listarTodas() {
         return turmasPlanejamentoFacade.findAll();
 
     }
@@ -138,7 +138,7 @@ public class TurmasPlanejamentoController implements Serializable{
 
     }
 
-    public TurmasPlanejamento buscar(Long id) {
+    public Turma buscar(Long id) {
 
         return turmasPlanejamentoFacade.find(id);
     }
@@ -156,7 +156,7 @@ public class TurmasPlanejamentoController implements Serializable{
 
 //    public void delete() {
 //        
-//        turma= (TurmasPlanejamento) pessoaDataModel.getRowData();
+//        turma= (Turma) pessoaDataModel.getRowData();
 //        try {
 //            turmasPlanejamentoFacade.remove(pessoa);
 //            pessoa= null;
@@ -209,7 +209,7 @@ public class TurmasPlanejamentoController implements Serializable{
 
                 palavras = linha.split("_", -1);
                 
-                turma = new TurmasPlanejamento();
+                turma = new Turma();
                 
                 turma.setCurso(palavras[2]);
                 
@@ -298,7 +298,7 @@ public class TurmasPlanejamentoController implements Serializable{
 //            if (value == null || value.length() == 0) {
 //                return null;
 //            }
-//            TurmasPlanejamentoController controller = (TurmasPlanejamentoController) facesContext.getApplication().getELResolver().
+//            TurmaController controller = (TurmaController) facesContext.getApplication().getELResolver().
 //                    getValue(facesContext.getELContext(), null, "pessoaController");
 //            return controller.getPessoa(getKey(value));
 //        }

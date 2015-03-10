@@ -2,15 +2,15 @@ package facade;
 
 import controller.HibernateUtil;
 import javax.ejb.Stateless;
-import model.TurmasPlanejamento;
+import model.Turma;
 import org.hibernate.SessionFactory;
 
 
 @Stateless
-public class TurmasPlanejamentoFacade extends AbstractFacade<TurmasPlanejamento>{
+public class TurmaFacade extends AbstractFacade<Turma>{
     
-    public TurmasPlanejamentoFacade() {
-        super(TurmasPlanejamento.class);
+    public TurmaFacade() {
+        super(Turma.class);
     }
 
     @Override

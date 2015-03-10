@@ -35,11 +35,11 @@
                         <p:tab title="Disciplinas">
                             <h:panelGrid columns="1" cellpadding="10">
 
-                                <p:dataTable var="disciplina" value="#{disciplinaController.disciplinaLazyModel}" paginator="true" rows="5"
+                                <p:dataTable var="disciplina" value="#{disciplinaController2.disciplinaLazyModel}" paginator="true" rows="5"
                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                              rowsPerPageTemplate="5,10,15" 
                                              selectionMode="single" 
-                                             selection="#{disciplinaController.disciplina}" 
+                                             selection="#{disciplinaController2.disciplina}" 
                                              id="disciplinaTable" 
                                              lazy="true"   rowKey="#{disciplina.ID}">
 
@@ -60,7 +60,7 @@
                                         </f:facet>
 
                                         <p:commandButton style="width: 95px;height: 30px; font-size: small"
-                                                         action="#{disciplinaController.delete()}" value="Deletar" immediate="true" 
+                                                         action="#{disciplinaController2.delete()}" value="Deletar" immediate="true" 
                                                          update="disciplinaTable" icon="ui-icon-trash"/>
 
 
@@ -73,7 +73,7 @@
                                         </f:facet>
 
                                         <p:commandButton style="width: 95px;height: 30px; font-size: small"
-                                                         action="#{disciplinaController.prepareEdit()}" value="Editar" immediate="true" 
+                                                         action="#{disciplinaController2.prepareEdit()}" value="Editar" immediate="true" 
                                                          update="disciplinaTable" icon="ui-icon-pencil"/>
 
 
@@ -83,7 +83,7 @@
                                 </p:dataTable>
 
 
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController.cadastrarDisciplinas()}" 
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController2.cadastrarDisciplinas()}" 
                                                  style="width: 230px; height: 25px; font-size: small" title="Cadastrar disciplinas"
                                                  value="Cadastrar disciplinas por .csv" update="disciplinaTable" immediate="true">
                                 </p:commandButton>
