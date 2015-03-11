@@ -1,6 +1,7 @@
 package model;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,14 +17,6 @@ public class Turma implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long ID;
 
-    public Long getID() {
-        return ID;
-    }
-
-    public void setID(Long ID) {
-        this.ID = ID;
-    }
-    
     private String curso;
     
     @ManyToOne
@@ -49,6 +42,9 @@ public class Turma implements Serializable {
     
     private int quadrimestre;
 
+    
+    //private Horario horarios;
+    
     public String getCurso() {
         return curso;
     }
@@ -121,5 +117,13 @@ public class Turma implements Serializable {
         this.quadrimestre = quadrimestre;
     }
     
+    
+    public Long getID() {
+        return ID;
+    }
+
+    public void setID(Long ID) {
+        this.ID = ID;
+    }
     
 }
