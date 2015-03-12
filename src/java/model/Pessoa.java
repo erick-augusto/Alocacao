@@ -95,7 +95,16 @@ public class Pessoa implements Serializable {
         this.afinidades = afinidades;
     }
     
-    
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
+    private List<Disponibilidade> disponibilidades;
+
+    public List<Disponibilidade> getDisponibilidades() {
+        return disponibilidades;
+    }
+
+    public void setDisponibilidades(List<Disponibilidade> disponibilidades) {
+        this.disponibilidades = disponibilidades;
+    }
     
 
     @Override

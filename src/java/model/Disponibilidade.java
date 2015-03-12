@@ -9,24 +9,12 @@ import java.io.Serializable;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
-/**
- *
- * @author charles
- */
+
 @Entity
 public class Disponibilidade {
    
-    @EmbeddedId
-    private Disponibilidade.Id id = new Disponibilidade.Id();
-    
-    private Horario horario;
-    
-    
-    
-    
-    
-    
     @Embeddable
     public static class Id implements Serializable{
         
@@ -56,10 +44,79 @@ public class Disponibilidade {
         @Override
         public int hashCode(){
             return pessoaId.hashCode() + turmaId.hashCode();
-        }
+        }    
         
+    }
+    
+    @EmbeddedId
+    private Id id = new Id();
+    
+    private String horario;
+    
+//    @Temporal(javax.persistence.TemporalType.DATE)
+//    private Date dataAcao;
+    
+    @ManyToOne 
+//    @JoinColumn(name = "pessoaId", referencedColumnName = "pessoa", insertable = false, updatable = false)
+    private Pessoa pessoa;
+    
+    @ManyToOne
+//  @JoinColumn(insertable = false, updatable = false)    
+    private TurmasPlanejamento turmaPlanejamento;
+    
+    public Disponibilidade() {}
+    
+    public Disponibilidade(String horario, Pessoa p, TurmasPlanejamento tP){
+        
+        this.horario = horario;
+        
+        this.pessoa = p;
+        
+        this.turmaPlanejamento = tP;
+        
+        this.id.pessoaId = p.getID();
+        this.id.turmaId = tP.getID();
+        
+        //Integridade Referencial
+        pessoa.getDisponibilidades().add(this);
+        turmaPlanejamento.getDisponibilidades().add(this);
+    }
 
-    }   
+    public Id getId() {
+        return id;
+    }
+
+    public void setId(Id id) {
+        this.id = id;
+    }
+
+    public String getHorario() {
+        return horario;
+    }
+
+    public void setHorario(String horario) {
+        this.horario = horario;
+    }
+
+
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+
+    public TurmasPlanejamento getTurmaPlanejamento() {
+        return turmaPlanejamento;
+    }
+
+    public void setTurmaPlanejamento(TurmasPlanejamento turmaPlanejamento) {
+        this.turmaPlanejamento = turmaPlanejamento;
+    }
+
+    
     
     
 }

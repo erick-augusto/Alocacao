@@ -6,13 +6,14 @@
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/Alocacao?zeroDateTimeBehavior=convertToNull</property>
     <property name="hibernate.connection.username">root</property>
-    <property name="hibernate.connection.password">estagioVinicius</property>
+    <property name="hibernate.connection.password">root</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
     
     <mapping class="model.Afinidades"/>
     <mapping class="model.Pessoa"/>
     <mapping class="model.Disciplina"/>
-    <mapping class="model.Turma"/>
+    <mapping class="model.TurmasPlanejamento"/>
+    <mapping class="model.Disponibilidade"/>
 
   </session-factory>
 </hibernate-configuration>

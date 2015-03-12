@@ -1,15 +1,11 @@
 package facade;
 
 import controller.HibernateUtil;
-import java.util.Calendar;
 import java.util.List;
 import javax.ejb.Stateless;
 import model.Afinidades;
-import model.Disciplina;
-import model.Pessoa;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -42,32 +38,32 @@ public class AfinidadesFacade extends AbstractFacade<Afinidades>{
 //    }
     
     
-    public void salvarAfinidade(){
-        
-        Session session = getSessionFactory().openSession();
-        session.beginTransaction();
-        Disciplina d = (Disciplina)session.get(Disciplina.class, 2L);
-        Pessoa p = (Pessoa)session.get(Pessoa.class, 2L);
-        
-        Afinidades afinidade = new Afinidades();
-        
-        afinidade.setDisciplina(d);
-        afinidade.setPessoa(p);
-        afinidade.setEstado("Adicionada");
-        
-        Calendar cal = Calendar.getInstance();
-        afinidade.setDataAcao(cal.getTime());
-        
-        d.getAfinidades().add(afinidade);
-        
-        session.save(d);
-        
-        
-        session.getTransaction().commit();
-        session.close();
-        
-        
-    }
+//    public void salvarAfinidade(){
+//        
+//        Session session = getSessionFactory().openSession();
+//        session.beginTransaction();
+//        Disciplina d = (Disciplina)session.get(Disciplina.class, 2L);
+//        Pessoa p = (Pessoa)session.get(Pessoa.class, 2L);
+//        
+//        Afinidades afinidade = new Afinidades();
+//        
+//        afinidade.setDisciplina(d);
+//        afinidade.setPessoa(p);
+//        afinidade.setEstado("Adicionada");
+//        
+//        Calendar cal = Calendar.getInstance();
+//        afinidade.setDataAcao(cal.getTime());
+//        
+//        d.getAfinidades().add(afinidade);
+//        
+//        session.save(d);
+//        
+//        
+//        session.getTransaction().commit();
+//        session.close();
+//        
+//        
+//    }
     
     public Afinidades findByIDs(Long disciplinaId, Long pessoaId){
         
