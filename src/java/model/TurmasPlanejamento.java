@@ -3,6 +3,7 @@ package model;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -44,7 +45,8 @@ public class TurmasPlanejamento implements Serializable {
     
     private int quadrimestre;
     
-    private String horarios;
+    @ElementCollection
+    private List<String> horarios;
     
     @OneToMany(mappedBy = "turmaPlanejamento", cascade = CascadeType.ALL)
     private List<Disponibilidade> disponibilidades;
@@ -144,13 +146,15 @@ public class TurmasPlanejamento implements Serializable {
         this.ID = ID;
     }
 
-    public String getHorarios() {
+    public List<String> getHorarios() {
         return horarios;
     }
 
-    public void setHorarios(String horarios) {
+    public void setHorarios(List<String> horarios) {
         this.horarios = horarios;
     }
+
+    
     
     @Override
     public int hashCode() {

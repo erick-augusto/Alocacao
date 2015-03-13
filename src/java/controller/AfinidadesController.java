@@ -383,6 +383,99 @@ public class AfinidadesController implements Serializable{
 //        return "View";
 //    }
     
+    //------------------------------Filtros de Disciplina-------------------------------------------
+    
+    private List<String> filtrosEixos;
+    
+    private List<String> filtrosSelecEixos;
+    
+    private List<String> filtrosCursos;
+    
+    private List<String> filtrosSelecCursos;
+           
+    
+    @PostConstruct
+    public void init() {
+//        afinidadesLazyModel = new AfinidadesLazyModel(this.listarTodas());
+        filtrosEixos = new ArrayList<>();
+        filtrosEixos.add("Humanidades");
+        filtrosEixos.add("Estrutura da Materia");
+        filtrosEixos.add("Energia");
+        filtrosEixos.add("Processos de Transformacao");
+        filtrosEixos.add("Comunicacao e Informacao");
+        filtrosEixos.add("Representacao e Simulacao");
+        filtrosEixos.add("Estado, Sociedade e Mercado");
+        filtrosEixos.add("Pensamento, Expressao e Significado");
+        filtrosEixos.add("Espaco, Cultura e Temporalidade");
+        filtrosEixos.add("Ciencia, Tecnologia e Inovacao");
+        filtrosEixos.add("Mais de um eixo");
+        
+        filtrosCursos = new ArrayList<>();
+        filtrosCursos.add("Engenharia de Energia");
+        filtrosCursos.add("Bacharelado em Politicas Publicas");
+        filtrosCursos.add("Engenharia Aeroespacial");
+        filtrosCursos.add("Engenharia Biomedica");
+        filtrosCursos.add("Engenharia de Automação e Robotica");
+        filtrosCursos.add("Bacharelado em Relacoes Internacionais");
+        filtrosCursos.add("Bacharelado em Planejamento Territorial");
+        filtrosCursos.add("Engenharia de Gestao");
+        filtrosCursos.add("Bacharelado em Economia");
+        filtrosCursos.add("Engenharia Ambiental e Urbana");
+        filtrosCursos.add("Quimica");
+        filtrosCursos.add("Filosofia");
+        filtrosCursos.add("Engenharia de Informacao");
+        filtrosCursos.add("Ciencias Biologicas");
+        filtrosCursos.add("Engenharia de Materiais");
+        filtrosCursos.add("Fisica");
+        filtrosCursos.add("Licenciaturas");
+        
+    }
+
+    public List<String> getFiltrosEixos() {
+        return filtrosEixos;
+    }
+
+    public void setFiltrosEixos(List<String> filtrosEixos) {
+        this.filtrosEixos = filtrosEixos;
+    }
+
+    public List<String> getFiltrosSelecEixos() {
+        return filtrosSelecEixos;
+    }
+
+    public void setFiltrosSelecEixos(List<String> filtrosSelecEixos) {
+        this.filtrosSelecEixos = filtrosSelecEixos;
+    }
+
+    public List<String> getFiltrosCursos() {
+        return filtrosCursos;
+    }
+
+    public void setFiltrosCursos(List<String> filtrosCursos) {
+        this.filtrosCursos = filtrosCursos;
+    }
+
+    public List<String> getFiltrosSelecCursos() {
+        return filtrosSelecCursos;
+    }
+
+    public void setFiltrosSelecCursos(List<String> filtrosSelecCursos) {
+        this.filtrosSelecCursos = filtrosSelecCursos;
+    }
+    
+    public void filtrar() {
+
+//        source = disciplinaFacade.findByEixo(filtros);
+        
+        disponiveis = disciplinaFacade.findByEixoCurso(filtrosSelecEixos, filtrosSelecCursos);
+        
+        for (Disciplina t : escolhidas) {
+            disponiveis.remove(t);
+        }
+
+    }
+    
+    
     //---------------------------LazyData Model--------------------------------------------------------------------
     
     public int getTotal() {
@@ -396,10 +489,7 @@ public class AfinidadesController implements Serializable{
                 
     }
      
-    @PostConstruct
-    public void init() {
-//        afinidadesLazyModel = new AfinidadesLazyModel(this.listarTodas());
-    }
+    
 
     public AfinidadesLazyModel getAfinidadesLazyModel() {
 //        if(afinidadesLazyModel == null){

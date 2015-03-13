@@ -45,6 +45,42 @@
 
 
                     <p:layoutUnit position="center">
+                        
+                        <p:panel id="toggleable" header="Filtros" toggleable="true" toggleSpeed="500" closeSpeed="500" 
+                                     widgetVar="panel" style="margin-bottom:20px; width: 400px; font-size: medium; " collapsed="true" closeTitle="Painel">
+
+                                <h:panelGrid columns="2"  cellspacing="10">
+
+                                    
+                                    <p:selectCheckboxMenu value="#{afinidadesController.filtrosSelecEixos}" label="Eixos"
+                                                          filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                        <f:selectItems value="#{afinidadesController.filtrosEixos}" />
+                                    </p:selectCheckboxMenu>
+                                    
+                                    <p:selectCheckboxMenu value="#{afinidadesController.filtrosSelecCursos}" label="Cursos"
+                                                          filter="true" filterMatchMode="startsWith" panelStyle="width:250px">
+                                        <f:selectItems value="#{afinidadesController.filtrosCursos}" />
+                                    </p:selectCheckboxMenu>
+
+                                </h:panelGrid>
+
+                                <p:separator/>
+                                
+                                <h:panelGrid columns="2">
+                                    <p:commandButton    icon="ui-icon-search"  actionListener="#{afinidadesController.filtrar()}"
+                                                         update="@(form:disponiveis)"  style="width: 30px; height: 25px" title="Filtrar disciplinas">
+
+                                    </p:commandButton>
+
+                                   
+
+                                </h:panelGrid>
+
+                              
+
+                            </p:panel>
+                        
+                        
                         <h:panelGrid id="painel" columns="2" columnClasses="a,b"  style=" alignment-adjust: central" styleClass="panelGridCenter">
 
 

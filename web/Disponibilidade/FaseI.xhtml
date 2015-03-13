@@ -36,30 +36,36 @@
                     </p:layoutUnit>
 
                     <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
-
                         <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
                         <br/>
                     </p:layoutUnit> 
 
-
-
-
                     <p:layoutUnit position="center">
-                        <h:panelGrid id="painel" columns="2" columnClasses="a,b"  style=" alignment-adjust: central" styleClass="panelGridCenter">
-
-
-                            <h:outputText value="Disciplinas disponíveis"></h:outputText>
-
-                            
+                        <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
                             <p:dataTable var="turma" value="#{turmasPlanejamentoController.dataModel}" 
                                          scrollRows="20" scrollable="true" liveScroll="true" 
-                                         scrollHeight="150" style="margin-bottom:0">
-                                
+                                         scrollHeight="600" style="margin-bottom:0">
+                                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                                <p:column headerText="Curso">
+                                    <h:outputText value="#{turma.curso}"/>
+                                </p:column>  
                                 <p:column headerText="Disciplina">
                                     <h:outputText value="#{turma.disciplina.nome}" />
                                 </p:column>
+                                <p:column headerText="Teoria" style="width: 6%">
+                                    <h:outputText value="#{turma.t}" />
+                                </p:column>
+                                <p:column headerText="Prática" style="width: 6%">
+                                    <h:outputText value="#{turma.p}" />
+                                </p:column>
+                                <p:column headerText="Periodicidade">
+                                    <h:outputText value="#{turma.periodicidade}"/>
+                                </p:column>
                                 <p:column headerText="Turno">
                                     <h:outputText value="#{turma.turno}" />
+                                </p:column>
+                                <p:column headerText="Câmpus">
+                                    <h:outputText value="#{turma.campus}" />
                                 </p:column>
                                 
 <!--                                Continuar-->
