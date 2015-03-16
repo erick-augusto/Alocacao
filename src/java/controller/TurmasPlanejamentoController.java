@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -19,7 +18,6 @@ import javax.inject.Named;
 import model.Disciplina;
 import model.TurmasPlanejamento;
 import util.TurmasPlanejamentoDataModel;
-import util.TurmasPlanejamentoLazyModel_NU;
 
 
 @Named(value = "turmasPlanejamentoController")
@@ -41,6 +39,15 @@ public class TurmasPlanejamentoController implements Serializable{
     private List<TurmasPlanejamento> escolhidas;
     
     private TurmasPlanejamentoDataModel dataModel;
+    
+    
+    //--------------------------------------Filtros----------------------------------------------------------
+    
+    private boolean filtrarAfinidades;
+    
+    private String campus;
+    
+    private String turno;
     
     //-------------------------------------Getters e Setters--------------------------------------------------------
 
@@ -73,6 +80,33 @@ public class TurmasPlanejamentoController implements Serializable{
     public void setDataModel(TurmasPlanejamentoDataModel dataModel) {
         this.dataModel = dataModel;
     }
+
+    public boolean isFiltrarAfinidades() {
+        return filtrarAfinidades;
+    }
+
+    public void setFiltrarAfinidades(boolean filtrarAfinidades) {
+        this.filtrarAfinidades = filtrarAfinidades;
+    }
+
+    public String getCampus() {
+        return campus;
+    }
+
+    public void setCampus(String campus) {
+        this.campus = campus;
+    }
+
+    public String getTurno() {
+        return turno;
+    }
+
+    public void setTurno(String turno) {
+        this.turno = turno;
+    }
+    
+    
+    
 
     //---------------------------------------Páginas web------------------------------------------------------------
 //    public String prepareCreate(int i) {

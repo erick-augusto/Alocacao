@@ -3,6 +3,8 @@ package facade;
 import controller.HibernateUtil;
 import javax.ejb.Stateless;
 import model.TurmasPlanejamento;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 
@@ -32,16 +34,16 @@ public class TurmasPlanejamentoFacade extends AbstractFacade<TurmasPlanejamento>
 //        
 //    }
 //    
-//    public Disciplina inicializarColecaoAfinidades(Disciplina d){
-//        
-//        Session session = getSessionFactory().openSession();
-//        session.refresh(d);
-//        Hibernate.initialize(d);
-//        Hibernate.initialize(d.getAfinidades());
-//        session.close();
-//        return d;
-//        
-//    }
+    public TurmasPlanejamento inicializarColecaoDisponibilidades(TurmasPlanejamento t){
+        
+        Session session = getSessionFactory().openSession();
+        session.refresh(t);
+        Hibernate.initialize(t);
+        Hibernate.initialize(t.getDisponibilidades());
+        session.close();
+        return t;
+        
+    }
     
     
     

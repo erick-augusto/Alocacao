@@ -475,6 +475,16 @@ public class AfinidadesController implements Serializable{
 
     }
     
+    public void limparFiltro(){
+        
+        //filtros2 = null;
+        filtrosSelecCursos = null;
+        filtrosSelecEixos = null;
+//        filtros = null;
+        disponiveis = null;
+        
+    }
+    
     
     //---------------------------LazyData Model--------------------------------------------------------------------
     
