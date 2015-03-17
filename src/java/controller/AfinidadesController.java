@@ -75,6 +75,8 @@ public class AfinidadesController implements Serializable{
     private DisciplinaFacade disciplinaFacade;
     private AfinidadesLazyModel afinidadeDataModel;
     
+    
+
 
     //------------------------------------Getters e Setters----------------------------------------------------------------
 

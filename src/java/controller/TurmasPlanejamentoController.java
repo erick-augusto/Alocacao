@@ -49,6 +49,18 @@ public class TurmasPlanejamentoController implements Serializable{
     
     private String turno;
     
+    public void filtrar(){
+        
+        
+        if(filtrarAfinidades){
+            
+            
+            
+        }
+        
+        
+    }
+    
     //-------------------------------------Getters e Setters--------------------------------------------------------
 
     public List<TurmasPlanejamento> getEscolhidas() {
