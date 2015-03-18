@@ -216,7 +216,7 @@ public class AfinidadesController implements Serializable{
             pessoa = LoginBean.getUsuario();
 
             //Todas as afinidades do usuario
-            afinidadesAtivas = pessoa.getAfinidades();
+            afinidadesAtivas = new ArrayList(pessoa.getAfinidades());
             
             escolhidas = new ArrayList<>();
             
@@ -519,7 +519,7 @@ public class AfinidadesController implements Serializable{
     public void povoarLazyModelD() {
 
         disciplina = disciplinaFacade.inicializarColecaoAfinidades(disciplina);
-        afinidadesFiltradas = disciplina.getAfinidades();
+        afinidadesFiltradas = new ArrayList(disciplina.getAfinidades());
 
         if (!incluirRemovidasD) {
 
@@ -545,7 +545,7 @@ public class AfinidadesController implements Serializable{
     //Preenche o LazyModel com as afinidades de acordo com o docente escolhido
     public void povoarLazyModelP() {
 
-        afinidadesFiltradas = pessoa.getAfinidades();
+        afinidadesFiltradas = new ArrayList(pessoa.getAfinidades());
 
         if (!incluirRemovidasP) {
 

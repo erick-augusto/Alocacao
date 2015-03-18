@@ -1,7 +1,7 @@
 package model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -84,25 +84,25 @@ public class Pessoa implements Serializable {
 //    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL })  
 //    @LazyCollection(value = LazyCollectionOption.EXTRA)  
 //    @Fetch(value = FetchMode.SUBSELECT) 
-    private List<Afinidades> afinidades;
+    private Set<Afinidades> afinidades;
     
 
-    public List<Afinidades> getAfinidades() {
+    public Set<Afinidades> getAfinidades() {
         return afinidades;
     }
 
-    public void setAfinidades(List<Afinidades> afinidades) {
+    public void setAfinidades(Set<Afinidades> afinidades) {
         this.afinidades = afinidades;
     }
     
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
-    private List<Disponibilidade> disponibilidades;
+    private Set<Disponibilidade> disponibilidades;
 
-    public List<Disponibilidade> getDisponibilidades() {
+    public Set<Disponibilidade> getDisponibilidades() {
         return disponibilidades;
     }
 
-    public void setDisponibilidades(List<Disponibilidade> disponibilidades) {
+    public void setDisponibilidades(Set<Disponibilidade> disponibilidades) {
         this.disponibilidades = disponibilidades;
     }
     

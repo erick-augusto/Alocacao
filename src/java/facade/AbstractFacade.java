@@ -1,6 +1,8 @@
 package facade;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -102,6 +104,19 @@ public abstract class AbstractFacade<T> {
      *
      * @return Lista com todas as entidades do banco de dados
      */
+//    public Set<T> findAll() {
+//        Session session = getSessionFactory().openSession();
+//        Criteria crit = session.createCriteria(entityClass);
+//        crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//faz um select distinct
+//
+//        //crit.setMaxResults(50);
+//        List results = crit.list();
+//        Set<T> resultados = new HashSet(results);
+//        session.close();
+//        return resultados;
+//    }
+    
+    
     public List<T> findAll() {
         Session session = getSessionFactory().openSession();
         Criteria crit = session.createCriteria(entityClass);
@@ -109,9 +124,11 @@ public abstract class AbstractFacade<T> {
 
         //crit.setMaxResults(50);
         List results = crit.list();
+        
         session.close();
         return results;
     }
+    
 
     /**
      * Busca todas as entidades do banco de dados dentro de um range específico.

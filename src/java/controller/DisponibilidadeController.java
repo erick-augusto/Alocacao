@@ -4,7 +4,9 @@ import facade.DisponibilidadeFacade;
 import facade.TurmasPlanejamentoFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -36,18 +38,18 @@ public class DisponibilidadeController implements Serializable{
     @EJB
     private DisponibilidadeFacade disponibilidadeFacade;
     
-    private List<TurmasPlanejamento> turmasEtapa1;
+    private Set<TurmasPlanejamento> turmasEtapa1;
 
-    public List<TurmasPlanejamento> getTurmasEtapa1() {
+    public Set<TurmasPlanejamento> getTurmasEtapa1() {
         
         if(turmasEtapa1 == null){
-            turmasEtapa1 = new ArrayList<>();
+            turmasEtapa1 = new HashSet<>();
         }
         
         return turmasEtapa1;
     }
 
-    public void setTurmasEtapa1(List<TurmasPlanejamento> turmasEtapa1) {
+    public void setTurmasEtapa1(Set<TurmasPlanejamento> turmasEtapa1) {
         this.turmasEtapa1 = turmasEtapa1;
     }
 
@@ -104,7 +106,7 @@ public class DisponibilidadeController implements Serializable{
     
     private String turno;
     
-    private List<Afinidades> afinidades;
+    private Set<Afinidades> afinidades;
     
     private List<Disciplina> discAfinidades;
 

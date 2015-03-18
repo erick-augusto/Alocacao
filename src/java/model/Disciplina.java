@@ -1,7 +1,7 @@
 package model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,18 +27,18 @@ public class Disciplina implements Serializable {
     
     
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
-    private List<Afinidades> afinidades;
+    private Set<Afinidades> afinidades;
 
     Disciplina(Long disciplinaId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 
-    public List<Afinidades> getAfinidades() {
+    public Set<Afinidades> getAfinidades() {
         return afinidades;
     }
 
-    public void setAfinidades(List<Afinidades> afinidades) {
+    public void setAfinidades(Set<Afinidades> afinidades) {
         this.afinidades = afinidades;
     }
     

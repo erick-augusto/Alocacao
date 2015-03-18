@@ -161,7 +161,7 @@ public class DisciplinaController2 implements Serializable {
             pessoa = LoginBean.getUsuario();
 
             //Todas as afinidades do usuario
-            afinidadesAtivas = pessoa.getAfinidades();
+            afinidadesAtivas = new ArrayList(pessoa.getAfinidades());
             
             escolhidas = new ArrayList<>();
             

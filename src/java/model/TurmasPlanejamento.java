@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -49,13 +50,13 @@ public class TurmasPlanejamento implements Serializable {
     private List<String> horarios;
     
     @OneToMany(mappedBy = "turmaPlanejamento", cascade = CascadeType.ALL)
-    private List<Disponibilidade> disponibilidades;
+    private Set<Disponibilidade> disponibilidades;
 
-    public List<Disponibilidade> getDisponibilidades() {
+    public Set<Disponibilidade> getDisponibilidades() {
         return disponibilidades;
     }
 
-    public void setDisponibilidades(List<Disponibilidade> disponibilidades) {
+    public void setDisponibilidades(Set<Disponibilidade> disponibilidades) {
         this.disponibilidades = disponibilidades;
     }
     
