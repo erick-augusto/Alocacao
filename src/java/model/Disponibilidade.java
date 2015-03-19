@@ -53,6 +53,10 @@ public class Disponibilidade {
     
     private String horario;
     
+//    private String ordem;
+    
+    private String ordemPreferencia;
+    
 //    @Temporal(javax.persistence.TemporalType.DATE)
 //    private Date dataAcao;
     
@@ -62,24 +66,26 @@ public class Disponibilidade {
     
     @ManyToOne
 //  @JoinColumn(insertable = false, updatable = false)    
-    private TurmasPlanejamento turmaPlanejamento;
+    private TurmasPlanejamento turma;
     
     public Disponibilidade() {}
     
-    public Disponibilidade(String horario, Pessoa p, TurmasPlanejamento tP){
+    public Disponibilidade(String horario, String ordem, Pessoa p, TurmasPlanejamento tP){
         
         this.horario = horario;
         
         this.pessoa = p;
         
-        this.turmaPlanejamento = tP;
+        this.turma = tP;
+        
+        this.ordemPreferencia = ordem;
         
         this.id.pessoaId = p.getID();
         this.id.turmaId = tP.getID();
         
         //Integridade Referencial
         pessoa.getDisponibilidades().add(this);
-        turmaPlanejamento.getDisponibilidades().add(this);
+        turma.getDisponibilidades().add(this);
     }
 
     public Id getId() {
@@ -98,8 +104,6 @@ public class Disponibilidade {
         this.horario = horario;
     }
 
-
-
     public Pessoa getPessoa() {
         return pessoa;
     }
@@ -108,13 +112,23 @@ public class Disponibilidade {
         this.pessoa = pessoa;
     }
 
-    public TurmasPlanejamento getTurmaPlanejamento() {
-        return turmaPlanejamento;
+    public TurmasPlanejamento getTurma() {
+        return turma;
     }
 
-    public void setTurmaPlanejamento(TurmasPlanejamento turmaPlanejamento) {
-        this.turmaPlanejamento = turmaPlanejamento;
+    public void setTurma(TurmasPlanejamento turma) {
+        this.turma = turma;
     }
+
+    public String getOrdemPreferencia() {
+        return ordemPreferencia;
+    }
+
+    public void setOrdemPreferencia(String ordemPreferencia) {
+        this.ordemPreferencia = ordemPreferencia;
+    }
+    
+    
 
     
     

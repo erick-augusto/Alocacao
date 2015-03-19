@@ -21,6 +21,15 @@ and open the template in the editor.
     padding: 0;
 }
 
+.ui-orderlist .ui-orderlist-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow:auto;
+    height:400px;
+    width:400px;
+}
+
 .a{
     width:500px;
 }

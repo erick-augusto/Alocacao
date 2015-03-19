@@ -9,12 +9,16 @@ import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import model.Afinidades;
 import model.Disciplina;
 import model.Disponibilidade;
 import model.Pessoa;
 import model.TurmasPlanejamento;
+import org.primefaces.event.CellEditEvent;
+import util.DisponibilidadeDataModel;
 import util.TurmasPlanejamentoDataModel;
 
 
@@ -38,18 +42,40 @@ public class DisponibilidadeController implements Serializable{
     @EJB
     private DisponibilidadeFacade disponibilidadeFacade;
     
-    private Set<TurmasPlanejamento> turmasEtapa1;
+    private List<TurmasPlanejamento> turmasEtapa1;
 
-    public Set<TurmasPlanejamento> getTurmasEtapa1() {
+    private DisponibilidadeDataModel dispdataModel;
+
+    public DisponibilidadeDataModel getDispdataModel() {
+        
+        if(dispdataModel == null){
+            
+            List<Disponibilidade> d = disponibilidadeFacade.findByPessoa(pessoa);
+            
+            dispdataModel = new DisponibilidadeDataModel(d);
+            
+        }
+        
+        return dispdataModel;
+    }
+
+    public void setDispdataModel(DisponibilidadeDataModel dispdataModel) {
+        this.dispdataModel = dispdataModel;
+    }
+    
+    
+    
+    
+    public List<TurmasPlanejamento> getTurmasEtapa1() {
         
         if(turmasEtapa1 == null){
-            turmasEtapa1 = new HashSet<>();
+            turmasEtapa1 = new ArrayList<>();
         }
         
         return turmasEtapa1;
     }
 
-    public void setTurmasEtapa1(Set<TurmasPlanejamento> turmasEtapa1) {
+    public void setTurmasEtapa1(List<TurmasPlanejamento> turmasEtapa1) {
         this.turmasEtapa1 = turmasEtapa1;
     }
 
@@ -60,6 +86,47 @@ public class DisponibilidadeController implements Serializable{
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
     }
+
+    private List<String> ordem;
+
+    public List<String> getOrdem() {
+        
+        int tamanho = pessoa.getDisponibilidades().size();
+        
+        ordem = new ArrayList<>();
+        
+        ordem.add("Selecione");
+        
+        for(int i = 1; i <= tamanho; i++){
+            ordem.add(String.valueOf(i));
+        }
+        
+        return ordem;
+    }
+
+    public void setOrdem(List<String> ordem) {
+        this.ordem = ordem;
+    }
+  
+    public void onCellEdit(CellEditEvent event) {
+//        Object oldValue = event.getOldValue();
+//        
+//        Object newValue = event.getNewValue();
+//        
+//        int indice = event.getRowIndex();
+        
+        Disponibilidade d = (Disponibilidade) dispdataModel.getRowData();
+        
+        disponibilidadeFacade.merge(d);
+         
+//        if(newValue != null && !newValue.equals(oldValue)) {
+//            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
+//            FacesContext.getCurrentInstance().addMessage(null, msg);
+//        }
+    }
+    
+    
+    
     
     
     
@@ -71,10 +138,14 @@ public class DisponibilidadeController implements Serializable{
             
             //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
             t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", pessoa, t);
+            disponibilidade = new Disponibilidade("", "", pessoa, t);
             disponibilidadeFacade.save(disponibilidade);
             
         }
+        
+        dispdataModel = null;
+        
+//        org.primefaces.context.RequestContext.getCurrentInstance().execute("dlg.show();"); 
         
     }
     
@@ -160,7 +231,7 @@ public class DisponibilidadeController implements Serializable{
     
     public void limparFiltro(){
         
-        dataModel = null;
+        dispdataModel = null;
         
     }
     

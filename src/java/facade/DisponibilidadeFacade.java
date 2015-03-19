@@ -9,6 +9,7 @@ import controller.HibernateUtil;
 import java.util.List;
 import javax.ejb.Stateless;
 import model.Disponibilidade;
+import model.Pessoa;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -92,6 +93,27 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
                 session.close();
                 return d;
             }
+        } catch (HibernateException e) {
+            return null;
+        }
+        
+        
+        
+    }
+    
+    public List<Disponibilidade> findByPessoa(Pessoa pessoa){
+        
+       try {
+
+            Session session = getSessionFactory().openSession();
+            Criteria criteria = session.createCriteria(Disponibilidade.class);
+            criteria.add(Restrictions.eq("pessoa", pessoa));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            List resultado = criteria.list();
+            
+            session.close();
+            return resultado;
+            
         } catch (HibernateException e) {
             return null;
         }

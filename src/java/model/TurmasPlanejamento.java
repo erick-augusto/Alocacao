@@ -49,7 +49,7 @@ public class TurmasPlanejamento implements Serializable {
     @ElementCollection
     private List<String> horarios;
     
-    @OneToMany(mappedBy = "turmaPlanejamento", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "turma", cascade = CascadeType.ALL)
     private Set<Disponibilidade> disponibilidades;
 
     public Set<Disponibilidade> getDisponibilidades() {
