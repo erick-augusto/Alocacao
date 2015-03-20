@@ -280,82 +280,6 @@ public class AfinidadesController implements Serializable{
     }
     
 
-//    public void testeSalvarAfinidade(){
-//        
-////        List<Pessoa> pessoas = pessoaFacade.findAll();
-//        
-//        pessoa = LoginBean.getUsuario();
-//        
-//        List<Disciplina> disciplinas = disciplinaFacade.findAll();
-//        
-//        disciplina = disciplinas.get(15);
-//
-//        Calendar cal = Calendar.getInstance();
-//               
-//        afinidade = new Afinidades("Adicionada", cal.getTime(), pessoa, disciplina);
-//        
-//        afinidadeFacade.save(afinidade);
-////        
-////        disciplina.getAfinidades().add(afinidade);
-////        disciplinaFacade.edit(disciplina);
-////        
-////        pessoa.getAfinidades().add(afinidade);
-////        pessoaFacade.edit(pessoa);
-//         
-//        
-////        afinidadeFacade.salvarAfinidade();
-//        
-//    }
-    
-//    public void salvarAfinidade(Pessoa p, Disciplina d){
-//        
-//        Calendar cal = Calendar.getInstance();
-//                    
-//        afinidade = new Afinidades("Adicionada", cal.getTime(), p, d);
-//        
-////        afinidadeFacade.save(afinidade);
-//        
-//        afinidadeFacade.save(afinidade);
-//        
-//    }
-//    
-//    public void removerAfinidade(Pessoa p, Disciplina d) {
-//
-//        List<Afinidades> afinidades = p.getAfinidades();
-//
-//        for (Afinidades a : afinidades) {
-//            if (a.getDisciplina() == d) {
-//                a.setEstado("Removida");
-//                Calendar cal = Calendar.getInstance();
-//                a.setDataAcao(cal.getTime());
-//                afinidadeFacade.edit(a);
-//            }
-//        }
-//
-//    }
-//    
-//    public void testeRemoverAfinidade(){
-//        
-//        pessoa = LoginBean.getUsuario();
-//        
-//       List<Afinidades> afinidades = pessoa.getAfinidades();
-//        
-//       for(Afinidades a: afinidades){
-//           if(a.getDisciplina().getID() == 7){
-//               a.setEstado("Removida");
-//               Calendar cal = Calendar.getInstance();
-//               a.setDataAcao(cal.getTime());
-//               afinidadeFacade.edit(a);
-//           }
-//       }
-//        
-//        
-//    }
-
-    
-    
-    
-    
     //---------------------------------------Páginas web------------------------------------------------------------
     public String prepareCreate(int i) {
         afinidade = new Afinidades();
@@ -568,28 +492,7 @@ public class AfinidadesController implements Serializable{
         incluirRemovidasP = false;
 
     }
-
-    
-//    
-//    public AfinidadesLazyModel getAfinidadesLazyModel() {
-//        
-//        if(afinidadeDataModel == null){
-//            afinidadeDataModel = new AfinidadesLazyModel(this.listarTodas());
-//        }
-//        
-//        
-//        return this.afinidadeDataModel;
-//    }
-//    
-    
-//    public void preencherDataModel(){
-//        
-//        cadastro.cadastrarAfinidadess();
-//        afinidadeDataModel = null;
-//        
-//    }
-    
-    
+   
     //---------------------------------------------------------------------------------------------------
     
 

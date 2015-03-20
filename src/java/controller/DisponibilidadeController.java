@@ -4,13 +4,10 @@ import facade.DisponibilidadeFacade;
 import facade.TurmasPlanejamentoFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import model.Afinidades;
 import model.Disciplina;
@@ -28,13 +25,13 @@ public class DisponibilidadeController implements Serializable{
     
     public DisponibilidadeController(){
         
-        pessoa = LoginBean.getUsuario();
+        usuario = LoginBean.getUsuario();
         
     }
     
     private Disponibilidade disponibilidade;
     
-    private Pessoa pessoa;
+    private Pessoa usuario;
     
     @EJB
     private TurmasPlanejamentoFacade turmasFacade;
@@ -44,24 +41,7 @@ public class DisponibilidadeController implements Serializable{
     
     private List<TurmasPlanejamento> turmasEtapa1;
 
-    private DisponibilidadeDataModel dispdataModel;
-
-    public DisponibilidadeDataModel getDispdataModel() {
-        
-        if(dispdataModel == null){
-            
-            List<Disponibilidade> d = disponibilidadeFacade.findByPessoa(pessoa);
-            
-            dispdataModel = new DisponibilidadeDataModel(d);
-            
-        }
-        
-        return dispdataModel;
-    }
-
-    public void setDispdataModel(DisponibilidadeDataModel dispdataModel) {
-        this.dispdataModel = dispdataModel;
-    }
+    
     
     
     
@@ -79,19 +59,21 @@ public class DisponibilidadeController implements Serializable{
         this.turmasEtapa1 = turmasEtapa1;
     }
 
-    public Pessoa getPessoa() {
-        return pessoa;
+    
+    
+    public Pessoa getUsuario() {
+        return usuario;
     }
 
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
+    public void setUsuario(Pessoa usuario) {
+        this.usuario = usuario;
     }
 
     private List<String> ordem;
 
     public List<String> getOrdem() {
         
-        int tamanho = pessoa.getDisponibilidades().size();
+        int tamanho = usuario.getDisponibilidades().size();
         
         ordem = new ArrayList<>();
         
@@ -138,7 +120,7 @@ public class DisponibilidadeController implements Serializable{
             
             //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
             t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", "", pessoa, t);
+            disponibilidade = new Disponibilidade("", "", usuario, t);
             disponibilidadeFacade.save(disponibilidade);
             
         }
@@ -150,6 +132,9 @@ public class DisponibilidadeController implements Serializable{
     }
     
     //------------------------------------Data Model---------------------------------------------------------
+    
+    
+    //Data Model das Turmas da Etapa I------------------------------------------------------------------------
     
     private TurmasPlanejamentoDataModel dataModel;
     
@@ -168,8 +153,31 @@ public class DisponibilidadeController implements Serializable{
     }
     
     
+    //Data Model das Disponibilidades---------------------------------------------------------------------------
     
-    //--------------------------------------Filtros----------------------------------------------------------
+    private DisponibilidadeDataModel dispdataModel;
+
+    public DisponibilidadeDataModel getDispdataModel() {
+        
+        if(dispdataModel == null){
+            
+            List<Disponibilidade> d = disponibilidadeFacade.findByPessoa(usuario);
+            
+            dispdataModel = new DisponibilidadeDataModel(d);
+            
+        }
+        
+        return dispdataModel;
+    }
+
+    public void setDispdataModel(DisponibilidadeDataModel dispdataModel) {
+        this.dispdataModel = dispdataModel;
+    }
+    
+   
+    //----------------------------------------Filtros----------------------------------------------------------
+    
+    //Filtros para as turmas da Etapa I------------------------------------------------------------------------
     
     private boolean filtrarAfinidades;
     
@@ -205,16 +213,13 @@ public class DisponibilidadeController implements Serializable{
         this.turno = turno;
     }
     
-    
-    
-    
-    public void filtrar(){
+    public void filtrarTurmas(){
         
         discAfinidades = new ArrayList<>();
         
-        //Caso o usuário queira filtrar por afinidades
+        //Caso o usuário queira filtrarTurmas por afinidades
         if(filtrarAfinidades){
-            afinidades = pessoa.getAfinidades();
+            afinidades = usuario.getAfinidades();
             
             
             //Quais disciplinas ele tem afinidade
@@ -229,11 +234,70 @@ public class DisponibilidadeController implements Serializable{
         dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTC(discAfinidades, turno, campus));        
     }
     
-    public void limparFiltro(){
+    public void limparFiltroTurmas(){
         
         dispdataModel = null;
         
     }
+    
+    //Filtros para o Log das Disponibilidades da Etapa I-------------------------------------------------------
+    
+    private Disciplina disciplina;
+    
+    private Pessoa pessoa;
+
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+
+    public Disciplina getDisciplina() {
+        return disciplina;
+    }
+
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
+    }
+    
+    private List<Disponibilidade> disponibilidades;
+
+    public List<Disponibilidade> getDisponibilidades() {
+        return disponibilidades;
+    }
+
+    public void setDisponibilidades(List<Disponibilidade> disponibilidades) {
+        this.disponibilidades = disponibilidades;
+    }
+  
+    //Filtrar as disponibilidades por disciplina
+    public void filtrarDisp(){
+        
+        disponibilidades = new ArrayList<>();
+        
+        disponibilidades = disponibilidadeFacade.findByDisciplinaTC(disciplina, campus, turno);
+        
+        dispdataModel = new DisponibilidadeDataModel(disponibilidades);
+        
+    }
+    
+    public void limparFiltroDisp(){
+        
+        dispdataModel = null;
+    }
+    
+    //Filtrar as disponibilidades por docente
+    public void filtrarDispDoc(){
+        
+        disponibilidades = disponibilidadeFacade.findByPessoa(pessoa);
+        
+        dispdataModel = new DisponibilidadeDataModel(disponibilidades);
+        
+    }
+    
+    
     
     
     

@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <title>Disponibilidade em turmas</title>
+        <meta name="viewport" content="width=device-width"/>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet library="css" name="style.css" />
+        <p:layout fullPage="true"> 
+
+            <p:layoutUnit position="north" size="100" header="Top" resizable="true" closable="true" collapsible="true">
+                <h:outputText value="North unit content." />
+            </p:layoutUnit>
+
+
+            <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
+
+                <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                <br/>
+            </p:layoutUnit> 
+
+            <p:layoutUnit id="layoutCentro" position="center" >  
+
+                <h:form id="form1">
+
+                    <p:panel header="Filtros" toggleable="true" toggleSpeed="500" closeSpeed="500">
+
+                        <p:tabView>
+                            <p:tab title="Disciplinas">
+                                <h:panelGrid columns="1">
+                                    <h:panelGrid columns="2">
+                                        <p:outputLabel value="Disciplina:" for="DisciplinaComplete" />
+                                        <p:autoComplete id="DisciplinaComplete" value="#{disponibilidadeController.disciplina}" 
+                                                        completeMethod="#{disciplinaController2.completeDisciplina}"
+                                                        var="disciplina" itemLabel="#{disciplina.nome}" itemValue="#{disciplina}" 
+                                                        converter="disciplinaCompleteConverter" forceSelection="true" />
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel for="campus" value="Câmpus:" />
+                                        <p:selectOneRadio id="campus" value="#{disponibilidadeController.campus}">
+                                            <f:selectItem itemLabel="SA" itemValue="SA" />
+                                            <f:selectItem itemLabel="SB" itemValue="SB" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel for="turno" value="Turno:" />
+                                        <p:selectOneRadio id="turno" value="#{disponibilidadeController.turno}">
+                                            <f:selectItem itemLabel="D" itemValue="D" />
+                                            <f:selectItem itemLabel="N" itemValue="N" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+
+
+                                </h:panelGrid>
+
+                                <p:separator/>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton id="buttonDisciplina" style="width: 30px; height: 30px; font-size: smaller; position: relative"  
+                                                     actionListener="#{disponibilidadeController.filtrarDisp()}"
+                                                     icon="ui-icon-search" 
+                                                     update="@(form:disponibilidadeTable)"> 
+                                    </p:commandButton>
+                                    <p:commandButton style="width: 30px; height: 30px; font-size: smaller; position: relative"  
+                                                     actionListener="#{disponibilidadeController.limparFiltroDisp()}"
+                                                     icon="ui-icon-closethick" 
+                                                     update="@all"> 
+                                    </p:commandButton>
+
+                                </h:panelGrid>
+
+
+                            </p:tab>
+
+                            <p:tab title="Docentes">
+
+                                <h:panelGrid columns="2">
+                                    <h:panelGrid columns="1">
+                                        <p:outputLabel value="Docente:" for="DocenteComplete" />
+                                        <p:autoComplete id="DocenteComplete" value="#{disponibilidadeController.pessoa}" 
+                                                        completeMethod="#{pessoaController.completePessoa}"
+                                                        var="docente" itemLabel="#{docente.nome}" itemValue="#{docente}" 
+                                                        converter="pessoaCompleteConverter" forceSelection="true" />
+
+                                    </h:panelGrid>
+
+                                    <p:separator/>
+
+                                    <h:panelGrid columns="2">
+                                        <p:commandButton id="buttonDocente" style="width: 30px; height: 30px; font-size: smaller; position: relative"  
+                                                         actionListener="#{disponibilidadeController.filtrarDispDoc()}"
+                                                         icon="ui-icon-search" 
+                                                         update="@(form:disponibilidadeTable)"> 
+                                        </p:commandButton>
+                                        <p:commandButton style="width: 30px; height: 30px; font-size: smaller; position: relative"  
+                                                         actionListener="#{disponibilidadeController.limparFiltroDisp()}"
+                                                         icon="ui-icon-closethick" 
+                                                         update="@all"> 
+                                        </p:commandButton>
+
+                                    </h:panelGrid>
+
+
+
+                                </h:panelGrid>
+
+                            </p:tab>
+
+                        </p:tabView>
+                    </p:panel>
+
+                    <p:panel id="painelDataTable" style="border-color: transparent" >
+
+
+                        <p:dataTable var="d" value="#{disponibilidadeController.dispdataModel}" paginator="true" rows="10"
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="5,10,15"  id="disponibilidadeTable" 
+                                     emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
+                                     style="width: 800px; " 
+                                     styleClass="panelCenter" 
+                                     paginatorPosition="top">
+
+                            <p:column headerText="Disciplina">
+                                <h:outputText value="#{d.turma.disciplina.nome}" />
+                            </p:column>
+                            <p:column headerText="Turno">
+                                <h:outputText value="#{d.turma.turno}" />
+                            </p:column>
+                            <p:column headerText="Câmpus">
+                                <h:outputText value="#{d.turma.campus}"/>
+                            </p:column>
+                            <p:column headerText="Docente">
+                                <h:outputText value="#{d.pessoa.nome}"/>
+                            </p:column>
+                            <p:column headerText="Preferência">
+                                <h:outputText value="#{d.ordemPreferencia}"/>
+                            </p:column>
+                        </p:dataTable>
+
+                    </p:panel>
+
+                    <p:panel style="border-color: transparent" >
+                        <h4>Exportar dados da consulta</h4>
+                        <p:commandLink ajax="false">
+                            <p:graphicImage library="images" name="xls.png" />
+                            <p:dataExporter type="xls" target="disponibilidadeTable" fileName="Logs de disponibilidade"/>
+                        </p:commandLink>
+
+                        <p:commandLink ajax="false">
+                            <p:graphicImage library="images" name="csv.png" />
+                            <p:dataExporter type="csv" target="disponibilidadeTable" fileName="Logs de disponibilidade"/>
+                        </p:commandLink>
+
+                        <p:commandLink ajax="false">
+                            <p:graphicImage library="images"  name="pdf.png"/>
+                            <p:dataExporter type="pdf" target="disponibilidadeTable" fileName="Logs de disponibilidade"/>
+                        </p:commandLink>
+
+
+                        <br/>
+                        <br/>
+                    </p:panel>
+
+
+                </h:form>
+
+            </p:layoutUnit>  
+        </p:layout>
+    </h:body>
+</html>

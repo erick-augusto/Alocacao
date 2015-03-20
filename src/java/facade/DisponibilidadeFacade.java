@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package facade;
 
 import controller.HibernateUtil;
 import java.util.List;
 import javax.ejb.Stateless;
+import model.Disciplina;
 import model.Disponibilidade;
 import model.Pessoa;
 import org.hibernate.Criteria;
@@ -16,10 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
-/**
- *
- * @author vinivcp
- */
+
 @Stateless
 public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
     
@@ -117,8 +110,54 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
         } catch (HibernateException e) {
             return null;
         }
+     
+    }
+    
+    //Retorna a lista de disponibilidade de acordo com a disciplina pesquisada
+    //Turno e campus são atributos opcionais
+    public List<Disponibilidade> findByDisciplinaTC(Disciplina d, String campus, String turno){
         
-        
+        try{
+            
+            Session session = getSessionFactory().openSession();
+            Criteria crit = session.createCriteria(Disponibilidade.class);
+            
+            if(d != null){
+                
+                crit.createAlias("turma", "t").add(Restrictions.eq("t.disciplina", d));
+                
+                if(!campus.equals("")){
+                    crit.add(Restrictions.eq("t.campus", campus));
+                }
+                
+                if(!turno.equals("")){
+                    crit.add(Restrictions.eq("t.turno", turno));
+                }
+                
+                
+            }
+            else{
+                
+                crit.createAlias("turma", "t");
+                
+                if(!campus.equals("")){
+                    crit.add(Restrictions.eq("t.campus", campus));
+                }
+                
+                if(!turno.equals("")){
+                    crit.add(Restrictions.eq("t.turno", turno));
+                }
+            }
+            
+            crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            List result = crit.list();
+            return result;
+            
+        }
+        catch(HibernateException e){
+            return null;
+        }
+
         
     }
     

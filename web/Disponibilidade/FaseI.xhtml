@@ -78,11 +78,11 @@
                             <p:separator/>
 
                             <h:panelGrid columns="2">
-                                <p:commandButton    icon="ui-icon-search"  actionListener="#{disponibilidadeController.filtrar()}"
+                                <p:commandButton    icon="ui-icon-search"  actionListener="#{disponibilidadeController.filtrarTurmas()}"
                                                     update="@(form:turmasTable)"  style="width: 30px; height: 25px" title="Filtrar disciplinas">
                                 </p:commandButton>
 
-                                <p:commandButton    ajax="false"  actionListener="#{disponibilidadeController.limparFiltro()}"
+                                <p:commandButton    ajax="false"  actionListener="#{disponibilidadeController.limparFiltroTurmas()}"
                                                     update="@(form:turmasTable)" icon="ui-icon-closethick" 
                                                     style="width: 30px; height: 25px" title="Limpar filtros">
                                 </p:commandButton>
@@ -130,12 +130,6 @@
                                 </p:column>
                                 <p:column headerText="Câmpus" style="width: 6%">
                                     <h:outputText value="#{turma.campus}" />
-                                </p:column>
-                                <p:column>    
-                                    <p:cellEditor>
-                                        <f:facet name="output"><h:outputText value="#{car.year}" /></f:facet>
-                                        <f:facet name="input"><p:inputText value="#{car.year}" style="width:96%" label="Year"/></f:facet>
-                                    </p:cellEditor>
                                 </p:column>
                             </p:dataTable>
 
