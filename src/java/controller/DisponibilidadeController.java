@@ -41,15 +41,26 @@ public class DisponibilidadeController implements Serializable{
     
     private List<TurmasPlanejamento> turmasEtapa1;
 
+    private List<TurmasPlanejamento> turmasEtapa2;
     
-    
-    
+        public List<TurmasPlanejamento> getTurmasEtapa2() {
+        
+        if(turmasEtapa2 == null){
+            turmasEtapa2 = new ArrayList<TurmasPlanejamento>();
+        }
+        
+        return turmasEtapa2;
+    }
+
+    public void setTurmasEtapa2(List<TurmasPlanejamento> turmasEtapa2) {
+        this.turmasEtapa2 = turmasEtapa2;
+    }
     
     
     public List<TurmasPlanejamento> getTurmasEtapa1() {
         
         if(turmasEtapa1 == null){
-            turmasEtapa1 = new ArrayList<>();
+            turmasEtapa1 = new ArrayList<TurmasPlanejamento>();
         }
         
         return turmasEtapa1;

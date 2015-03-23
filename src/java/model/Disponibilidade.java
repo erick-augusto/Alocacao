@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 
 
 @Entity
-public class Disponibilidade {
+public class Disponibilidade implements Serializable {
    
     @Embeddable
     public static class Id implements Serializable{

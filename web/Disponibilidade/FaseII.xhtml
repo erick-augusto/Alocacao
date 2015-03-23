@@ -88,10 +88,10 @@
                         
                         
                         <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
-                            <p:dataTable var="turma" value="#{disponibilidadeController.turmasEtapa1}" 
+                            <p:dataTable var="turma" value="#{disponibilidadeController.dataModel}" 
                                          scrollRows="20" scrollable="true"
                                          scrollHeight="400" style="margin-bottom:0; text-align: center"
-                                         selection="#{turmasPlanejamentoController.turma.horarios}" id="turmasTable"
+                                         selection="#{disponibilidadeController.turmasEtapa2}" id="turmasTable"
                                          rowKey="#{turma.ID}"
                                           >
                                 
@@ -103,7 +103,7 @@
                             
                                 
                                 <p:column headerText="Curso" style="width: 33%">
-                                    <h:outputText value="#{turma.horarios}"/>
+                                    <h:outputText value="#{turma.curso}"/>
                                 </p:column>  
                                 <p:column headerText="Disciplina" style="width: 33%">
                                     <h:outputText value="#{turma.disciplina.nome}"/>
@@ -129,6 +129,8 @@
                                              value="Salvar" actionListener="#{disponibilidadeController.salvarDisponibilidade()}"
                                              icon="ui-icon-disk"  immediate="true"> 
                             </p:commandButton>
+                            <br/>
+                            <p:commandButton  value="Voltar" id="btnVoltar_faseII"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
                             
                         </h:panelGrid>
                     </p:layoutUnit>
