@@ -23,16 +23,20 @@ import util.TurmasPlanejamentoDataModel;
 @SessionScoped
 public class DisponibilidadeController implements Serializable{
     
+    //Construtor (pega o usuario Logado)
     public DisponibilidadeController(){
         
         usuario = LoginBean.getUsuario();
         
     }
     
+    //Atributos de Disponibilidade controller
     private Disponibilidade disponibilidade;
     
     private Pessoa usuario;
     
+    private List<String> ordem;
+      
     @EJB
     private TurmasPlanejamentoFacade turmasFacade;
     
@@ -80,8 +84,6 @@ public class DisponibilidadeController implements Serializable{
         this.usuario = usuario;
     }
 
-    private List<String> ordem;
-
     public List<String> getOrdem() {
         
         int tamanho = usuario.getDisponibilidades().size();
@@ -118,13 +120,7 @@ public class DisponibilidadeController implements Serializable{
 //        }
     }
     
-    
-    
-    
-    
-    
-    
-    
+ 
     public void salvarDisponibilidade(){
         
         for(TurmasPlanejamento t: turmasEtapa1){
@@ -143,7 +139,6 @@ public class DisponibilidadeController implements Serializable{
     }
     
     //------------------------------------Data Model---------------------------------------------------------
-    
     
     //Data Model das Turmas da Etapa I------------------------------------------------------------------------
     
@@ -192,20 +187,34 @@ public class DisponibilidadeController implements Serializable{
     
     private boolean filtrarAfinidades;
     
+    private boolean filtrarDisponibilidades;
+    
     private String campus;
     
     private String turno;
     
     private Set<Afinidades> afinidades;
     
+    private Set<Disponibilidade> setDisponibilidades;
+    
     private List<Disciplina> discAfinidades;
 
+    private List<Disciplina> discEtapa1;
+    
     public boolean isFiltrarAfinidades() {
         return filtrarAfinidades;
+    }
+    
+    public boolean isFiltrarDisponibilidades() {
+        return filtrarDisponibilidades;
     }
 
     public void setFiltrarAfinidades(boolean filtrarAfinidades) {
         this.filtrarAfinidades = filtrarAfinidades;
+    }
+    
+    public void setFiltrarDisponibilidades(boolean filtrarDisponibilidades) {
+        this.filtrarDisponibilidades = filtrarDisponibilidades;
     }
 
     public String getCampus() {
@@ -245,6 +254,19 @@ public class DisponibilidadeController implements Serializable{
         dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTC(discAfinidades, turno, campus));        
     }
     
+    public void filtrarTurmas2(){
+        discEtapa1 = new ArrayList<>();
+        
+        if(filtrarDisponibilidades){
+            setDisponibilidades = usuario.getDisponibilidades();
+            
+            for (Disponibilidade d: setDisponibilidades){
+                discEtapa1.add(d.getTurma().getDisciplina());             
+            }
+        }
+        
+        dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTC(discEtapa1, turno, campus)); 
+    }
     public void limparFiltroTurmas(){
         
         dispdataModel = null;
