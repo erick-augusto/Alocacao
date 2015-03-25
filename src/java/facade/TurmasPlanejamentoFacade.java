@@ -45,7 +45,7 @@ public class TurmasPlanejamentoFacade extends AbstractFacade<TurmasPlanejamento>
 
         try {
             List<TurmasPlanejamento> turmas = new ArrayList<>();
-
+            
             Session session = getSessionFactory().openSession();
             
 

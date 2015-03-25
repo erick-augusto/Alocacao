@@ -234,7 +234,7 @@ public class DisponibilidadeController implements Serializable{
     }
     
     public void filtrarTurmas(){
-        
+        dataModel = null;
         discAfinidades = new ArrayList<>();
         
         //Caso o usuário queira filtrarTurmas por afinidades
@@ -255,6 +255,7 @@ public class DisponibilidadeController implements Serializable{
     }
     
     public void filtrarTurmas2(){
+        dataModel = null;
         discEtapa1 = new ArrayList<>();
         
         if(filtrarDisponibilidades){
@@ -268,7 +269,7 @@ public class DisponibilidadeController implements Serializable{
         dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTC(discEtapa1, turno, campus)); 
     }
     public void limparFiltroTurmas(){
-        
+        dataModel = null;
         dispdataModel = null;
         
     }
