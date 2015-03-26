@@ -24,7 +24,7 @@
                     <p:panelMenu style="width:300px; height: 300px; text-align: justify; 
                                  position: relative; left: 500px;top: 100px">
                         <p:submenu label="Afinidades">
-                            <p:menuitem value="Definir afinidades" action="Afinidades/DefinirAfinidade" icon="ui-icon-pencil"/>
+                            <p:menuitem value="Definir afinidades" action="#{afinidadesController.prepareAfinidades()}" icon="ui-icon-pencil"/>
                             <p:menuitem value="Ver histórico de afinidades" action="Afinidades/LogsAfinidades" icon="ui-icon-clock"/>
                         </p:submenu>
                         <p:submenu  label="Disponibilidade">

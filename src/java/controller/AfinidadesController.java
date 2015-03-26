@@ -289,6 +289,12 @@ public class AfinidadesController implements Serializable{
             return "Create";
         }
     }
+    
+    public String prepareAfinidades(){
+        disponiveis = null;
+        escolhidas = null;
+        return "/Afinidades/DefinirAfinidade";
+    }
 
     public String index() {
         afinidade = null;

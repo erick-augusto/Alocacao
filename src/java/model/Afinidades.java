@@ -75,12 +75,12 @@ public class Afinidades{
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dataAcao;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
 //    @Column(insertable=false, updatable=false)
 //    @JoinColumn(name = "pessoaId", referencedColumnName = "pessoa", insertable = false, updatable = false)
     private Pessoa pessoa;
     
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
 //    @Column(insertable=false, updatable=false)
 //  @JoinColumn(insertable = false, updatable = false)    
     private Disciplina disciplina;

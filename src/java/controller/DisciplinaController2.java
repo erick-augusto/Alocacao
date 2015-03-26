@@ -280,18 +280,18 @@ public class DisciplinaController2 implements Serializable {
            Pessoa atual;
            
            
-           for(Afinidades a: afinidades){
-               disciplina.getAfinidades().remove(a);
-               atual = a.getPessoa();
-               atual.getAfinidades().remove(a);
-//               disciplinaFacade.edit(disciplina);
-               pessoaFacade.edit(atual);
-               afinidadesFacade.remove(a);
-               
-           }
+//           for(Afinidades a: afinidades){
+//               disciplina.getAfinidades().remove(a);
+//               atual = a.getPessoa();
+//               atual.getAfinidades().remove(a);
+////               disciplinaFacade.edit(disciplina);
+//               pessoaFacade.edit(atual);
+//               afinidadesFacade.remove(a);
+//               
+//           }
            
-           TurmasPlanejamentoController tpc = new TurmasPlanejamentoController();
-           tpc.deletarPorDisciplina(disciplina);           
+//           TurmasPlanejamentoController tpc = new TurmasPlanejamentoController();
+//           tpc.deletarPorDisciplina(disciplina);           
             disciplinaFacade.remove(disciplina);
             disciplina = null;
             JsfUtil.addSuccessMessage("Disciplina Deletado");

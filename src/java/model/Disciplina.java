@@ -28,6 +28,19 @@ public class Disciplina implements Serializable {
     
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
     private Set<Afinidades> afinidades;
+    
+    @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
+    private Set<TurmasPlanejamento> turmas;
+
+    public Set<TurmasPlanejamento> getTurmas() {
+        return turmas;
+    }
+
+    public void setTurmas(Set<TurmasPlanejamento> turmas) {
+        this.turmas = turmas;
+    }
+    
+    
 
     Disciplina(Long disciplinaId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
