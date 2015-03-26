@@ -5,7 +5,7 @@ import java.util.Comparator;
 import model.TurmasPlanejamento;
 import org.primefaces.model.SortOrder;
 
-public class TurmasPlanejamentoLazySorter_NU implements Comparator<TurmasPlanejamento> {
+public class TurmasPlanejamentoLazySorter implements Comparator<TurmasPlanejamento> {
 
     private String sortField;
 
@@ -16,7 +16,7 @@ public class TurmasPlanejamentoLazySorter_NU implements Comparator<TurmasPlaneja
      * @param sortField
      * @param sortOrder
      */
-    public TurmasPlanejamentoLazySorter_NU(String sortField, SortOrder sortOrder) {
+    public TurmasPlanejamentoLazySorter(String sortField, SortOrder sortOrder) {
         this.sortField = sortField;
         this.sortOrder = sortOrder;
     }

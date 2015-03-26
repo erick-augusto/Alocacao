@@ -70,7 +70,15 @@ public class Disciplina implements Serializable {
     }
 
     public void setEixo(String eixo) {
-        this.eixo = eixo;
+        
+        if(eixo.equals("")){
+            this.eixo = null;
+        }
+        else{
+            this.eixo = eixo;
+        }
+        
+    
     }
     
     private String curso;
@@ -80,7 +88,15 @@ public class Disciplina implements Serializable {
     }
 
     public void setCurso(String curso) {
-        this.curso = curso;
+        
+        if(curso.equals("")){
+            this.curso = null;
+        }
+        else{
+            this.curso = curso;
+        }
+        
+        
     }
     
     

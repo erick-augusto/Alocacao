@@ -6,7 +6,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -18,6 +20,7 @@ import javax.inject.Named;
 import model.Disciplina;
 import model.TurmasPlanejamento;
 import util.TurmasPlanejamentoDataModel;
+import util.TurmasPlanejamentoLazyModel;
 
 
 @Named(value = "turmasPlanejamentoController")
@@ -151,24 +154,25 @@ public class TurmasPlanejamentoController implements Serializable{
     
     //---------------------------LazyData Model--------------------------------------------------------------------
     
-//    private TurmasPlanejamentoLazyModel_NU turmasLazyModel;
-//    
-//    @PostConstruct
-//    public void init() {
-//        turmasLazyModel = new TurmasPlanejamentoLazyModel_NU(this.listarTodas());
-//    }
-//
-//    public TurmasPlanejamentoLazyModel_NU getTurmasLazyModel() {
-//        if(turmasLazyModel == null){
-//            turmasLazyModel = new TurmasPlanejamentoLazyModel_NU(this.listarTodas());
-//        }
-// 
-//        return this.turmasLazyModel;
-//    }
-//
-//    public void setTurmasLazyModel(TurmasPlanejamentoLazyModel_NU turmasLazyModel) {
-//        this.turmasLazyModel = turmasLazyModel;
-//    }
+    private TurmasPlanejamentoLazyModel turmasLazyModel;
+    
+    @PostConstruct
+    public void init() {
+        turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
+//        pessoaDataModel = new PessoaLazyModel(this.listarTodas());
+    }
+
+    public TurmasPlanejamentoLazyModel getTurmasLazyModel() {
+        if(turmasLazyModel == null){
+            turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
+        }
+ 
+        return this.turmasLazyModel;
+    }
+
+    public void setTurmasLazyModel(TurmasPlanejamentoLazyModel turmasLazyModel) {
+        this.turmasLazyModel = turmasLazyModel;
+    }
 
     
 //    @PostConstruct
@@ -185,14 +189,14 @@ public class TurmasPlanejamentoController implements Serializable{
 //        
 //        return this.pessoaDataModel;
 //    }
-//    
-//    
-////    public void preencherDataModel(){
-////        
-////        cadastro.cadastrarPessoas();
-////        pessoaDataModel = null;
-////        
-////    }
+    
+    
+//    public void preencherDataModel(){
+//        
+//        cadastro.cadastrarPessoas();
+//        pessoaDataModel = null;
+//        
+//    }
     
     //---------------------------------------------------CRUD-------------------------------------------------------
     private List<TurmasPlanejamento> listarTodas() {
@@ -229,6 +233,18 @@ public class TurmasPlanejamentoController implements Serializable{
             JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar a turma: " + e.getMessage());
 
         }
+    }
+    
+    public void deletarPorDisciplina(Disciplina d){
+        
+        List<Disciplina> ds = new ArrayList<>();
+        ds.add(d);
+        List<TurmasPlanejamento> turmas = turmasPlanejamentoFacade.filtrarDTC(ds, "", "");
+        
+        for(TurmasPlanejamento t:turmas){
+            turmasPlanejamentoFacade.remove(t);
+        }
+        
     }
 
 //    public void delete() {
@@ -318,6 +334,7 @@ public class TurmasPlanejamentoController implements Serializable{
             }
 
             arq.close();
+            turmasLazyModel = null;
 
         } catch (IOException e) {
             System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());

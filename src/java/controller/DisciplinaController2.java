@@ -2,6 +2,7 @@ package controller;
 
 import facade.AfinidadesFacade;
 import facade.DisciplinaFacade;
+import facade.PessoaFacade;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -44,6 +46,9 @@ public class DisciplinaController2 implements Serializable {
     @EJB
     private AfinidadesFacade afinidadesFacade;
     
+    @EJB
+    private PessoaFacade pessoaFacade;
+    
     
     //Lista de Afinidades, tanto com as disciplinas adicionadas, quanto removidas
     private List<Afinidades> afinidadesAtivas;
@@ -59,7 +64,7 @@ public class DisciplinaController2 implements Serializable {
     //Pessoa logada
     private Pessoa pessoa;
     
-//    private Disciplina disciplina;
+    private Disciplina disciplinaSalvar;
     
     //Disciplinas disponiveis
     private List<Disciplina> disponiveis;
@@ -85,6 +90,21 @@ public class DisciplinaController2 implements Serializable {
         return this.buscar(key);
 
     }
+
+    public Disciplina getDisciplinaSalvar() {
+        
+        if(disciplinaSalvar == null){
+            disciplinaSalvar = new Disciplina();
+        }
+        
+        return disciplinaSalvar;
+    }
+
+    public void setDisciplinaSalvar(Disciplina disciplinaSalvar) {
+        this.disciplinaSalvar = disciplinaSalvar;
+    }
+    
+    
       
     public void setDisponiveis(List<Disciplina> disponiveis) {
         this.disponiveis = disponiveis;
@@ -148,7 +168,7 @@ public class DisciplinaController2 implements Serializable {
 
     }
   
-    //----------------------------Preenchimento das listas Disponiveis e Escolhidas-----------------------------------------------------
+    //----------------------------Preenchimento das listas Disponiveis c Escolhidas-----------------------------------------------------
 
     //Esse método vê quais disciplinas a pessoa já escolheu,
     //para exibir só as que ela ainda não selecionou 
@@ -188,6 +208,29 @@ public class DisciplinaController2 implements Serializable {
    
     //----------------------------------Metodos de CRUD--------------------------------------------------------------------------------
     
+    public void salvar(){
+        try {
+            disciplinaFacade.save(disciplinaSalvar);
+            JsfUtil.addSuccessMessage("Disciplina " + disciplinaSalvar.getNome() + " cadastrada com sucesso!");
+            disciplinaSalvar = null;
+            disciplinaDataModel = null;
+            
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("Não foi possível cadastrar a disciplina");
+        }
+    }
+    
+    public void editar(){
+        try {
+            disciplinaFacade.merge(disciplina);
+            JsfUtil.addSuccessMessage("Disciplina " + disciplina.getNome() + " editada com sucesso!");
+            disciplina = new Disciplina();
+            disciplinaDataModel = null;
+            
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("Não foi possível editar a disciplina");
+        }
+    }
 
     public void salvarAfinidade() {
         
@@ -207,7 +250,7 @@ public class DisciplinaController2 implements Serializable {
     
     public void removerAfinidade(){
         
-        //Percorre a lista de afinidades da pessoa e muda o status de Adicionada para removida
+        //Percorre a lista de afinidades da pessoa c muda o status de Adicionada para removida
         for(Afinidades a: afinidadesAtivas){
             
             if(a.getDisciplina() == escolhida){
@@ -228,7 +271,27 @@ public class DisciplinaController2 implements Serializable {
     
     public void delete() {
         disciplina = (Disciplina) disciplinaDataModel.getRowData();
+        
+        
         try {
+            
+           disciplina = disciplinaFacade.inicializarColecaoAfinidades(disciplina);
+           Set<Afinidades> afinidades = disciplina.getAfinidades();
+           Pessoa atual;
+           
+           
+           for(Afinidades a: afinidades){
+               disciplina.getAfinidades().remove(a);
+               atual = a.getPessoa();
+               atual.getAfinidades().remove(a);
+//               disciplinaFacade.edit(disciplina);
+               pessoaFacade.edit(atual);
+               afinidadesFacade.remove(a);
+               
+           }
+           
+           TurmasPlanejamentoController tpc = new TurmasPlanejamentoController();
+           tpc.deletarPorDisciplina(disciplina);           
             disciplinaFacade.remove(disciplina);
             disciplina = null;
             JsfUtil.addSuccessMessage("Disciplina Deletado");
@@ -267,7 +330,7 @@ public class DisciplinaController2 implements Serializable {
 
     public String prepareEdit() {
         disciplina = (Disciplina) disciplinaDataModel.getRowData();
-        return "Edit";
+        return "/Cadastro/editDisciplina";
     }
 
     public String prepareView() {
@@ -282,6 +345,8 @@ public class DisciplinaController2 implements Serializable {
     
 //----------------------------------------AutoComplete----------------------------------------------------------------------------------------
     
+    
+//Disciplina----------------------------------------------------------------------------------------------------------    
     public List<Disciplina> completeDisciplina(String query) {
         
         query = query.toLowerCase();
@@ -295,6 +360,71 @@ public class DisciplinaController2 implements Serializable {
             }
         }
         return filteredDisciplinas;
+    }
+    
+ //Eixo----------------------------------------------------------------------------------------------------------
+    public List<String> completeEixo(String query){
+        
+        query = query.toLowerCase();
+        
+        List<String> eixos = new ArrayList<>();
+        eixos.add("Estrutura da Materia");
+        eixos.add("Processos de Transformacao");
+        eixos.add("Comunicacao e Informacao");
+        eixos.add("Representacao e Simulacao");
+        eixos.add("Estado, Sociedade e Mercado");
+        eixos.add("Pensamento, Expressao e Significado");
+        eixos.add("Espaco, Cultura e Temporalidade");
+        eixos.add("Ciencia, Tecnologia e Inovacao");
+        eixos.add("Mais de um eixo");
+        
+        List<String> filteredEixos = new ArrayList<>();
+
+        for (String e : eixos ) {
+            if (e.toLowerCase().startsWith(query)) {
+                filteredEixos.add(e);
+            }
+        }
+        return filteredEixos;
+        
+    }
+    
+    //Curso-----------------------------------------------------------------------------------------------
+    public List<String> completeCurso(String query){
+        
+        query = query.toLowerCase();
+        
+        List<String> cursos = new ArrayList<>();
+        cursos.add("Bacharelado em Matemática");
+        cursos.add("Bacharelado em Neurociência");
+        cursos.add("Licenciatura em Matemática");
+        cursos.add("Bacharelado em Políticas Públicas");
+        cursos.add("Engenharia Aeroespacial");
+        cursos.add("Engenharia Ambiental e Urbana");
+        cursos.add("Engenharia de Automação e Robótica");
+        cursos.add("Engenharia Biomédica");
+        cursos.add("Engenharia de Energia");
+        cursos.add("Engenharia de Gestão");
+        cursos.add("Engenharia de Informação");
+        cursos.add("Engenharia de Materiais");
+        cursos.add("Bacharelado em Economia");
+        cursos.add("Bacharelado em Relações Internacionais");
+        cursos.add("Bacharelado em Planejamento Territorial");
+        cursos.add("Ciências Biológicas");
+        cursos.add("Filosofia");
+        cursos.add("Física");
+        cursos.add("Química");
+        cursos.add("Licenciaturas");
+        
+        List<String> filteredCursos = new ArrayList<>();
+
+        for (String c : cursos ) {
+            if (c.toLowerCase().startsWith(query)) {
+                filteredCursos.add(c);
+            }
+        }
+        return filteredCursos;
+        
     }
 
     //----------------------------------------------------------------------------------------------------
@@ -362,7 +492,7 @@ public class DisciplinaController2 implements Serializable {
             //Cursos do CMCC
             case "MC":
 
-                switch (sigla.charAt(2)) {
+                switch (sigla.charAt(3)) {
 
                     case 'A':
                         return "Bacharelado em Ciência da Computação";
@@ -374,6 +504,9 @@ public class DisciplinaController2 implements Serializable {
                         return "Licenciatura em Matemática";
                     case 'X':
                         return "Disciplina não ofertada";
+                    //Mudar
+                    default:
+                        return "";
                 }
 
             //Cursos do CECS
@@ -407,6 +540,9 @@ public class DisciplinaController2 implements Serializable {
                         return "Bacharelado em Planejamento Territorial";
                     case 'X':
                         return "Disciplina não ofertada";
+                    //Mudar
+                    default:
+                        return "";
                 }
 
             //Cursos do CCNH
@@ -414,6 +550,7 @@ public class DisciplinaController2 implements Serializable {
 
                 switch (sigla.charAt(3)) {
 
+                    
                     case '1':
                         return "Ciências Biológicas";
                     case '2':
@@ -424,6 +561,9 @@ public class DisciplinaController2 implements Serializable {
                         return "Química";
                     case '5':
                         return "Licenciaturas";
+                    //Mudar
+                    default:
+                        return "";
 
                 }
         }

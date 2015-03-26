@@ -13,24 +13,24 @@
 
             <h:form style="background-color: transparent">
 
-                <p:panel rendered="true" style="width:500px;height:250px; border-color: transparent; position: relative; left: 400px; background-color: transparent">
+                
                     <br/>
-                    <p:graphicImage library="images" cache="true" name="cmccLogo.png"/>
-                </p:panel>
+                    <p:graphicImage library="images" cache="true" name="cmccLogo.png" style="position: relative; left: 400px"/>
+                
 
-                <p:panel id="conpnl" style="width:300px;height:300px; border-color: transparent; position: relative; left: 500px; text-align: center; background-color: transparent">
+                
                     <br/>
 
-                    <p:panelMenu style="width:300px; height: 300px; text-align: justify; position: relative; ">
+                    <p:panelMenu style="width:300px; height: 300px; text-align: justify; 
+                                 position: relative; left: 500px;top: 100px">
                         <p:submenu label="Afinidades">
-                            <p:menuitem value="Definir afinidades" action="Afinidades/DefinirAfinidade" icon="ui-icon-disk"/>
-                            <p:menuitem value="Ver histórico de afinidades" action="Afinidades/LogsAfinidades" icon="ui-icon-document"/>
+                            <p:menuitem value="Definir afinidades" action="Afinidades/DefinirAfinidade" icon="ui-icon-pencil"/>
+                            <p:menuitem value="Ver histórico de afinidades" action="Afinidades/LogsAfinidades" icon="ui-icon-clock"/>
                         </p:submenu>
                         <p:submenu  label="Disponibilidade">
-                            <p:menuitem value="Definir disponibilidades" action="Disponibilidade/Disponibilidade.xhtml" icon="ui-icon-disk" />
-                            <p:menuitem value="Fase I" action="Disponibilidade/FaseI.xhtml" icon="ui-icon-disk" />
-                            <p:menuitem value="Fase II" action="Disponibilidade/FaseII.xhtml" icon="ui-icon-disk" />
-                            <p:menuitem value="Ver histórico de disponibilidade" action="Disponibilidade/LogsDisponibilidades" icon="ui-icon-document" />
+                            <p:menuitem value="Fase I" action="Disponibilidade/FaseI.xhtml" icon="ui-icon-pencil" />
+                            <p:menuitem value="Fase II" action="Disponibilidade/FaseII.xhtml" icon="ui-icon-pencil" />
+                            <p:menuitem value="Ver histórico de disponibilidade" action="Disponibilidade/LogsDisponibilidades" icon="ui-icon-clock" />
                         </p:submenu>
                         <p:submenu  label="Cadastros de Dados">
                             <p:menuitem value="Fazer cadastros" icon="ui-icon-disk" action="Cadastro/cadastro"/>
@@ -38,9 +38,7 @@
 
                     </p:panelMenu>
                     
-                    
-
-                </p:panel>
+              
             </h:form>
         </f:view>
 

@@ -10,11 +10,11 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SelectableDataModel;
 import org.primefaces.model.SortOrder;
 
-public class TurmasPlanejamentoLazyModel_NU extends LazyDataModel<TurmasPlanejamento> implements SelectableDataModel<TurmasPlanejamento>{
+public class TurmasPlanejamentoLazyModel extends LazyDataModel<TurmasPlanejamento> implements SelectableDataModel<TurmasPlanejamento>{
 
     private List<TurmasPlanejamento> datasource;
 
-    public TurmasPlanejamentoLazyModel_NU(List<TurmasPlanejamento> datasource) {
+    public TurmasPlanejamentoLazyModel(List<TurmasPlanejamento> datasource) {
         this.datasource = datasource;
     }
 
@@ -68,7 +68,7 @@ public class TurmasPlanejamentoLazyModel_NU extends LazyDataModel<TurmasPlanejam
 
         //sort
         if (sortField != null) {
-            Collections.sort(data, new TurmasPlanejamentoLazySorter_NU(sortField, sortOrder));
+            Collections.sort(data, new TurmasPlanejamentoLazySorter(sortField, sortOrder));
         }
 
         //rowCount

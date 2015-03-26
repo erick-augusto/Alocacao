@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+    <h:head>
+        <title>Cadastros</title>
+    </h:head>
+    <h:body>
+        <h:form>
+
+            <p:layout fullPage="true">
+
+                <p:layoutUnit style="text-align:center" position="north" size="60"  resizable="true" closable="true" collapsible="true" >  
+                    <style type="text/css">
+                        .ui-widget{font-size:95% !important;}
+                        /*                        .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}*/
+                    </style>
+                    <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Cadastros</div>
+
+                </p:layoutUnit> 
+
+                <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center" resizable="true"  >  
+
+                    <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                    <br/>
+                </p:layoutUnit> 
+
+
+
+                <p:layoutUnit position="center">
+
+                    <p:tabView dynamic="true" cache="true" id="tabV" style=" border-color: transparent">
+                        <p:tab title="Disciplinas">
+                            <h:panelGrid columns="1" cellpadding="10">
+
+                               
+
+
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController2.cadastrarDisciplinas()}" 
+                                                 style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                 value="Cadastrar disciplinas por .csv"  immediate="true">
+                                </p:commandButton>
+                                
+                            </h:panelGrid>
+                            
+                            <p:panel header="Cadastrar Nova disciplina"  >
+                                <h:panelGrid columns="2" id="criarDisciplina">
+                                    <h:outputText value="Nome: "/>
+                                    <h:inputText value="#{disciplinaController2.disciplinaSalvar.nome}" size="100"/>
+
+                                    <h:outputText value="Eixo: "/>
+                                    <p:autoComplete id="completeEixo" forceSelection="true" 
+                                                    value="#{disciplinaController2.disciplinaSalvar.eixo}" 
+                                                    completeMethod="#{disciplinaController2.completeEixo}" size="100" />
+
+                                    <h:outputText value="Curso: "/>
+                                    <p:autoComplete id="completeCurso" forceSelection="true" 
+                                                    value="#{disciplinaController2.disciplinaSalvar.curso}" 
+                                                    completeMethod="#{disciplinaController2.completeCurso}" size="100" />
+
+                                </h:panelGrid>
+                            <p:separator/>
+                            <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
+                                             ajax="true"  value="Salvar" actionListener="#{disciplinaController2.salvar()}"
+                                             update="@(form:msgs)criarDisciplina" icon="ui-icon-disk"> 
+                            </p:commandButton>
+                            
+<!--                        </p:panel>-->
+
+                    </p:panel>
+                            
+                            
+                        </p:tab>
+
+                        <p:tab title="Docentes">
+                            <h:panelGrid columns="1" cellpadding="10">
+
+                               
+
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{pessoaController.cadastrarPessoas()}"
+                                                 style="width: 230px; height: 25px; font-size: small" 
+                                                 value="Cadastrar docentes por .csv"  update="@all" immediate="true">
+                                </p:commandButton>
+
+
+                            </h:panelGrid>
+                            
+                            <p:panel header="Cadastrar Novo Docente"  >
+                                <h:panelGrid columns="2" id="criarDocente">
+                                    <h:outputText value="Nome: "/>
+                                    <h:inputText value="#{pessoaController.pessoaSalvar.nome}" size="70"/>
+                                    
+                                    <h:outputText value="Siape: "/>
+                                    <h:inputText value="#{pessoaController.pessoaSalvar.siape}" size="70"/>
+
+                                    <h:outputText value="Centro: "/>
+                                    <p:autoComplete id="completeCentro" forceSelection="true" 
+                                                    value="#{pessoaController.pessoaSalvar.centro}" 
+                                                    completeMethod="#{pessoaController.completeCentro}" size="7" />
+
+                                    <h:outputText value="Email: "/>
+                                    <h:inputText value="#{pessoaController.pessoaSalvar.email}"/>
+
+                                </h:panelGrid>
+                            <p:separator/>
+                            <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
+                                             ajax="true"  value="Salvar" actionListener="#{pessoaController.salvar()}"
+                                             update="@(form:msgs)criarDocente" icon="ui-icon-disk"> 
+                            </p:commandButton>
+                            
+<!--                        </p:panel>-->
+
+                    </p:panel>
+                            
+                            
+                        </p:tab>
+
+                        <p:tab title="Turmas planejamento">
+                            <h:panelGrid columns="1" cellpadding="10">
+                               
+
+
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.cadastrarTurmasPlanejamento()}"
+                                                 style="width: 230px; height: 25px; font-size: small" 
+                                                 value="Cadastrar turmas .csv"  immediate="true" >
+                                </p:commandButton>
+
+
+                            </h:panelGrid>
+                        </p:tab>
+
+                    </p:tabView>
+
+                    <h:panelGrid columns="1">
+
+                    </h:panelGrid>
+                </p:layoutUnit>
+                
+                
+
+
+                <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="60"  resizable="true" closable="true" collapsible="true">  
+                    <p:messages id="msgs" showDetail="true"/>   
+                </p:layoutUnit>
+
+            </p:layout>
+        </h:form>
+    </h:body>
+</html>
+

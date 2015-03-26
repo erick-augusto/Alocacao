@@ -13,14 +13,21 @@
         <h:outputStylesheet library="css" name="style.css" />
         <p:layout fullPage="true"> 
 
-            <p:layoutUnit position="north" size="100" header="Top" resizable="true" closable="true" collapsible="true">
-                <h:outputText value="North unit content." />
-            </p:layoutUnit>
+            
+            
+            <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" 
+                                  closable="true" collapsible="true" >  
+                        
+                        <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Histórico de afinidades</div>
+
+                    </p:layoutUnit> 
 
 
             <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
 
-                <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                <p:commandButton  value="Início" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                <br/>
+                <p:commandButton  value="Fase I alocação" id="btnFaseI"  style="width: 140px; position: relative; top: 10px"  action="/Disponibilidade/FaseI" immediate="true"/>
                 <br/>
             </p:layoutUnit> 
 
@@ -30,7 +37,7 @@
 
                 <h:form id="form1">
 
-                    <p:panel header="Filtros" toggleable="true" toggleSpeed="500" closeSpeed="500" style="width: 400px">
+                    <p:panel header="Filtros" toggleable="true" toggleSpeed="500" closeSpeed="500" style="width: 500px">
 
                         <p:tabView>
                             <p:tab title="Disciplinas">

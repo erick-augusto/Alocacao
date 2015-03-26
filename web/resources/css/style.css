@@ -30,6 +30,12 @@ and open the template in the editor.
     width:400px;
 }
 
+
+.ui-layout-unit-content{
+    background-image:url('resources/images/grey-back.jpg');
+}
+
+
 .a{
     width:500px;
 }

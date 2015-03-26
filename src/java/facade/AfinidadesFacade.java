@@ -8,6 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 
@@ -90,6 +91,18 @@ public class AfinidadesFacade extends AbstractFacade<Afinidades>{
         
         
         
+    }
+    
+    @Override
+    public void remove(Afinidades a) {
+        Session session = getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.delete(a);
+        try {
+            transaction.commit();
+        } finally {
+            session.close();
+        }
     }
     
   

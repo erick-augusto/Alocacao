@@ -3,6 +3,8 @@ package model;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -73,11 +75,13 @@ public class Afinidades{
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dataAcao;
     
-    @ManyToOne 
+    @ManyToOne(cascade = CascadeType.ALL)
+//    @Column(insertable=false, updatable=false)
 //    @JoinColumn(name = "pessoaId", referencedColumnName = "pessoa", insertable = false, updatable = false)
     private Pessoa pessoa;
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+//    @Column(insertable=false, updatable=false)
 //  @JoinColumn(insertable = false, updatable = false)    
     private Disciplina disciplina;
     

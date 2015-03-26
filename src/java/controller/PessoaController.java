@@ -34,6 +34,23 @@ public class PessoaController implements Serializable{
     //Guarda o pessoaatual
     private Pessoa pessoa;
     
+    private Pessoa pessoaSalvar;
+
+    public Pessoa getPessoaSalvar() {
+        
+        if(pessoaSalvar == null){
+            pessoaSalvar = new Pessoa();
+        }
+        
+        return pessoaSalvar;
+    }
+
+    public void setPessoaSalvar(Pessoa pessoaSalvar) {
+        this.pessoaSalvar = pessoaSalvar;
+    }
+    
+    
+    
     private CadastroBean cadastro;
 
     @EJB
@@ -76,7 +93,7 @@ public class PessoaController implements Serializable{
 
     public String prepareEdit() {
         pessoa= (Pessoa) pessoaDataModel.getRowData();
-        return "Edit";
+        return "/Cadastro/editDocente";
     }
 
     public String prepareView() {
@@ -136,14 +153,27 @@ public class PessoaController implements Serializable{
 
         return pessoaFacade.find(id);
     }
+    
+    public void salvar(){
+        try {
+            pessoaFacade.save(pessoaSalvar);
+            JsfUtil.addSuccessMessage("Docente " + pessoaSalvar.getNome() + " cadastrado com sucesso!");
+            pessoaSalvar = null;
+            pessoaDataModel = null;
+            
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("Não foi possível cadastrar o docente");
+        }
+    }
 
     public void editar() {
         try {
             pessoaFacade.edit(pessoa);
-            JsfUtil.addSuccessMessage("Pessoa Editado com sucesso!");
+            JsfUtil.addSuccessMessage("Docente editado com sucesso!");
             pessoa= null;
+            pessoaDataModel = null;
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar o pessoa: " + e.getMessage());
+            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar o docente: " + e.getMessage());
 
         }
     }
@@ -288,6 +318,27 @@ return retorno;
 //        return filteredDisciplinas;
 //    }
 
+    //Centro--------------------------------------------------------------------------------------------
+    public List<String> completeCentro(String query){
+        
+        query = query.toLowerCase();
+        
+        List<String> centros = new ArrayList<>();
+        centros.add("CCNH");
+        centros.add("CECS");
+        centros.add("CMCC");
+        
+        List<String> filteredCentros = new ArrayList<>();
+
+        for (String c : centros ) {
+            if (c.toLowerCase().startsWith(query)) {
+                filteredCentros.add(c);
+            }
+        }
+        return filteredCentros;
+        
+    }
+    
     //----------------------------------------------------------------------------------------------------
 
     

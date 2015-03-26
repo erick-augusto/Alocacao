@@ -52,8 +52,10 @@ public class JsfUtil {
     
         
         
-        FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, msg);
-        FacesContext.getCurrentInstance().addMessage("sucessInfo", facesMsg);
+//        FacesMessage facesMsg = new FacesMessage(FacesMessage.SEVERITY_INFO, msg, msg);
+//        FacesContext.getCurrentInstance().addMessage("sucessInfo", facesMsg);
+        
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "successInfo", msg));
         
     }
     
