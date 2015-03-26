@@ -291,10 +291,10 @@ public class DisciplinaController2 implements Serializable {
 //           }
            
 //           TurmasPlanejamentoController tpc = new TurmasPlanejamentoController();
-//           tpc.deletarPorDisciplina(disciplina);           
+        
             disciplinaFacade.remove(disciplina);
             disciplina = null;
-            JsfUtil.addSuccessMessage("Disciplina Deletado");
+            JsfUtil.addSuccessMessage("Disciplina Deletada");
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
         }
