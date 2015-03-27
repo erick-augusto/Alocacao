@@ -12,7 +12,7 @@
 
             <p:layout fullPage="true">
 
-                <p:layoutUnit style="text-align:center" position="north" size="60"  resizable="true" closable="true" collapsible="true" >  
+                <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
                     <style type="text/css">
                         .ui-widget{font-size:95% !important;}
                         /*                        .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}*/
@@ -21,9 +21,13 @@
 
                 </p:layoutUnit> 
 
-                <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center" resizable="true"  >  
+                <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center" resizable="true"  >  
 
-                    <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                    <p:commandButton  value="Início" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                    <br/>
+                    <p:commandButton  value="Histórico Afinidades" id="btnAfinidades"  style="width: 140px; position: relative; top: 10px"  action="/Afinidades/LogsAfinidades" immediate="true"/>
+                    <br/>
+                    <p:commandButton  value="Histórico Disponibilidades" id="btnDisponibilidades"  style="width: 140px; position: relative; top: 15px"  action="/Disponibilidade/LogsDisponibilidades" immediate="true"/>
                     <br/>
                 </p:layoutUnit> 
 
@@ -270,7 +274,7 @@
                 
 
 
-                <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="60"  resizable="true" closable="true" collapsible="true">  
+                <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
                     <p:messages id="msgs" showDetail="true"/>   
                 </p:layoutUnit>
 

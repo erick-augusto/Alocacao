@@ -51,6 +51,8 @@ public class AfinidadesController implements Serializable{
     private List<Afinidades> afinidadesAtivas;
     
     private Pessoa pessoa;
+    
+    private Pessoa pessoaFiltro;
 
     private List<Afinidades> afinidadesFiltradas;
       
@@ -147,6 +149,15 @@ public class AfinidadesController implements Serializable{
     public void setParaRemover(Disciplina paraRemover) {
         this.paraRemover = paraRemover;
     }
+
+    public Pessoa getPessoaFiltro() {
+        return pessoaFiltro;
+    }
+
+    public void setPessoaFiltro(Pessoa pessoaFiltro) {
+        this.pessoaFiltro = pessoaFiltro;
+    }
+    
     
 
 //---------------------------------------------------CRUD-------------------------------------------------------
@@ -214,6 +225,7 @@ public class AfinidadesController implements Serializable{
             
             //Usuário que fez o logon
             pessoa = LoginBean.getUsuario();
+//            pessoa = pessoaFacade.reinicializarUsuario(pessoa);
 
             //Todas as afinidades do usuario
             afinidadesAtivas = new ArrayList(pessoa.getAfinidades());
@@ -330,36 +342,39 @@ public class AfinidadesController implements Serializable{
     public void init() {
 //        afinidadesLazyModel = new AfinidadesLazyModel(this.listarTodas());
         filtrosEixos = new ArrayList<>();
-        filtrosEixos.add("Humanidades");
-        filtrosEixos.add("Estrutura da Materia");
-        filtrosEixos.add("Energia");
-        filtrosEixos.add("Processos de Transformacao");
-        filtrosEixos.add("Comunicacao e Informacao");
-        filtrosEixos.add("Representacao e Simulacao");
-        filtrosEixos.add("Estado, Sociedade e Mercado");
-        filtrosEixos.add("Pensamento, Expressao e Significado");
-        filtrosEixos.add("Espaco, Cultura e Temporalidade");
         filtrosEixos.add("Ciencia, Tecnologia e Inovacao");
+        filtrosEixos.add("Comunicacao e Informacao");
+        filtrosEixos.add("Energia");
+        filtrosEixos.add("Espaco, Cultura e Temporalidade");
+        filtrosEixos.add("Estado, Sociedade e Mercado");
+        filtrosEixos.add("Estrutura da Materia");
+        filtrosEixos.add("Humanidades");
+        filtrosEixos.add("Pensamento, Expressao e Significado");
+        filtrosEixos.add("Processos de Transformacao");
         filtrosEixos.add("Mais de um eixo");
+        filtrosEixos.add("Representacao e Simulacao");
         
+
         filtrosCursos = new ArrayList<>();
-        filtrosCursos.add("Engenharia de Energia");
+        filtrosCursos.add("Bacharelado em Ciencia da Computacao");
+        filtrosCursos.add("Bacharelado em Economia");
+        filtrosCursos.add("Bacharelado em Planejamento Territorial");
         filtrosCursos.add("Bacharelado em Politicas Publicas");
+        filtrosCursos.add("Bacharelado em Relacoes Internacionais");
+        filtrosCursos.add("Ciencias Biologicas");
         filtrosCursos.add("Engenharia Aeroespacial");
+        filtrosCursos.add("Engenharia Ambiental e Urbana");
         filtrosCursos.add("Engenharia Biomedica");
         filtrosCursos.add("Engenharia de Automação e Robotica");
-        filtrosCursos.add("Bacharelado em Relacoes Internacionais");
-        filtrosCursos.add("Bacharelado em Planejamento Territorial");
+        filtrosCursos.add("Engenharia de Energia");
         filtrosCursos.add("Engenharia de Gestao");
-        filtrosCursos.add("Bacharelado em Economia");
-        filtrosCursos.add("Engenharia Ambiental e Urbana");
-        filtrosCursos.add("Quimica");
-        filtrosCursos.add("Filosofia");
         filtrosCursos.add("Engenharia de Informacao");
-        filtrosCursos.add("Ciencias Biologicas");
         filtrosCursos.add("Engenharia de Materiais");
+        filtrosCursos.add("Filosofia");
         filtrosCursos.add("Fisica");
         filtrosCursos.add("Licenciaturas");
+        filtrosCursos.add("Quimica");
+        
         
     }
 
@@ -471,11 +486,15 @@ public class AfinidadesController implements Serializable{
         incluirRemovidasD = false;
 
     }
+    
+    public void limparLazyModel(){
+        afinidadesLazyModel = null;
+    }
 
     //Preenche o LazyModel com as afinidades de acordo com o docente escolhido
     public void povoarLazyModelP() {
 
-        afinidadesFiltradas = new ArrayList(pessoa.getAfinidades());
+        afinidadesFiltradas = new ArrayList(pessoaFiltro.getAfinidades());
 
         if (!incluirRemovidasP) {
 

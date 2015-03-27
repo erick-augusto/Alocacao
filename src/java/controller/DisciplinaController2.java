@@ -179,6 +179,7 @@ public class DisciplinaController2 implements Serializable {
             
             //Usuário que fez o logon
             pessoa = LoginBean.getUsuario();
+            
 
             //Todas as afinidades do usuario
             afinidadesAtivas = new ArrayList(pessoa.getAfinidades());
@@ -280,15 +281,16 @@ public class DisciplinaController2 implements Serializable {
            Pessoa atual;
            
            
-//           for(Afinidades a: afinidades){
-//               disciplina.getAfinidades().remove(a);
-//               atual = a.getPessoa();
-//               atual.getAfinidades().remove(a);
-////               disciplinaFacade.edit(disciplina);
-//               pessoaFacade.edit(atual);
-//               afinidadesFacade.remove(a);
-//               
-//           }
+           for(Afinidades a: afinidades){
+               disciplina.getAfinidades().remove(a);
+               atual = a.getPessoa();
+               atual.getAfinidades().remove(a);
+//               disciplinaFacade.edit(disciplina);
+               pessoaFacade.edit(atual);
+               LoginBean.setUsuario(atual);
+               afinidadesFacade.remove(a);
+               
+           }
            
 //           TurmasPlanejamentoController tpc = new TurmasPlanejamentoController();
         

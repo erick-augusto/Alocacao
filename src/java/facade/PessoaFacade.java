@@ -25,6 +25,14 @@ public class PessoaFacade extends AbstractFacade<Pessoa>{
 
     }
     
+//    public Pessoa reinicializarUsuario(Pessoa p) {
+//
+//        Session session = getSessionFactory().openSession();
+//        session.refresh(p);
+//        return p;
+//
+//    }
+    
     public List<Pessoa> findByName(String nome){
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(Pessoa.class);

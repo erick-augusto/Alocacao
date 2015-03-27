@@ -44,6 +44,11 @@ and open the template in the editor.
     width:500px;
 }
 
+.colored {
+background-color: #FF0000;
+color: #FFFFFF;
+}
+
 root { 
     display: block;
 }
