@@ -10,7 +10,7 @@
         <h:head>
             <f:facet name="first">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-                <title>Fase I Disponibilidade</title>
+                <title>Fase II Disponibilidade</title>
             </f:facet>
         </h:head>
 
@@ -18,27 +18,22 @@
 
             <h:outputStylesheet library="css" name="style.css"  />
 
-            <h:form id="form">  
+            <h:form id="form">
 
                 <p:layout fullPage="true">
 
-                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
+                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >   
                         <style type="text/css">
                             .ui-widget{font-size:90% !important;}
                             .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}
                         </style>
-                        <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Fase I - Disponibilidade</div>
+                        <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Fase II - Disponibilidade</div>
 
                     </p:layoutUnit> 
-
-                    <p:layoutUnit position="south" size="100" closable="true" collapsible="true">
+                    
+                    <p:layoutUnit position="south" size="90" closable="true" collapsible="true">
 
                     </p:layoutUnit>
-
-                    <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
-                        <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
-                        <br/>
-                    </p:layoutUnit> 
 
                     <p:layoutUnit position="center">
 
@@ -64,8 +59,8 @@
                                 </h:panelGrid>
 
                                 <h:panelGrid columns="2">
-                                    <h:outputText value="Filtrar por afinidades: " />
-                                    <p:selectBooleanButton id="value2" value="#{disponibilidadeController.filtrarAfinidades}" 
+                                    <h:outputText value="Filtrar por disponibilidades: " />
+                                    <p:selectBooleanButton id="value2" value="#{disponibilidadeController.filtrarDisponibilidades}" 
                                                            onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" 
                                                            style="width:70px; height: 27px; text-align: center">
                                     </p:selectBooleanButton>
@@ -78,7 +73,7 @@
                             <p:separator/>
 
                             <h:panelGrid columns="2">
-                                <p:commandButton    icon="ui-icon-search"  actionListener="#{disponibilidadeController.filtrarTurmas()}"
+                                <p:commandButton    icon="ui-icon-search"  actionListener="#{disponibilidadeController.filtrarTurmas2()}"
                                                     update="@(form:turmasTable)"  style="width: 30px; height: 25px" title="Filtrar disciplinas">
                                 </p:commandButton>
 
@@ -93,116 +88,57 @@
 
                         </p:panel>
 
-
-
                         <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
                             <p:dataTable var="turma" value="#{disponibilidadeController.dataModel}" 
                                          scrollRows="20" scrollable="true"
-                                         scrollHeight="400" style="margin-bottom:0; text-align: center"
-                                         selection="#{disponibilidadeController.turmasEtapa1}" id="turmasTable"
+                                         scrollHeight="430" 
+                                         selection="#{disponibilidadeController.turmasEtapa2}" id="turmasTable"
                                          rowKey="#{turma.ID}"
-                                         >
+                                         style="width: 1250px">
 
                                 <p:ajax event="rowSelectCheckbox" />  
                                 <p:ajax event="rowUnselectCheckbox" /> 
 
-                                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                                <p:column selectionMode="multiple" style="width:5%;text-align:center"/>
 
 
 
                                 <p:column headerText="Curso" style="width: 33%">
-                                    <h:outputText value="#{turma.curso}"/>
+                                    <h:outputText value="#{turma.curso}" style="width: 33%"/>
                                 </p:column>  
                                 <p:column headerText="Disciplina" style="width: 33%">
-                                    <h:outputText value="#{turma.disciplina.nome}"/>
+                                    <h:outputText value="#{turma.disciplina.nome}" style="width: 33%"/>
                                 </p:column>
                                 <p:column headerText="Teoria" style="width: 6%">
-                                    <h:outputText value="#{turma.t}" />
+                                    <h:outputText value="#{turma.t}" style="width: 6%"/>
                                 </p:column>
                                 <p:column headerText="Prática" style="width: 6%">
-                                    <h:outputText value="#{turma.p}" />
+                                    <h:outputText value="#{turma.p}" style="width: 6%" />
                                 </p:column>
                                 <p:column headerText="Periodicidade" style="width: 10%">
-                                    <h:outputText value="#{turma.periodicidade}" />
+                                    <h:outputText value="#{turma.periodicidade}" style="width: 10%" />
                                 </p:column>
                                 <p:column headerText="Turno" style="width: 6%" >
-                                    <h:outputText value="#{turma.turno}"/>
+                                    <h:outputText value="#{turma.turno}" style="width: 6%" />
                                 </p:column>
                                 <p:column headerText="Câmpus" style="width: 6%">
-                                    <h:outputText value="#{turma.campus}" />
+                                    <h:outputText value="#{turma.campus}" style="width: 6%" />
                                 </p:column>
                             </p:dataTable>
 
-                            <p:commandButton id="buttonSe" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                             value="Selecionar" actionListener="#{disponibilidadeController.salvarDisponibilidade}"
-                                             immediate="true" oncomplete="PF('dlg').show();" > 
-                            </p:commandButton>
-
+                            <p:commandButton id="buttonS" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"  
+                                             value="Salvar" actionListener="#{disponibilidadeController.salvarDisponibilidade()}"
+                                             icon="ui-icon-disk"  immediate="true"> 
+                            </p:commandButton>                       
                         </h:panelGrid>
                     </p:layoutUnit>
 
+
+                    <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
+                        <p:commandButton  value="Voltar" id="btnVoltar_faseII"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                        <br/>
+                    </p:layoutUnit> 
                 </p:layout>
-
-
-                <p:dialog header="Ordem de prioridade" widgetVar="dlg" dynamic="true"
-                          draggable="false" resizable="false" maximizable="true">
-
-                    <h:outputText escape="false" value="Defina a ordem de preferência das turmas escolhidas," /> <br/>
-                    <h:outputText escape="false" value=" clicando na célula para editar:"/>
-                    <br/>
-                    <br/>
-
-                    <p:dataTable var="disp" value="#{disponibilidadeController.dispdataModel}" 
-                                 style="margin-bottom:0; text-align: center; width: 600px"
-                                 id="dispTable"
-                                 rowKey="#{disp.Id}" editable="true"
-                                 editMode="cell">
-
-                        <p:ajax event="cellEdit"  listener="#{disponibilidadeController.onCellEdit}"/>
-
-                        <p:column headerText="Disciplina" style="width: 50%">
-                            <h:outputText value="#{disp.turma.disciplina.nome}"/>
-                        </p:column>  
-                        <!--                        <p:column headerText="Preferência" style="width: 20%">    
-                                                    <p:cellEditor>
-                                                        <f:facet name="output"><h:outputText value="#{disp.ordemPreferencia}" /></f:facet>
-                                                        <f:facet name="input"><p:inputText value="#{disp.ordemPreferencia}" label="Preferência"/></f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>-->
-
-                        <p:column headerText="Turno" style="width: 10%">
-                            <h:outputText value="#{disp.turma.turno}"/>
-                        </p:column>
-
-                        <p:column headerText="Câmpus" style="width: 12%">
-                            <h:outputText value="#{disp.turma.campus}"/>
-                        </p:column>
-
-                        <p:column headerText="Ordem" style="width:15%">
-                            <p:cellEditor>
-                                <f:facet name="output"><h:outputText value="#{disp.ordemPreferencia}" /></f:facet>
-                                <f:facet name="input">
-
-                                    <h:selectOneMenu value="#{disp.ordemPreferencia}" style="width:100%">
-
-
-                                        <f:selectItems value="#{disponibilidadeController.ordem}" var="ordem" itemLabel="#{ordem}" itemValue="#{ordem}" />
-                                    </h:selectOneMenu>
-                                </f:facet>
-                            </p:cellEditor>
-                        </p:column>
-
-
-                    </p:dataTable>
-
-                    <br/>
-
-                    <p:commandButton id="closeB" value="Ok" oncomplete="PF('dlg').hide();"/> 
-
-
-
-                </p:dialog>
-
             </h:form>
         </h:body>
 
