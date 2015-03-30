@@ -31,11 +31,11 @@
 
                     </p:layoutUnit> 
 
-                    <p:layoutUnit position="south" size="100" closable="true" collapsible="true">
+                    <p:layoutUnit position="south" size="90" closable="true" collapsible="true">
 
                     </p:layoutUnit>
 
-                    <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
+                    <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
                         <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
                         <br/>
                     </p:layoutUnit> 
@@ -93,43 +93,41 @@
 
                         </p:panel>
 
-
-
                         <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
                             <p:dataTable var="turma" value="#{disponibilidadeController.dataModel}" 
                                          scrollRows="20" scrollable="true"
-                                         scrollHeight="400" style="margin-bottom:0; text-align: center"
+                                         scrollHeight="430" 
                                          selection="#{disponibilidadeController.turmasEtapa1}" id="turmasTable"
                                          rowKey="#{turma.ID}"
-                                         >
+                                         style="width: 1250px">
 
                                 <p:ajax event="rowSelectCheckbox" />  
                                 <p:ajax event="rowUnselectCheckbox" /> 
 
-                                <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                                <p:column selectionMode="multiple" style="width:5%;text-align:center"/>
 
 
 
                                 <p:column headerText="Curso" style="width: 33%">
-                                    <h:outputText value="#{turma.curso}"/>
+                                    <h:outputText value="#{turma.curso}" style="width: 33%"/>
                                 </p:column>  
                                 <p:column headerText="Disciplina" style="width: 33%">
-                                    <h:outputText value="#{turma.disciplina.nome}"/>
+                                    <h:outputText value="#{turma.disciplina.nome}" style="width: 33%"/>
                                 </p:column>
                                 <p:column headerText="Teoria" style="width: 6%">
-                                    <h:outputText value="#{turma.t}" />
+                                    <h:outputText value="#{turma.t}" style="width: 6%"/>
                                 </p:column>
                                 <p:column headerText="Prática" style="width: 6%">
-                                    <h:outputText value="#{turma.p}" />
+                                    <h:outputText value="#{turma.p}" style="width: 6%"/>
                                 </p:column>
                                 <p:column headerText="Periodicidade" style="width: 10%">
-                                    <h:outputText value="#{turma.periodicidade}" />
+                                    <h:outputText value="#{turma.periodicidade}" style="width: 10%"/>
                                 </p:column>
                                 <p:column headerText="Turno" style="width: 6%" >
-                                    <h:outputText value="#{turma.turno}"/>
+                                    <h:outputText value="#{turma.turno}" style="width: 6%" />
                                 </p:column>
                                 <p:column headerText="Câmpus" style="width: 6%">
-                                    <h:outputText value="#{turma.campus}" />
+                                    <h:outputText value="#{turma.campus}" style="width: 6%"/>
                                 </p:column>
                             </p:dataTable>
 

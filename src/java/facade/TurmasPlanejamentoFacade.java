@@ -9,7 +9,6 @@ import model.TurmasPlanejamento;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -107,6 +106,21 @@ public class TurmasPlanejamentoFacade extends AbstractFacade<TurmasPlanejamento>
             return null;
         }
 
+    }
+    
+    //Lista as turmas por quadrimestre
+    public List<TurmasPlanejamento> findAllQuad(int quadrimestre) {
+        
+        Session session = getSessionFactory().openSession();
+        Criteria crit = session.createCriteria(TurmasPlanejamento.class);
+        crit.add(Restrictions.eq("quadrimestre", quadrimestre));
+        crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//faz um select distinct
+
+        //crit.setMaxResults(50);
+        List results = crit.list();
+        
+        session.close();
+        return results;
     }
 
 }

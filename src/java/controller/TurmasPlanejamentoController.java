@@ -1,6 +1,8 @@
 package controller;
 
 import facade.DisciplinaFacade;
+import facade.DisponibilidadeFacade;
+import facade.PessoaFacade;
 import facade.TurmasPlanejamentoFacade;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
@@ -18,6 +21,8 @@ import javax.faces.convert.FacesConverter;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import model.Disciplina;
+import model.Disponibilidade;
+import model.Pessoa;
 import model.TurmasPlanejamento;
 import util.TurmasPlanejamentoDataModel;
 import util.TurmasPlanejamentoLazyModel;
@@ -36,6 +41,12 @@ public class TurmasPlanejamentoController implements Serializable{
     
     @EJB
     private DisciplinaFacade disciplinaFacade;
+    
+    @EJB
+    private DisponibilidadeFacade disponibilidadeFacade;
+    
+    @EJB
+    private PessoaFacade pessoaFacade;
     
     private TurmasPlanejamento turma;
 
@@ -154,25 +165,66 @@ public class TurmasPlanejamentoController implements Serializable{
     
     //---------------------------LazyData Model--------------------------------------------------------------------
     
-    private TurmasPlanejamentoLazyModel turmasLazyModel;
+    private TurmasPlanejamentoLazyModel turmas1LazyModel;
+    private TurmasPlanejamentoLazyModel turmas2LazyModel;
+    private TurmasPlanejamentoLazyModel turmas3LazyModel;
     
     @PostConstruct
     public void init() {
-        turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
+        turmas1LazyModel = new TurmasPlanejamentoLazyModel(this.listarTodasQuad(1));
+        turmas2LazyModel = new TurmasPlanejamentoLazyModel(this.listarTodasQuad(2));
+        turmas3LazyModel = new TurmasPlanejamentoLazyModel(this.listarTodasQuad(3));
 //        pessoaDataModel = new PessoaLazyModel(this.listarTodas());
     }
 
-    public TurmasPlanejamentoLazyModel getTurmasLazyModel() {
-        if(turmasLazyModel == null){
-            turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
+    public TurmasPlanejamentoLazyModel getTurmas1LazyModel() {
+        
+        if(turmas1LazyModel == null){
+            turmas1LazyModel = new TurmasPlanejamentoLazyModel(this.listarTodasQuad(1));
         }
- 
-        return this.turmasLazyModel;
+        
+        return turmas1LazyModel;
     }
 
-    public void setTurmasLazyModel(TurmasPlanejamentoLazyModel turmasLazyModel) {
-        this.turmasLazyModel = turmasLazyModel;
+    public void setTurmas1LazyModel(TurmasPlanejamentoLazyModel turmas1LazyModel) {
+        this.turmas1LazyModel = turmas1LazyModel;
     }
+
+    public TurmasPlanejamentoLazyModel getTurmas2LazyModel() {
+        if(turmas2LazyModel == null){
+            turmas2LazyModel = new TurmasPlanejamentoLazyModel(this.listarTodasQuad(2));
+        }
+        return turmas2LazyModel;
+    }
+
+    public void setTurmas2LazyModel(TurmasPlanejamentoLazyModel turmas2LazyModel) {
+        this.turmas2LazyModel = turmas2LazyModel;
+    }
+
+    public TurmasPlanejamentoLazyModel getTurmas3LazyModel() {
+        if(turmas3LazyModel == null){
+            turmas3LazyModel = new TurmasPlanejamentoLazyModel(this.listarTodasQuad(3));
+        }
+        return turmas3LazyModel;
+    }
+
+    public void setTurmas3LazyModel(TurmasPlanejamentoLazyModel turmas3LazyModel) {
+        this.turmas3LazyModel = turmas3LazyModel;
+    }
+//    
+//    
+//
+//    public TurmasPlanejamentoLazyModel getTurmasLazyModel() {
+//        if(turmas1LazyModel == null){
+//            turmas1LazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
+//        }
+// 
+//        return this.turmas1LazyModel;
+//    }
+//
+//    public void setTurmasLazyModel(TurmasPlanejamentoLazyModel turmasLazyModel) {
+//        this.turmas1LazyModel = turmasLazyModel;
+//    }
 
     
 //    @PostConstruct
@@ -202,6 +254,12 @@ public class TurmasPlanejamentoController implements Serializable{
     private List<TurmasPlanejamento> listarTodas() {
         return turmasPlanejamentoFacade.findAll();
 
+    }
+    
+    //Retorna as turmas por quadrimestre
+    private List<TurmasPlanejamento> listarTodasQuad(int quad){
+        
+        return turmasPlanejamentoFacade.findAllQuad(quad);
     }
 
     
@@ -261,6 +319,37 @@ public class TurmasPlanejamentoController implements Serializable{
 //        recriarModelo();
 //    }
     
+    
+        public void deleteAll() {
+
+        List<TurmasPlanejamento> all = listarTodas();
+        for (TurmasPlanejamento t : all) {
+            t = turmasPlanejamentoFacade.inicializarColecaoDisponibilidades(t);
+            Set<Disponibilidade> ds = t.getDisponibilidades();
+            Pessoa atual;
+
+            for (Disponibilidade d : ds) {
+                t.getDisponibilidades().remove(d);
+                atual = d.getPessoa();
+                atual.getDisponibilidades().remove(d);
+                pessoaFacade.edit(atual);
+                if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
+                    LoginBean.setUsuario(atual);
+                }
+                disponibilidadeFacade.remove(d);
+
+            }
+            turmasPlanejamentoFacade.remove(t);
+
+        }
+        
+        turmas1LazyModel = null;
+        turmas2LazyModel = null;
+        turmas3LazyModel = null;
+    }
+    
+    
+    
     public SelectItem[] getItemsAvaiableSelectOne() {
         return JsfUtil.getSelectItems(turmasPlanejamentoFacade.findAll(), true);
     }
@@ -277,70 +366,453 @@ public class TurmasPlanejamentoController implements Serializable{
     //Cadastro-------------------------------------------------------------------------------------------
     
     
-    public void cadastrarTurmasPlanejamento() {
+//    public void cadastrarTurmasPlanejamento() {
+//
+//        String[] palavras;
+//
+//        try {
+//
+//            FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/PLANEJAMENTO 2014 quad 1.csv");
+//
+//            BufferedReader lerArq = new BufferedReader(arq);
+//
+//            String linha = lerArq.readLine(); //cabeçalho
+//            // lê a primeira linha 
+//            // a variável "linha" recebe o valor "null" quando o processo 
+//            // de repetição atingir o final do arquivo texto 
+//
+//            linha = lerArq.readLine();
+//            
+////            linha = linha.replaceAll("\"", "");
+//
+//            while (linha != null) {
+//                
+//                linha = linha.replaceAll("\"", "");
+//
+//                palavras = linha.split("_", -1);
+//                
+//                turma = new TurmasPlanejamento();
+//                
+//                turma.setCurso(palavras[2]);
+//                
+//                String nome = palavras[4];
+//                List<Disciplina> ds = disciplinaFacade.findByName(nome);
+//                
+//                if(!ds.isEmpty()){
+//                    Disciplina d = disciplinaFacade.findByName(nome).get(0);
+//                    turma.setDisciplina(d);
+//                }
+//                
+//                turma.setT(Integer.parseInt(palavras[5]));
+//                turma.setP(Integer.parseInt(palavras[6]));
+//                turma.setTurno(palavras[11]);
+//                turma.setCampus(palavras[12]);
+//                turma.setNumTurmas(Integer.parseInt(palavras[13]));
+//                
+//                
+//                if(!palavras[19].equals("")){
+//                   turma.setPeriodicidade(palavras[19]); 
+//                }
+//
+//                turma.setQuadrimestre(1);
+//
+//                salvarNoBanco();
+//
+//                linha = lerArq.readLine();
+////                linha = linha.replaceAll("\"", "");
+//            }
+//
+//            arq.close();
+//            turmas1LazyModel = null;
+//
+//        } catch (IOException e) {
+//            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+//        }
+//
+//     
+//
+//    }
+    
+    //Cadastrar todos os quadrimestres
+    public void cadastrarTurmasPlanejamento(int quad) {
 
         String[] palavras;
 
-        try {
+        //Cadastrar todos quadrimestres
+        if (quad == 0) {
 
-            FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/PLANEJAMENTO 2014 quad 1.csv");
+            //Primeiro quadrimestre
+            try {
 
-            BufferedReader lerArq = new BufferedReader(arq);
+                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad1.csv");
 
-            String linha = lerArq.readLine(); //cabeçalho
-            // lê a primeira linha 
-            // a variável "linha" recebe o valor "null" quando o processo 
-            // de repetição atingir o final do arquivo texto 
+                BufferedReader lerArq = new BufferedReader(arq);
 
-            linha = lerArq.readLine();
-            
-//            linha = linha.replaceAll("\"", "");
-
-            while (linha != null) {
-                
-                linha = linha.replaceAll("\"", "");
-
-                palavras = linha.split("_", -1);
-                
-                turma = new TurmasPlanejamento();
-                
-                turma.setCurso(palavras[2]);
-                
-                String nome = palavras[4];
-                List<Disciplina> ds = disciplinaFacade.findByName(nome);
-                
-                if(!ds.isEmpty()){
-                    Disciplina d = disciplinaFacade.findByName(nome).get(0);
-                    turma.setDisciplina(d);
-                }
-                
-                turma.setT(Integer.parseInt(palavras[5]));
-                turma.setP(Integer.parseInt(palavras[6]));
-                turma.setTurno(palavras[11]);
-                turma.setCampus(palavras[12]);
-                turma.setNumTurmas(Integer.parseInt(palavras[13]));
-                
-                
-                if(!palavras[19].equals("")){
-                   turma.setPeriodicidade(palavras[19]); 
-                }
-
-                turma.setQuadrimestre(1);
-
-                salvarNoBanco();
+                String linha = lerArq.readLine(); //cabeçalho
+                // lê a primeira linha 
+                // a variável "linha" recebe o valor "null" quando o processo 
+                // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
+
+//            linha = linha.replaceAll("\"", "");
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split("_", -1);
+
+                    turma = new TurmasPlanejamento();
+
+                    turma.setCurso(palavras[2]);
+
+                    String nome = palavras[4];
+                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+
+                    if (!ds.isEmpty()) {
+                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                        turma.setDisciplina(d);
+                    }
+
+                    turma.setT(Integer.parseInt(palavras[5]));
+                    turma.setP(Integer.parseInt(palavras[6]));
+                    turma.setTurno(palavras[11]);
+                    turma.setCampus(palavras[12]);
+                    if (!palavras[13].equals("")) {
+                        turma.setNumTurmas(Integer.parseInt(palavras[13]));
+                    }
+
+                    if (!palavras[19].equals("")) {
+                        turma.setPeriodicidade(palavras[19]);
+                    }
+
+                    turma.setQuadrimestre(1);
+
+                    salvarNoBanco();
+
+                    linha = lerArq.readLine();
 //                linha = linha.replaceAll("\"", "");
+                }
+
+                arq.close();
+                turmas1LazyModel = null;
+
+            } catch (IOException e) {
+                System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
             }
 
-            arq.close();
-            turmasLazyModel = null;
+            //Segundo quadrimestre
+            try {
 
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad2.csv");
+
+                BufferedReader lerArq = new BufferedReader(arq);
+
+                String linha = lerArq.readLine(); //cabeçalho
+                // lê a primeira linha 
+                // a variável "linha" recebe o valor "null" quando o processo 
+                // de repetição atingir o final do arquivo texto 
+
+                linha = lerArq.readLine();
+
+//            linha = linha.replaceAll("\"", "");
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split("_", -1);
+
+                    turma = new TurmasPlanejamento();
+
+                    turma.setCurso(palavras[2]);
+
+                    String nome = palavras[4];
+                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+
+                    if (!ds.isEmpty()) {
+                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                        turma.setDisciplina(d);
+                    }
+
+                    turma.setT(Integer.parseInt(palavras[5]));
+                    turma.setP(Integer.parseInt(palavras[6]));
+                    turma.setTurno(palavras[11]);
+                    turma.setCampus(palavras[12]);
+                    if (!palavras[13].equals("")) {
+                        turma.setNumTurmas(Integer.parseInt(palavras[13]));
+                    }
+
+                    if (!palavras[19].equals("")) {
+                        turma.setPeriodicidade(palavras[19]);
+                    }
+
+                    turma.setQuadrimestre(2);
+
+                    salvarNoBanco();
+
+                    linha = lerArq.readLine();
+//                linha = linha.replaceAll("\"", "");
+                }
+
+                arq.close();
+                turmas2LazyModel = null;
+
+            } catch (IOException e) {
+                System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+            }
+
+            //Terceiro quadrimestre
+            try {
+
+                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad3.csv");
+
+                BufferedReader lerArq = new BufferedReader(arq);
+
+                String linha = lerArq.readLine(); //cabeçalho
+                // lê a primeira linha 
+                // a variável "linha" recebe o valor "null" quando o processo 
+                // de repetição atingir o final do arquivo texto 
+
+                linha = lerArq.readLine();
+
+//            linha = linha.replaceAll("\"", "");
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split("_", -1);
+
+                    turma = new TurmasPlanejamento();
+
+                    turma.setCurso(palavras[2]);
+
+                    String nome = palavras[4];
+                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+
+                    if (!ds.isEmpty()) {
+                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                        turma.setDisciplina(d);
+                    }
+
+                    turma.setT(Integer.parseInt(palavras[5]));
+                    turma.setP(Integer.parseInt(palavras[6]));
+                    turma.setTurno(palavras[11]);
+                    turma.setCampus(palavras[12]);
+                    if (!palavras[13].equals("")) {
+                        turma.setNumTurmas(Integer.parseInt(palavras[13]));
+                    }
+
+                    if (!palavras[19].equals("")) {
+                        turma.setPeriodicidade(palavras[19]);
+                    }
+
+                    turma.setQuadrimestre(2);
+
+                    salvarNoBanco();
+
+                    linha = lerArq.readLine();
+//                linha = linha.replaceAll("\"", "");
+                }
+
+                arq.close();
+                turmas3LazyModel = null;
+
+            } catch (IOException e) {
+                System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+            }
+
+        } else {
+
+            if (quad == 1) {
+                //Primeiro quadrimestre
+                try {
+
+                    FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad1.csv");
+
+                    BufferedReader lerArq = new BufferedReader(arq);
+
+                    String linha = lerArq.readLine(); //cabeçalho
+                    // lê a primeira linha 
+                    // a variável "linha" recebe o valor "null" quando o processo 
+                    // de repetição atingir o final do arquivo texto 
+
+                    linha = lerArq.readLine();
+
+//            linha = linha.replaceAll("\"", "");
+                    while (linha != null) {
+
+                        linha = linha.replaceAll("\"", "");
+
+                        palavras = linha.split("_", -1);
+
+                        turma = new TurmasPlanejamento();
+
+                        turma.setCurso(palavras[2]);
+
+                        String nome = palavras[4];
+                        List<Disciplina> ds = disciplinaFacade.findByName(nome);
+
+                        if (!ds.isEmpty()) {
+                            Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                            turma.setDisciplina(d);
+                        }
+
+                        turma.setT(Integer.parseInt(palavras[5]));
+                        turma.setP(Integer.parseInt(palavras[6]));
+                        turma.setTurno(palavras[11]);
+                        turma.setCampus(palavras[12]);
+                        if (!palavras[13].equals("")) {
+                            turma.setNumTurmas(Integer.parseInt(palavras[13]));
+                        }
+
+                        if (!palavras[19].equals("")) {
+                            turma.setPeriodicidade(palavras[19]);
+                        }
+
+                        turma.setQuadrimestre(1);
+
+                        salvarNoBanco();
+
+                        linha = lerArq.readLine();
+//                linha = linha.replaceAll("\"", "");
+                    }
+
+                    arq.close();
+                    turmas1LazyModel = null;
+
+                } catch (IOException e) {
+                    System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+                }
+            } else {
+
+                if (quad == 2) {
+                    //Segundo quadrimestre
+                    try {
+
+                        FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad2.csv");
+
+                        BufferedReader lerArq = new BufferedReader(arq);
+
+                        String linha = lerArq.readLine(); //cabeçalho
+                        // lê a primeira linha 
+                        // a variável "linha" recebe o valor "null" quando o processo 
+                        // de repetição atingir o final do arquivo texto 
+
+                        linha = lerArq.readLine();
+
+//            linha = linha.replaceAll("\"", "");
+                        while (linha != null) {
+
+                            linha = linha.replaceAll("\"", "");
+
+                            palavras = linha.split("_", -1);
+
+                            turma = new TurmasPlanejamento();
+
+                            turma.setCurso(palavras[2]);
+
+                            String nome = palavras[4];
+                            List<Disciplina> ds = disciplinaFacade.findByName(nome);
+
+                            if (!ds.isEmpty()) {
+                                Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                                turma.setDisciplina(d);
+                            }
+
+                            turma.setT(Integer.parseInt(palavras[5]));
+                            turma.setP(Integer.parseInt(palavras[6]));
+                            turma.setTurno(palavras[11]);
+                            turma.setCampus(palavras[12]);
+                            if (!palavras[13].equals("")) {
+                                turma.setNumTurmas(Integer.parseInt(palavras[13]));
+                            }
+
+                            if (!palavras[19].equals("")) {
+                                turma.setPeriodicidade(palavras[19]);
+                            }
+
+                            turma.setQuadrimestre(2);
+
+                            salvarNoBanco();
+
+                            linha = lerArq.readLine();
+//                linha = linha.replaceAll("\"", "");
+                        }
+
+                        arq.close();
+                        turmas2LazyModel = null;
+
+                    } catch (IOException e) {
+                        System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+                    }
+                }
+                
+                else{
+                    if(quad == 3){
+                        //Terceiro quadrimestre
+            try {
+
+                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad3.csv");
+
+                BufferedReader lerArq = new BufferedReader(arq);
+
+                String linha = lerArq.readLine(); //cabeçalho
+                // lê a primeira linha 
+                // a variável "linha" recebe o valor "null" quando o processo 
+                // de repetição atingir o final do arquivo texto 
+
+                linha = lerArq.readLine();
+
+//            linha = linha.replaceAll("\"", "");
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split("_", -1);
+
+                    turma = new TurmasPlanejamento();
+
+                    turma.setCurso(palavras[2]);
+
+                    String nome = palavras[4];
+                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+
+                    if (!ds.isEmpty()) {
+                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                        turma.setDisciplina(d);
+                    }
+
+                    turma.setT(Integer.parseInt(palavras[5]));
+                    turma.setP(Integer.parseInt(palavras[6]));
+                    turma.setTurno(palavras[11]);
+                    turma.setCampus(palavras[12]);
+                    if (!palavras[13].equals("")) {
+                        turma.setNumTurmas(Integer.parseInt(palavras[13]));
+                    }
+
+                    if (!palavras[19].equals("")) {
+                        turma.setPeriodicidade(palavras[19]);
+                    }
+
+                    turma.setQuadrimestre(2);
+
+                    salvarNoBanco();
+
+                    linha = lerArq.readLine();
+//                linha = linha.replaceAll("\"", "");
+                }
+
+                arq.close();
+                turmas3LazyModel = null;
+
+            } catch (IOException e) {
+                System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+            }
+                    }
+                }
+            }
+
         }
-
-     
 
     }
 

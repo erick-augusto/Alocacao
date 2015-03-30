@@ -287,7 +287,10 @@ public class DisciplinaController2 implements Serializable {
                atual.getAfinidades().remove(a);
 //               disciplinaFacade.edit(disciplina);
                pessoaFacade.edit(atual);
-               LoginBean.setUsuario(atual);
+               
+               if(atual.getNome().equals(LoginBean.getUsuario().getNome())){
+                   LoginBean.setUsuario(atual);
+               }
                afinidadesFacade.remove(a);
                
            }

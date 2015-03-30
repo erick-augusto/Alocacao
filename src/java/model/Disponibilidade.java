@@ -6,6 +6,7 @@
 package model;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -64,7 +65,7 @@ public class Disponibilidade {
 //    @JoinColumn(name = "pessoaId", referencedColumnName = "pessoa", insertable = false, updatable = false)
     private Pessoa pessoa;
     
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
 //  @JoinColumn(insertable = false, updatable = false)    
     private TurmasPlanejamento turma;
     

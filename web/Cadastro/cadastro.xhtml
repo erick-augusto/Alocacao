@@ -91,9 +91,9 @@
                                                  style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
                                                  value="Cadastrar disciplinas por .csv" update="disciplinaTable" immediate="true">
                                 </p:commandButton>
-                                
+
                             </h:panelGrid>
-                            
+
                             <p:panel header="Cadastrar Nova disciplina"  >
                                 <h:panelGrid columns="2" id="criarDisciplina">
                                     <h:outputText value="Nome: "/>
@@ -110,17 +110,17 @@
                                                     completeMethod="#{disciplinaController2.completeCurso}" size="100" />
 
                                 </h:panelGrid>
-                            <p:separator/>
-                            <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
-                                             ajax="true"  value="Salvar" actionListener="#{disciplinaController2.salvar()}"
-                                             update="@(form:msgs),disciplinaTable,criarDisciplina" icon="ui-icon-disk"> 
-                            </p:commandButton>
-                            
-<!--                        </p:panel>-->
+                                <p:separator/>
+                                <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
+                                                 ajax="true"  value="Salvar" actionListener="#{disciplinaController2.salvar()}"
+                                                 update="@(form:msgs),disciplinaTable,criarDisciplina" icon="ui-icon-disk"> 
+                                </p:commandButton>
 
-                    </p:panel>
-                            
-                            
+                                <!--                        </p:panel>-->
+
+                            </p:panel>
+
+
                         </p:tab>
 
                         <p:tab title="Docentes">
@@ -182,12 +182,12 @@
 
 
                             </h:panelGrid>
-                            
+
                             <p:panel header="Cadastrar Novo Docente"  >
                                 <h:panelGrid columns="2" id="criarDocente">
                                     <h:outputText value="Nome: "/>
                                     <h:inputText value="#{pessoaController.pessoaSalvar.nome}" size="70"/>
-                                    
+
                                     <h:outputText value="Siape: "/>
                                     <h:inputText value="#{pessoaController.pessoaSalvar.siape}" size="70"/>
 
@@ -200,80 +200,183 @@
                                     <h:inputText value="#{pessoaController.pessoaSalvar.email}"/>
 
                                 </h:panelGrid>
-                            <p:separator/>
-                            <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
-                                             ajax="true"  value="Salvar" actionListener="#{pessoaController.salvar()}"
-                                             update="@(form:msgs),pessoaTable,criarDocente" icon="ui-icon-disk"> 
-                            </p:commandButton>
-                            
-<!--                        </p:panel>-->
+                                <p:separator/>
+                                <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
+                                                 ajax="true"  value="Salvar" actionListener="#{pessoaController.salvar()}"
+                                                 update="@(form:msgs),pessoaTable,criarDocente" icon="ui-icon-disk"> 
+                                </p:commandButton>
 
-                    </p:panel>
-                            
-                            
+                                <!--                        </p:panel>-->
+
+                            </p:panel>
+
+
                         </p:tab>
 
                         <p:tab title="Turmas planejamento">
-                            <h:panelGrid columns="1" cellpadding="10">
+                            
+                            <p:carousel numVisible="1" itemStyle="height:400px;width:1220px;" effect="easeInStrong" headerText="Quadrimestres" style="margin-bottom:0">
+                                <p:tab title="Primeiro" >
+                                    <h:panelGrid columns="1" cellpadding="10">
+                                        <p:dataTable var="turma1" value="#{turmasPlanejamentoController.turmas1LazyModel}" paginator="true" rows="10"
+                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                     rowsPerPageTemplate="5,10,15" 
+                                                     selectionMode="single" 
+                                                     id="turma1PTable" 
+                                                     lazy="true"   rowKey="#{turma1.ID}">
+
+
+                                            <p:column headerText="Curso"  sortBy="#{turma1.curso}">
+                                                <h:outputText value="#{turma1.curso}" />
+                                            </p:column>
+                                            <p:column headerText="Disciplina" >
+                                                <h:outputText value="#{turma1.disciplina.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Turno"  style="width: 8%; text-align: center">
+                                                <h:outputText value="#{turma1.turno}"/>
+                                            </p:column>
+                                            <p:column headerText="Câmpus"  style="width: 8%; text-align: center">
+                                                <h:outputText value="#{turma1.campus}"/>
+                                            </p:column>
+                                            <p:column headerText="Qtd. Turmas"  style="width: 10%; text-align: center">
+                                                <h:outputText value="#{turma1.numTurmas}"/>
+                                            </p:column>
+                                            <p:column headerText="T"  style="width: 5%; text-align: center">
+                                                <h:outputText value="#{turma1.t}"/>
+                                            </p:column>
+                                            <p:column headerText="P"  style="width: 5%; text-align: center">
+                                                <h:outputText value="#{turma1.p}"/>
+                                            </p:column>
+                                            <p:column headerText="Periodicidade"  style="width: 12%; text-align: center">
+                                                <h:outputText value="#{turma1.periodicidade}"/>
+                                            </p:column>
+
+
+
+                                        </p:dataTable>
+                                        
+                                        <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.cadastrarTurmasPlanejamento(1)}"
+                                                         style="width: 230px; height: 25px; font-size: small" 
+                                                         value="Cadastrar turmas .csv" >
+                                        </p:commandButton>  
+
+
+
+                                    </h:panelGrid>
+                                </p:tab>
+                                <p:tab title="Segundo">
+                                    <h:panelGrid columns="1" cellpadding="10">
+                                        <p:dataTable var="turma2" value="#{turmasPlanejamentoController.turmas2LazyModel}" paginator="true" rows="10"
+                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                     rowsPerPageTemplate="5,10,15" 
+                                                     selectionMode="single" 
+                                                     id="turma2PTable" 
+                                                     lazy="true"   rowKey="#{turma2.ID}">
+
+
+                                            <p:column headerText="Curso"  sortBy="#{turma2.curso}">
+                                                <h:outputText value="#{turma2.curso}" />
+                                            </p:column>
+                                            <p:column headerText="Disciplina" >
+                                                <h:outputText value="#{turma2.disciplina.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Turno"  style="width: 8%; text-align: center">
+                                                <h:outputText value="#{turma.turno}"/>
+                                            </p:column>
+                                            <p:column headerText="Câmpus"  style="width: 8%; text-align: center">
+                                                <h:outputText value="#{turma2.campus}"/>
+                                            </p:column>
+                                            <p:column headerText="Qtd. Turmas"  style="width: 10%; text-align: center">
+                                                <h:outputText value="#{turma2.numTurmas}"/>
+                                            </p:column>
+                                            <p:column headerText="T"  style="width: 5%; text-align: center">
+                                                <h:outputText value="#{turma2.t}"/>
+                                            </p:column>
+                                            <p:column headerText="P"  style="width: 5%; text-align: center">
+                                                <h:outputText value="#{turma2.p}"/>
+                                            </p:column>
+                                            <p:column headerText="Periodicidade"  style="width: 12%; text-align: center">
+                                                <h:outputText value="#{turma2.periodicidade}"/>
+                                            </p:column>
+
+                                        </p:dataTable>
+                                        
+                                        <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.cadastrarTurmasPlanejamento(2)}"
+                                                         style="width: 230px; height: 25px; font-size: small" 
+                                                         value="Cadastrar turmas .csv"  >
+                                        </p:commandButton> 
+
+                                    </h:panelGrid>
+                                </p:tab>
+                                <p:tab title="Terceiro" id="tabQuadrimestres">
+                                    <h:panelGrid columns="1" cellpadding="10">
+                                        <p:dataTable var="turma3" value="#{turmasPlanejamentoController.turmas3LazyModel}" paginator="true" rows="10"
+                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                     rowsPerPageTemplate="5,10,15" 
+                                                     selectionMode="single"  
+                                                     id="turma3PTable" 
+                                                     lazy="true"   rowKey="#{turma3.ID}">
+
+
+                                            <p:column headerText="Curso"  sortBy="#{turma3.curso}">
+                                                <h:outputText value="#{turma3.curso}" />
+                                            </p:column>
+                                            <p:column headerText="Disciplina" >
+                                                <h:outputText value="#{turma3.disciplina.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Turno"  style="width: 8%; text-align: center">
+                                                <h:outputText value="#{turma3.turno}"/>
+                                            </p:column>
+                                            <p:column headerText="Câmpus"  style="width: 8%; text-align: center">
+                                                <h:outputText value="#{turma3.campus}"/>
+                                            </p:column>
+                                            <p:column headerText="Qtd. Turmas"  style="width: 10%; text-align: center">
+                                                <h:outputText value="#{turma3.numTurmas}"/>
+                                            </p:column>
+                                            <p:column headerText="T"  style="width: 5%; text-align: center">
+                                                <h:outputText value="#{turma3.t}"/>
+                                            </p:column>
+                                            <p:column headerText="P"  style="width: 5%; text-align: center">
+                                                <h:outputText value="#{turma3.p}"/>
+                                            </p:column>
+                                            <p:column headerText="Periodicidade"  style="width: 12%; text-align: center">
+                                                <h:outputText value="#{turma3.periodicidade}"/>
+                                            </p:column>
+
+
+
+                                        </p:dataTable>
+                                        
+                                        <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.cadastrarTurmasPlanejamento(3)}"
+                                                         style="width: 230px; height: 25px; font-size: small" 
+                                                         value="Cadastrar turmas .csv"  immediate="true"  >
+                                        </p:commandButton> 
+
+
+
+                                    </h:panelGrid>
+                                </p:tab>
+                            </p:carousel>
+
+                            
+                            <h:panelGrid columns="2">
+                              <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.cadastrarTurmasPlanejamento(0)}"
+                                             style="width: 230px; height: 25px; font-size: small" 
+                                             value="Cadastrar turmas .csv"  immediate="true" >
+                            </p:commandButton>   
                                 
-                                <p:dataTable var="turma" value="#{turmasPlanejamentoController.turmasLazyModel}" paginator="true" rows="5"
-                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                             rowsPerPageTemplate="5,10,15" 
-                                             selectionMode="single" 
-                                             selection="#{turmasPlanejamentoController.turma}" 
-                                             id="turmaPTable" 
-                                             lazy="true"   rowKey="#{turma.ID}">
-
-
-                                    <p:column headerText="Curso"  sortBy="#{turma.curso}">
-                                        <h:outputText value="#{turma.curso}" />
-                                    </p:column>
-                                    <p:column headerText="Disciplina" >
-                                        <h:outputText value="#{turma.disciplina.nome}" />
-                                    </p:column>
-                                    <p:column headerText="Turno"  style="width: 8%; text-align: center">
-                                        <h:outputText value="#{turma.turno}"/>
-                                    </p:column>
-                                    <p:column headerText="Câmpus"  style="width: 8%; text-align: center">
-                                        <h:outputText value="#{turma.campus}"/>
-                                    </p:column>
-                                    <p:column headerText="Qtd. Turmas"  style="width: 10%; text-align: center">
-                                        <h:outputText value="#{turma.numTurmas}"/>
-                                    </p:column>
-                                    <p:column headerText="T"  style="width: 5%; text-align: center">
-                                        <h:outputText value="#{turma.t}"/>
-                                    </p:column>
-                                    <p:column headerText="P"  style="width: 5%; text-align: center">
-                                        <h:outputText value="#{turma.p}"/>
-                                    </p:column>
-                                    <p:column headerText="Periodicidade"  style="width: 12%; text-align: center">
-                                        <h:outputText value="#{turma.periodicidade}"/>
-                                    </p:column>
-                                    
-
-
-                                </p:dataTable>
-
-
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.cadastrarTurmasPlanejamento()}"
-                                                 style="width: 230px; height: 25px; font-size: small" 
-                                                 value="Cadastrar turmas .csv"  immediate="true" update="turmaPTable">
-                                </p:commandButton>
-
-
+                                <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAll()}"
+                                             style="width: 230px; height: 25px; font-size: small" 
+                                             value="Deletar turmas"  immediate="true" >
+                            </p:commandButton> 
+                                
                             </h:panelGrid>
+
+                            
                         </p:tab>
-
                     </p:tabView>
-
-                    <h:panelGrid columns="1">
-
-                    </h:panelGrid>
+                        
                 </p:layoutUnit>
-                
-                
-
-
                 <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
                     <p:messages id="msgs" showDetail="true"/>   
                 </p:layoutUnit>
