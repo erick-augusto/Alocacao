@@ -31,24 +31,28 @@
 
                     </p:layoutUnit> 
 
+                    <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
+                        <p:commandButton  value="Inicio" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                        <br/>
+                    </p:layoutUnit> 
 
                     <p:layoutUnit position="center">
 
                         <p:panel style="display: block; text-align: center; width: 300px;position: relative; top: 60px" styleClass="panelCenter">
 
-                            <p:commandLink id="primeiroQuad" action= "/Disponibilidade/FaseIQuad1"   >  
+                            <p:commandLink id="primeiroQuad" action= "#{turmasPlanejamentoController.prepareQuad1()}"   >  
                                 <p:commandButton value="Primeiro Quadrimestre" style="width: 260px"/>
                             </p:commandLink>
 
                             <p:separator/>
 
-                            <p:commandLink id="segundoQuad" action= "/Disponibilidade/FaseIQuad2">  
+                            <p:commandLink id="segundoQuad" action= "#{turmasPlanejamentoController.prepareQuad2()}">  
                                 <p:commandButton value="Segundo Quadrimestre"  style="width: 260px"/>
                             </p:commandLink>
 
                             <p:separator/>
 
-                            <p:commandLink id="terceiroQuad" action= "/Disponibilidade/FaseIQuad3">  
+                            <p:commandLink id="terceiroQuad" action= "#{turmasPlanejamentoController.prepareQuad3()}">  
                                 <p:commandButton value="Terceiro Quadrimestre" style="width: 260px"/>
                             </p:commandLink> 
 

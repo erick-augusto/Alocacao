@@ -127,7 +127,7 @@ public class DisponibilidadeController implements Serializable{
             
             //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
             t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", "", usuario, t);
+            disponibilidade = new Disponibilidade("", "", usuario, t, t.getQuadrimestre());
             disponibilidadeFacade.save(disponibilidade);
             
         }
@@ -168,6 +168,19 @@ public class DisponibilidadeController implements Serializable{
         if(dispdataModel == null){
             
             List<Disponibilidade> d = disponibilidadeFacade.findByPessoa(usuario);
+            
+            dispdataModel = new DisponibilidadeDataModel(d);
+            
+        }
+        
+        return dispdataModel;
+    }
+    
+    public DisponibilidadeDataModel getDispdataModel(int quad) {
+        
+        if(dispdataModel == null){
+            
+            List<Disponibilidade> d = disponibilidadeFacade.findByPessoaQuad(usuario, quad);
             
             dispdataModel = new DisponibilidadeDataModel(d);
             

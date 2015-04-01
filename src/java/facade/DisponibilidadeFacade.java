@@ -113,6 +113,26 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
      
     }
     
+    public List<Disponibilidade> findByPessoaQuad(Pessoa pessoa, int quad){
+        
+       try {
+
+            Session session = getSessionFactory().openSession();
+            Criteria criteria = session.createCriteria(Disponibilidade.class);
+            criteria.add(Restrictions.eq("pessoa", pessoa));
+            criteria.add(Restrictions.eq("quadrimestre", quad));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            List resultado = criteria.list();
+            
+            session.close();
+            return resultado;
+            
+        } catch (HibernateException e) {
+            return null;
+        }
+     
+    }
+    
     //Retorna a lista de disponibilidade de acordo com a disciplina pesquisada
     //Turno e campus são atributos opcionais
     public List<Disponibilidade> findByDisciplinaTC(Disciplina d, String campus, String turno){

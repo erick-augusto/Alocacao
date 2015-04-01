@@ -163,6 +163,26 @@ public class TurmasPlanejamentoController implements Serializable{
 //        return "View";
 //    }
     
+    public String prepareQuad1(){
+        
+        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(1));
+        return "/Disponibilidade/FaseIQuad1";
+        
+    }
+    
+    public String prepareQuad2(){
+        
+        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(2));
+        return "/Disponibilidade/FaseIQuad2";
+        
+    }
+    
+    public String prepareQuad3(){
+        
+        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(3));
+        return "/Disponibilidade/FaseIQuad3";
+    }
+    
     //---------------------------LazyData Model--------------------------------------------------------------------
     
     private TurmasPlanejamentoLazyModel turmas1LazyModel;

@@ -35,7 +35,9 @@
                     </p:layoutUnit>
 
                     <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
-                        <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                        <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/Disponibilidade/EscolhaQuad" immediate="true"/>
+                        <br/>
+                        <p:commandButton  value="Início" id="btnInicio"  style="width: 140px; position: relative; top: 10px"  action="/index" immediate="true"/>
                         <br/>
                     </p:layoutUnit> 
 
@@ -93,12 +95,12 @@
                         </p:panel>
 
                         <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
-                            <p:dataTable var="turma" value="#{turmasPlanejamentoController.turmas1LazyModel}" 
+                            <p:dataTable var="turma" value="#{turmasPlanejamentoController.dataModel}" 
                                          scrollRows="20" scrollable="true"
                                          scrollHeight="430" 
                                          selection="#{disponibilidadeController.turmasEtapa1}" id="turmasTable"
                                          rowKey="#{turma.ID}"
-                                         style="width: 1250px">
+                                         style="width: 1250px" >
 
                                 <p:ajax event="rowSelectCheckbox" />  
                                 <p:ajax event="rowUnselectCheckbox" /> 
@@ -149,7 +151,7 @@
                     <br/>
                     <br/>
 
-                    <p:dataTable var="disp" value="#{disponibilidadeController.dispdataModel}" 
+                    <p:dataTable var="disp" value="#{disponibilidadeController.getDispdataModel(1)}" 
                                  style="margin-bottom:0; text-align: center; width: 600px"
                                  id="dispTable"
                                  rowKey="#{disp.Id}" editable="true"

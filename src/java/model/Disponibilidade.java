@@ -58,6 +58,8 @@ public class Disponibilidade {
     
     private String ordemPreferencia;
     
+    private int quadrimestre;
+    
 //    @Temporal(javax.persistence.TemporalType.DATE)
 //    private Date dataAcao;
     
@@ -71,7 +73,7 @@ public class Disponibilidade {
     
     public Disponibilidade() {}
     
-    public Disponibilidade(String horario, String ordem, Pessoa p, TurmasPlanejamento tP){
+    public Disponibilidade(String horario, String ordem, Pessoa p, TurmasPlanejamento tP, int quadrimestre){
         
         this.horario = horario;
         
@@ -80,6 +82,8 @@ public class Disponibilidade {
         this.turma = tP;
         
         this.ordemPreferencia = ordem;
+        
+        this.quadrimestre = quadrimestre;
         
         this.id.pessoaId = p.getID();
         this.id.turmaId = tP.getID();
@@ -128,6 +132,16 @@ public class Disponibilidade {
     public void setOrdemPreferencia(String ordemPreferencia) {
         this.ordemPreferencia = ordemPreferencia;
     }
+
+    public int getQuadrimestre() {
+        return quadrimestre;
+    }
+
+    public void setQuadrimestre(int quadrimestre) {
+        this.quadrimestre = quadrimestre;
+    }
+    
+    
     
     
 
