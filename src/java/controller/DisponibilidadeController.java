@@ -100,6 +100,28 @@ public class DisponibilidadeController implements Serializable{
         
         return ordem;
     }
+    
+    public List<String> getOrdem(Long quad) {
+        
+        int tamanho = 0;
+        
+        for(Disponibilidade d: usuario.getDisponibilidades()){
+            
+            if(d.getQuadrimestre() == (int)(long) quad){
+                tamanho++;
+            }   
+        }
+        
+        ordem = new ArrayList<>();
+        
+        ordem.add("Selecione");
+        
+        for(int i = 1; i <= tamanho; i++){
+            ordem.add(String.valueOf(i));
+        }
+        
+        return ordem;
+    }
 
     public void setOrdem(List<String> ordem) {
         this.ordem = ordem;

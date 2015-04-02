@@ -130,6 +130,9 @@
                                 <p:column headerText="Câmpus" style="width: 6%">
                                     <h:outputText value="#{turma.campus}" style="width: 6%"/>
                                 </p:column>
+                                <p:column headerText="Quad" style="width: 6%">
+                                    <h:outputText value="#{turma.quadrimestre}" style="width: 6%"/>
+                                </p:column>
                             </p:dataTable>
 
                             <p:commandButton id="buttonSe" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"  
@@ -185,7 +188,7 @@
                                     <h:selectOneMenu value="#{disp.ordemPreferencia}" style="width:100%">
 
 
-                                        <f:selectItems value="#{disponibilidadeController.ordem}" var="ordem" itemLabel="#{ordem}" itemValue="#{ordem}" />
+                                        <f:selectItems value="#{disponibilidadeController.getOrdem(1)}" var="ordem" itemLabel="#{ordem}" itemValue="#{ordem}" />
                                     </h:selectOneMenu>
                                 </f:facet>
                             </p:cellEditor>
