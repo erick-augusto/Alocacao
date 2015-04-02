@@ -22,17 +22,18 @@
 
                 <p:layout fullPage="true">
 
-                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
+                    <p:layoutUnit style="text-align:center" position="north" size="60"  resizable="true" closable="true" collapsible="true" >  
+                        
                         <style type="text/css">
-                            /*                                                                .ui-widget{font-size:90% !important;}*/
-                            .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}
-                        </style>
+                    .ui-widget{font-size:95% !important;}
+                    /*                        .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}*/
+                </style>
                         <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Fase I - Disponibilidade</div>
 
                     </p:layoutUnit> 
 
-                    <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
-                        <p:commandButton  value="Inicio" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                    <p:layoutUnit position="west" size="140" header="Links Rápidos" style="text-align: center; font-size: smaller" resizable="true"  >  
+                        <p:commandButton  value="Inicio" id="btnVoltar"  style="width: 140px; position: relative; top: 5px;font-size: smaller"  action="/index" immediate="true"/>
                         <br/>
                     </p:layoutUnit> 
 
@@ -40,8 +41,8 @@
 
                         <p:panel style="display: block; text-align: center; width: 300px;position: relative; top: 60px" styleClass="panelCenter">
 
-                            <p:commandLink id="primeiroQuad" action= "#{turmasPlanejamentoController.prepareQuad1()}"   >  
-                                <p:commandButton value="Primeiro Quadrimestre" style="width: 260px"/>
+                            <p:commandLink id="primeiroQuad" action= "#{disponibilidadeController.prepareQuad1()}"   >  
+                                <p:commandButton value="Primeiro Quadrimestre" style="width: 260px; font-size: larger"/>
                             </p:commandLink>
 
                             <p:separator/>

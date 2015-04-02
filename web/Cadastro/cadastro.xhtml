@@ -214,7 +214,7 @@
                         </p:tab>
 
                         <p:tab title="Turmas planejamento">
-                            
+
                             <p:tabView dynamic="true" cache="true" id="tabV">
 
                                 <p:tab title="1 Quadrimestre">
@@ -255,17 +255,27 @@
 
                                         </p:dataTable>
 
-                                        <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad1()}" 
-                                                         style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
-                                                         value="Cadastrar turmas por .csv" update="turma1PTable" immediate="true">
-                                        </p:commandButton>
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad1()}" 
+                                                             style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                             value="Cadastrar turmas por .csv" update="turma1PTable" immediate="true">
+                                            </p:commandButton>
+
+                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(1)}" 
+                                                             style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                             value="Deletar turmas 1 Quad." update="@(form:turma1PTable)" immediate="true">
+                                            </p:commandButton>
+
+                                        </h:panelGrid>
+
+
 
                                     </h:panelGrid>
 
                                 </p:tab>
-                                
+
                                 <p:tab title="2 Quadrimestre">
-                                    
+
                                     <h:panelGrid columns="1" cellpadding="10">
                                         <p:dataTable var="turma2" value="#{turmasPlanejamentoController.turmas2LazyModel}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -300,16 +310,24 @@
                                                 <h:outputText value="#{turma2.periodicidade}"/>
                                             </p:column>
                                         </p:dataTable>
-                                        
-                                        <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad2()}" 
-                                                         style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
-                                                         value="Cadastrar turmas por .csv" update="turma2PTable" immediate="true">
-                                        </p:commandButton>
-                                        
+
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad2()}" 
+                                                             style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                             value="Cadastrar turmas por .csv" update="turma2PTable" immediate="true">
+                                            </p:commandButton>
+
+                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(2)}" 
+                                                             style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                             value="Deletar turmas 2 Quad." update="@(form:turma2PTable)" immediate="true">
+                                            </p:commandButton>
+
+                                        </h:panelGrid>
+
                                     </h:panelGrid> 
-                                    
+
                                 </p:tab>
-                                
+
                                 <p:tab title="3 Quadrimestre">
 
                                     <h:panelGrid columns="1" cellpadding="10">
@@ -347,11 +365,21 @@
                                             </p:column>
 
                                         </p:dataTable>
-                                        
-                                        <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad3()}" 
-                                                         style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
-                                                         value="Cadastrar turmas por .csv" update="turma3PTable" immediate="true">
-                                        </p:commandButton>
+
+
+
+                                        <h:panelGrid columns="2">
+                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad3()}" 
+                                                             style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                             value="Cadastrar turmas por .csv" update="turma3PTable" immediate="true">
+                                            </p:commandButton>
+
+                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(3)}" 
+                                                             style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                             value="Deletar turmas 3 Quad." update="@(form:turma3PTable)" immediate="true">
+                                            </p:commandButton>
+
+                                        </h:panelGrid>
 
 
 
@@ -364,7 +392,7 @@
 
                         </p:tab>
                     </p:tabView>
-                        
+
                 </p:layoutUnit>
                 <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
                     <p:messages id="msgs" showDetail="true"/>   

@@ -79,11 +79,11 @@
                             <p:separator/>
 
                             <h:panelGrid columns="2">
-                                <p:commandButton    icon="ui-icon-search"  actionListener="#{disponibilidadeController.filtrarTurmas()}"
+                                <p:commandButton    icon="ui-icon-search"  actionListener="#{disponibilidadeController.filtrarTurmasQuad(3)}"
                                                     update="@(form:turmasTable)"  style="width: 30px; height: 25px" title="Filtrar disciplinas">
                                 </p:commandButton>
 
-                                <p:commandButton    ajax="false"  actionListener="#{disponibilidadeController.limparFiltroTurmas()}"
+                                <p:commandButton    ajax="false"  actionListener="#{disponibilidadeController.limparFiltroQuad(3)}"
                                                     update="@(form:turmasTable)" icon="ui-icon-closethick" 
                                                     style="width: 30px; height: 25px" title="Limpar filtros">
                                 </p:commandButton>
@@ -95,7 +95,7 @@
                         </p:panel>
 
                         <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
-                            <p:dataTable var="turma" value="#{turmasPlanejamentoController.dataModel}" 
+                            <p:dataTable var="turma" value="#{disponibilidadeController.dataModel}" 
                                          scrollRows="20" scrollable="true"
                                          scrollHeight="430" 
                                          selection="#{disponibilidadeController.turmasEtapa1}" id="turmasTable"

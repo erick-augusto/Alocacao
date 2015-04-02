@@ -35,6 +35,8 @@ public class DisponibilidadeController implements Serializable{
     
     private Pessoa usuario;
     
+    
+    
     private List<String> ordem;
       
     @EJB
@@ -159,6 +161,9 @@ public class DisponibilidadeController implements Serializable{
     }
     
     
+    
+    
+    
     //Data Model das Disponibilidades---------------------------------------------------------------------------
     
     private DisponibilidadeDataModel dispdataModel;
@@ -191,6 +196,36 @@ public class DisponibilidadeController implements Serializable{
 
     public void setDispdataModel(DisponibilidadeDataModel dispdataModel) {
         this.dispdataModel = dispdataModel;
+    }
+    
+    //------------------------------------Prepare das paginas web-----------------------------------------------
+    
+    //Paginas da Fase I de disponibilidade-----------------------------------------------------------------------
+    
+    //Retorna as turmas por quadrimestre
+    private List<TurmasPlanejamento> listarTodasQuad(int quad){
+        
+        return turmasFacade.findAllQuad(quad);
+    }
+    
+    public String prepareQuad1(){
+        
+        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(1));
+        return "/Disponibilidade/FaseIQuad1";
+        
+    }
+    
+    public String prepareQuad2(){
+        
+        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(2));
+        return "/Disponibilidade/FaseIQuad2";
+        
+    }
+    
+    public String prepareQuad3(){
+        
+        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(3));
+        return "/Disponibilidade/FaseIQuad3";
     }
     
    
@@ -267,6 +302,34 @@ public class DisponibilidadeController implements Serializable{
         dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTC(discAfinidades, turno, campus));        
     }
     
+    
+    public void filtrarTurmasQuad(Long quad){
+        dataModel = null;
+        discAfinidades = new ArrayList<>();
+        
+        //Caso o usuário queira filtrarTurmas por afinidades
+        if(filtrarAfinidades){
+            afinidades = usuario.getAfinidades();
+            
+            
+            //Quais disciplinas ele tem afinidade
+            for(Afinidades a: afinidades){
+                if(a.getEstado().equals("Adicionada")){
+                    discAfinidades.add(a.getDisciplina());
+                }
+     
+            }
+        }
+        
+        Integer q = (int) (long) quad;
+        
+        dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTCQ(discAfinidades, turno, campus, q));        
+    
+        filtrarAfinidades = false;
+        turno = "";
+        campus = "";
+    }
+    
     public void filtrarTurmas2(){
         dataModel = null;
         discEtapa1 = new ArrayList<>();
@@ -285,6 +348,13 @@ public class DisponibilidadeController implements Serializable{
         dataModel = null;
         dispdataModel = null;
         
+    }
+    
+    
+    public void limparFiltroQuad(Long quad){
+
+        dispdataModel = null;
+        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad((int)(long)quad));
     }
     
     //Filtros para o Log das Disponibilidades da Etapa I-------------------------------------------------------

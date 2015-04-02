@@ -108,6 +108,78 @@ public class TurmasPlanejamentoFacade extends AbstractFacade<TurmasPlanejamento>
 
     }
     
+    
+     //Filtro por disciplina e/ou turno e/ou campus e quadrimestre
+    public List<TurmasPlanejamento> filtrarDTCQ(List<Disciplina> disciplinas, String turno, String campus, int quadrimestre) {
+
+        try {
+            List<TurmasPlanejamento> turmas = new ArrayList<>();
+
+            Session session = getSessionFactory().openSession();
+            
+
+            if(!disciplinas.isEmpty()){
+                
+                for (Disciplina d : disciplinas) {
+
+                    Criteria criteria = session.createCriteria(TurmasPlanejamento.class);
+                    
+                if (!campus.equals("")) {
+                    criteria.add(Restrictions.eq("campus", campus));
+                }
+
+                if (!turno.equals("")) {
+                    criteria.add(Restrictions.eq("turno", turno));
+                }
+                
+//                    Query query = session.createQuery("from TurmasPlanejamento t where t.disciplina_disciplina_id = :id ");
+//                    query.setParameter("id", d.getID());
+                criteria.add(Restrictions.eq("disciplina", d));
+                criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
+                List resultado = criteria.list();
+                
+//                    List resultado = query.list();
+                    turmas.addAll(resultado);
+            }
+            }
+            
+            else{
+                
+                Criteria criteria = session.createCriteria(TurmasPlanejamento.class);
+                
+                if (!campus.equals("")) {
+                    criteria.add(Restrictions.eq("campus", campus));
+                }
+
+                if (!turno.equals("")) {
+                    criteria.add(Restrictions.eq("turno", turno));
+                }
+                
+                criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
+                List resultado = criteria.list();
+                turmas.addAll(resultado);
+                
+            }
+            
+            
+
+            if (turmas.size() <= 0) {
+
+                session.close();
+                return null;
+
+            } else {
+
+                session.close();
+                return turmas;
+
+            }
+        } catch (HibernateException e) {
+            return null;
+        }
+
+    }
+    
     //Lista as turmas por quadrimestre
     public List<TurmasPlanejamento> findAllQuad(int quadrimestre) {
         

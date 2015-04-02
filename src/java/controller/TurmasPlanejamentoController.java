@@ -340,9 +340,10 @@ public class TurmasPlanejamentoController implements Serializable{
 //    }
     
     
-        public void deleteAll() {
+        public void deleteAll(Long quad) {
 
-        List<TurmasPlanejamento> all = listarTodas();
+        List<TurmasPlanejamento> all = listarTodasQuad((int)(long)quad);
+        
         for (TurmasPlanejamento t : all) {
             t = turmasPlanejamentoFacade.inicializarColecaoDisponibilidades(t);
             Set<Disponibilidade> ds = t.getDisponibilidades();
@@ -364,8 +365,47 @@ public class TurmasPlanejamentoController implements Serializable{
         }
         
         turmas1LazyModel = null;
-        turmas2LazyModel = null;
-        turmas3LazyModel = null;
+        
+    }
+        
+        public void deleteAllQuad(Long quad) {
+
+        Integer q = (int)(long) quad;    
+        List<TurmasPlanejamento> all = listarTodasQuad(q);
+        
+        for (TurmasPlanejamento t : all) {
+            t = turmasPlanejamentoFacade.inicializarColecaoDisponibilidades(t);
+            Set<Disponibilidade> ds = t.getDisponibilidades();
+            Pessoa atual;
+
+//            for (Disponibilidade d : ds) {
+//                t.getDisponibilidades().remove(d);
+//                atual = d.getPessoa();
+//                atual.getDisponibilidades().remove(d);
+//                pessoaFacade.edit(atual);
+//                if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
+//                    LoginBean.setUsuario(atual);
+//                }
+//                disponibilidadeFacade.remove(d);
+//
+//            }
+            turmasPlanejamentoFacade.remove(t);
+
+        }
+        
+        if(q == 1){
+           turmas1LazyModel = null; 
+        }
+        else{
+            if(q == 2){
+                turmas2LazyModel = null;
+            }
+            else{
+                turmas3LazyModel = null;
+            }
+        }
+        
+        
     }
     
     
