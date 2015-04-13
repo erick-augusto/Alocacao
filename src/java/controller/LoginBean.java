@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import static javax.naming.Context.INITIAL_CONTEXT_FACTORY;
@@ -25,6 +26,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
+import javax.servlet.http.HttpSession;
 import model.Pessoa;
 import org.primefaces.context.RequestContext;
 
@@ -161,27 +163,23 @@ public class LoginBean implements Serializable {
 
     public String doLogout() {
 
-        RequestContext context = RequestContext.getCurrentInstance();
+//        RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg;
-        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Logout efetuado", usuario.getNome());
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Logout efetuado", "");
         loggedIn = false;
         username = "";
         password = "";
         usuario = null;
 
         FacesContext.getCurrentInstance().addMessage(null, msg);
-//        
-//
-//        try {
-//            FacesContext.getCurrentInstance().getExternalContext().redirect("/login.xhtml?faces-redirect=true");
-////            ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-////        ec.redirect(ec.getRequestContextPath() + "/" + "login.xhtml");
-//        return;
-//        } catch (IOException ex) {
-//            Logger.getLogger(CalendarioController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        HttpSession session = (HttpSession) ec.getSession(false);
         
-        return "/login";
+        if (session != null) {
+        session.invalidate();
+    }
+
+        return "/login?faces-redirect=true";
 
     }
 

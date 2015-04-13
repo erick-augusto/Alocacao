@@ -3,8 +3,6 @@ package model;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -14,10 +12,14 @@ import javax.persistence.Temporal;
 //Tentativa 3------------------------------------------------------------------
 
 @Entity
-public class Afinidades{
+public class Afinidades implements Serializable{
+    
+    private static final long serialVersionUID = 1L;
     
     @Embeddable
     public static class Id implements Serializable{
+        
+        private static final long serialVersionUID = 1L;
         
         private Long pessoaId;
         
@@ -69,6 +71,8 @@ public class Afinidades{
     
     @EmbeddedId
     private Id id = new Id();
+    
+    
     
     private String estado;
     

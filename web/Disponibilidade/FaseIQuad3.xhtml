@@ -23,6 +23,8 @@
                 <p:layout fullPage="true">
 
                     <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
+                        <h:commandLink value="Logout" style="position: relative; left: 650px; top: 10px; color: #2E8B57" 
+                                       action="#{loginBean.doLogout()}" immediate="true"/>
                         <style type="text/css">
                             .ui-widget{font-size:90% !important;}
                         </style>
@@ -30,8 +32,8 @@
 
                     </p:layoutUnit> 
 
-                    <p:layoutUnit position="south" size="90" closable="true" collapsible="true">
-
+                    <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
+                        <p:messages id="msgs" showDetail="true"/>   
                     </p:layoutUnit>
 
                     <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
@@ -199,9 +201,8 @@
 
                     <br/>
 
-                    <p:commandButton id="closeB" value="Ok" oncomplete="PF('dlg').hide();"/> 
-
-
+                    <p:commandButton id="closeB" value="Ok" oncomplete="PF('dlg').hide();"
+                                     update="@(form:msgs), @(form:turmasTable)" actionListener="#{disponibilidadeController.sucessoFase1()}"/> 
 
                 </p:dialog>
 

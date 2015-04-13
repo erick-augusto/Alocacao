@@ -27,45 +27,6 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
 
     }
     
-//    public List<Afinidades> findByName(String nome){
-//        Session session = getSessionFactory().openSession();
-//        Criteria criteria = session.createCriteria(Afinidades.class);
-//        criteria.add(Restrictions.eq("nome", nome));
-//        
-//        List results = criteria.list();
-//        session.close();
-//        
-//        return results;
-//        
-//    }
-    
-    
-//    public void salvarAfinidade(){
-//        
-//        Session session = getSessionFactory().openSession();
-//        session.beginTransaction();
-//        Disciplina d = (Disciplina)session.get(Disciplina.class, 2L);
-//        Pessoa p = (Pessoa)session.get(Pessoa.class, 2L);
-//        
-//        Afinidades afinidade = new Afinidades();
-//        
-//        afinidade.setDisciplina(d);
-//        afinidade.setPessoa(p);
-//        afinidade.setEstado("Adicionada");
-//        
-//        Calendar cal = Calendar.getInstance();
-//        afinidade.setDataAcao(cal.getTime());
-//        
-//        d.getAfinidades().add(afinidade);
-//        
-//        session.save(d);
-//        
-//        
-//        session.getTransaction().commit();
-//        session.close();
-//        
-//        
-//    }
     
     public Disponibilidade findByIDs(Long turmaId, Long pessoaId){
         
@@ -120,7 +81,9 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
             Session session = getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Disponibilidade.class);
             criteria.add(Restrictions.eq("pessoa", pessoa));
-            criteria.add(Restrictions.eq("quadrimestre", quad));
+            if(quad != 0){
+                criteria.add(Restrictions.eq("quadrimestre", quad));
+            }
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             List resultado = criteria.list();
             
@@ -157,6 +120,64 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
                 
             }
             else{
+                
+                crit.createAlias("turma", "t");
+                
+                if(!campus.equals("")){
+                    crit.add(Restrictions.eq("t.campus", campus));
+                }
+                
+                if(!turno.equals("")){
+                    crit.add(Restrictions.eq("t.turno", turno));
+                }
+            }
+            
+            crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            List result = crit.list();
+            return result;
+            
+        }
+        catch(HibernateException e){
+            return null;
+        }
+
+        
+    }
+    
+    //Retorna a lista de disponibilidade de acordo com a disciplina pesquisada
+    //Turno, campus e quadrimestre são atributos opcionais
+    public List<Disponibilidade> findByDisciplinaTCQ(Disciplina d, String campus, String turno, int quadrimestre){
+        
+        try{
+            
+            Session session = getSessionFactory().openSession();
+            Criteria crit = session.createCriteria(Disponibilidade.class);
+            
+            if(d != null){
+                
+                if(quadrimestre != 0){
+                    crit.add(Restrictions.eq("quadrimestre", quadrimestre));
+                }
+                
+                crit.createAlias("turma", "t").add(Restrictions.eq("t.disciplina", d));
+                
+                if(!campus.equals("")){
+                    crit.add(Restrictions.eq("t.campus", campus));
+                }
+                
+                if(!turno.equals("")){
+                    crit.add(Restrictions.eq("t.turno", turno));
+                }
+                
+                
+                
+                
+            }
+            else{
+                
+                if(quadrimestre != 0){
+                    crit.add(Restrictions.eq("quadrimestre", quadrimestre));
+                }
                 
                 crit.createAlias("turma", "t");
                 

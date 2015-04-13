@@ -175,7 +175,7 @@ public class CadastroBean implements Serializable {
             System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
         }
 
-        Pessoa p = new Pessoa();
+//        Pessoa p = new Pessoa();
 
     }
 
