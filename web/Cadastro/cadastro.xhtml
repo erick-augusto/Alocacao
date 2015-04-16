@@ -19,7 +19,6 @@
                     
                     <style type="text/css">
                         .ui-widget{font-size:95% !important;}
-                        /*                        .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}*/
                     </style>
                     <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Cadastros</div>
 
@@ -120,8 +119,6 @@
                                                  update="@(form:msgs),disciplinaTable,criarDisciplina" icon="ui-icon-disk"> 
                                 </p:commandButton>
 
-                                <!--                        </p:panel>-->
-
                             </p:panel>
 
 
@@ -130,13 +127,13 @@
                         <p:tab title="Docentes">
                             <h:panelGrid columns="1" cellpadding="10">
 
-                                <p:dataTable var="docente" value="#{pessoaController.pessoaLazyModel}" paginator="true" rows="5"
+                                <p:dataTable var="docente" value="#{docenteController.docenteLazyModel}" paginator="true" rows="5"
                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                              rowsPerPageTemplate="5,10,15" 
                                              selectionMode="single" 
-                                             selection="#{pessoaController.pessoa}" 
+                                             selection="#{docenteController.docente}" 
                                              id="pessoaTable" 
-                                             lazy="true"   rowKey="#{pessoa.ID}">
+                                             lazy="true"   rowKey="#{docente.ID}">
 
 
                                     <p:column headerText="Nome"  sortBy="#{docente.nome}">
@@ -158,7 +155,7 @@
                                         </f:facet>
 
                                         <p:commandButton style="width: 95px;height: 30px; font-size: small"
-                                                         action="#{pessoaController.delete()}" value="Deletar" immediate="true" 
+                                                         action="#{docenteController.delete()}" value="Deletar" immediate="true" 
                                                          update="pessoaTable" icon="ui-icon-trash"/>
 
 
@@ -171,7 +168,7 @@
                                         </f:facet>
 
                                         <p:commandButton style="width: 95px;height: 30px; font-size: small"
-                                                         action="#{pessoaController.prepareEdit()}" value="Editar" immediate="true" 
+                                                         action="#{docenteController.prepareEdit()}" value="Editar" immediate="true" 
                                                          update="pessoaTable" icon="ui-icon-pencil"/>
 
                                     </p:column>
@@ -179,8 +176,8 @@
 
                                 </p:dataTable>
 
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{pessoaController.cadastrarPessoas()}"
-                                                 style="width: 230px; height: 25px; font-size: small" 
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{docenteController.cadastrarDocentes()}"
+                                                 style="width: 250px; height: 25px; font-size: small" 
                                                  value="Cadastrar docentes por .csv"  update="@all" immediate="true">
                                 </p:commandButton>
 
@@ -190,23 +187,23 @@
                             <p:panel header="Cadastrar Novo Docente"  >
                                 <h:panelGrid columns="2" id="criarDocente">
                                     <h:outputText value="Nome: "/>
-                                    <h:inputText value="#{pessoaController.pessoaSalvar.nome}" size="70"/>
+                                    <h:inputText value="#{docenteController.docenteSalvar.nome}" size="70"/>
 
                                     <h:outputText value="Siape: "/>
-                                    <h:inputText value="#{pessoaController.pessoaSalvar.siape}" size="70"/>
+                                    <h:inputText value="#{docenteController.docenteSalvar.siape}" size="70"/>
 
                                     <h:outputText value="Centro: "/>
                                     <p:autoComplete id="completeCentro" forceSelection="true" 
-                                                    value="#{pessoaController.pessoaSalvar.centro}" 
+                                                    value="#{docenteController.docenteSalvar.centro}" 
                                                     completeMethod="#{pessoaController.completeCentro}" size="7" />
 
                                     <h:outputText value="Email: "/>
-                                    <h:inputText value="#{pessoaController.pessoaSalvar.email}"/>
+                                    <h:inputText value="#{docenteController.docenteSalvar.email}"/>
 
                                 </h:panelGrid>
                                 <p:separator/>
                                 <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
-                                                 ajax="true"  value="Salvar" actionListener="#{pessoaController.salvar()}"
+                                                 ajax="true"  value="Salvar" actionListener="#{docenteController.salvar()}"
                                                  update="@(form:msgs),pessoaTable,criarDocente" icon="ui-icon-disk"> 
                                 </p:commandButton>
 
@@ -216,15 +213,65 @@
 
 
                         </p:tab>
+                        
+                        <p:tab title="Administradores">
+                            <h:panelGrid columns="1" cellpadding="10">
 
-                        <p:tab title="Turmas planejamento">
+                                <p:dataTable var="adm" value="#{pessoaController.admLazyModel}" paginator="true" rows="5"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             rowsPerPageTemplate="5,10,15" 
+                                             selectionMode="single" 
+                                             selection="#{pessoaController.pessoa}" 
+                                             id="admTable" 
+                                             lazy="true"   rowKey="#{pessoa.ID}">
+
+
+                                    <p:column headerText="Nome"  sortBy="#{adm.nome}">
+                                        <h:outputText value="#{adm.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Centro" style="width: 10%">
+                                        <h:outputText value="#{adm.centro}" />
+                                    </p:column>
+
+                                    <p:column headerText="" style="width: 10%">
+                                        <f:facet name="header">
+                                            <h:outputText value=""/>
+                                        </f:facet>
+
+                                        <p:commandButton style="width: 95px;height: 30px; font-size: small"
+                                                         action="#{pessoaController.removerAdm()}" value="Remover" immediate="true" 
+                                                         update="admTable" icon="ui-icon-closethick"/>
+                                    </p:column>
+
+                                </p:dataTable>
+
+                            </h:panelGrid>
+
+                            <p:panel header="Cadastrar Administrador"  >
+                                <h:panelGrid columns="2" id="criarAdm">
+                                    <h:outputLabel value="Nome: " for="adm"/>
+                                    <h:selectOneMenu id="adm" value="#{pessoaController.adm}">
+                                        <f:selectItems value="#{pessoaController.itemsAvaiableSelectOne}"/>
+                                    </h:selectOneMenu>
+                                </h:panelGrid>
+                                <p:separator/>
+                                <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
+                                                 ajax="true"  value="Salvar" actionListener="#{pessoaController.salvarAdm()}"
+                                                 update="@(form:msgs),admTable,criarAdm" icon="ui-icon-disk"> 
+                                </p:commandButton>
+
+                            </p:panel>
+
+                        </p:tab>
+
+                        <p:tab title="Ofertas disciplinas">
 
                             <p:tabView dynamic="true" cache="true" id="tabV">
 
                                 <p:tab title="1 Quadrimestre">
 
                                     <h:panelGrid columns="1" cellpadding="10">
-                                        <p:dataTable var="turma1" value="#{turmasPlanejamentoController.turmas1LazyModel}" paginator="true" rows="10"
+                                        <p:dataTable var="turma1" value="#{turmasPlanejamentoController.ofertas1LazyModel}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="5,10,15" 
                                                      selectionMode="single" 
@@ -261,13 +308,13 @@
 
                                         <h:panelGrid columns="2">
                                             <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad1()}" 
-                                                             style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
-                                                             value="Cadastrar turmas por .csv" update="turma1PTable" immediate="true">
+                                                             style="width: 250px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                             value="Cadastrar ofertas por .csv" update="turma1PTable" immediate="true">
                                             </p:commandButton>
 
                                             <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(1)}" 
-                                                             style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
-                                                             value="Deletar turmas 1 Quad." update="@(form:turma1PTable)" immediate="true">
+                                                             style="width: 250px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                             value="Deletar ofertas 1 Quad." update="@(form:turma1PTable)" immediate="true">
                                             </p:commandButton>
 
                                         </h:panelGrid>
@@ -281,7 +328,7 @@
                                 <p:tab title="2 Quadrimestre">
 
                                     <h:panelGrid columns="1" cellpadding="10">
-                                        <p:dataTable var="turma2" value="#{turmasPlanejamentoController.turmas2LazyModel}" paginator="true" rows="10"
+                                        <p:dataTable var="turma2" value="#{turmasPlanejamentoController.ofertas2LazyModel}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="5,10,15" 
                                                      selectionMode="single" 
@@ -317,13 +364,13 @@
 
                                         <h:panelGrid columns="2">
                                             <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad2()}" 
-                                                             style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
-                                                             value="Cadastrar turmas por .csv" update="turma2PTable" immediate="true">
+                                                             style="width: 250px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                             value="Cadastrar ofertas por .csv" update="turma2PTable" immediate="true">
                                             </p:commandButton>
 
                                             <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(2)}" 
-                                                             style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
-                                                             value="Deletar turmas 2 Quad." update="@(form:turma2PTable)" immediate="true">
+                                                             style="width: 250px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                             value="Deletar ofertas 2 Quad." update="@(form:turma2PTable)" immediate="true">
                                             </p:commandButton>
 
                                         </h:panelGrid>
@@ -335,7 +382,7 @@
                                 <p:tab title="3 Quadrimestre">
 
                                     <h:panelGrid columns="1" cellpadding="10">
-                                        <p:dataTable var="turma3" value="#{turmasPlanejamentoController.turmas3LazyModel}" paginator="true" rows="10"
+                                        <p:dataTable var="turma3" value="#{turmasPlanejamentoController.ofertas3LazyModel}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="5,10,15" 
                                                      selectionMode="single"  
@@ -374,21 +421,18 @@
 
                                         <h:panelGrid columns="2">
                                             <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad3()}" 
-                                                             style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
-                                                             value="Cadastrar turmas por .csv" update="turma3PTable" immediate="true">
+                                                             style="width: 250px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                             value="Cadastrar ofertas por .csv" update="turma3PTable" immediate="true">
                                             </p:commandButton>
 
                                             <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(3)}" 
-                                                             style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
-                                                             value="Deletar turmas 3 Quad." update="@(form:turma3PTable)" immediate="true">
+                                                             style="width: 250px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                             value="Deletar ofertas 3 Quad." update="@(form:turma3PTable)" immediate="true">
                                             </p:commandButton>
 
                                         </h:panelGrid>
 
-
-
                                     </h:panelGrid>
-
 
                                 </p:tab>
 
@@ -399,7 +443,7 @@
 
                 </p:layoutUnit>
                 <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
-                    <p:messages id="msgs" showDetail="true"/>   
+                    <p:messages id="msgs"/>   
                 </p:layoutUnit>
 
             </p:layout>

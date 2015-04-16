@@ -16,7 +16,7 @@ import model.Disciplina;
             if (value == null || value.length() == 0) {
                 return null;
             }
-            DisciplinaController2 controller = (DisciplinaController2) facesContext.getApplication().getELResolver().
+            DisciplinaController controller = (DisciplinaController) facesContext.getApplication().getELResolver().
                     getValue(facesContext.getELContext(), null, "disciplinaController2");
             return controller.buscar(getKey(value));
         }

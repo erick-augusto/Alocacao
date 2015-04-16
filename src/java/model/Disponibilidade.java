@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.io.Serializable;
@@ -12,86 +7,75 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
-
 @Entity
 public class Disponibilidade implements Serializable {
-   
-    
+
     @Embeddable
-    public static class Id implements Serializable{
-        
+    public static class Id implements Serializable {
+
         private Long pessoaId;
-        
+
         private Long turmaId;
-        
-        public Id() {}
-        
-        public Id(Long pessoaId, Long turmaId){
+
+        public Id() {
+        }
+
+        public Id(Long pessoaId, Long turmaId) {
             this.pessoaId = pessoaId;
             this.turmaId = turmaId;
         }
-        
+
         @Override
-        public boolean equals(Object o){
-            if(o != null && o instanceof Id){
-                Id that = (Id)o;
+        public boolean equals(Object o) {
+            if (o != null && o instanceof Id) {
+                Id that = (Id) o;
                 return this.pessoaId.equals(that.pessoaId) && this.turmaId.equals(that.turmaId);
-            }
-            
-            else{
+            } else {
                 return false;
             }
         }
-        
+
         @Override
-        public int hashCode(){
+        public int hashCode() {
             return pessoaId.hashCode() + turmaId.hashCode();
-        }    
-        
+        }
+
     }
-    
+
     @EmbeddedId
     private Id id = new Id();
-    
-    private String horario;
-    
-//    private String ordem;
-    
+
     private String ordemPreferencia;
-    
-    private int quadrimestre;
-    
-//    @Temporal(javax.persistence.TemporalType.DATE)
-//    private Date dataAcao;
-    
-    @ManyToOne 
-//    @JoinColumn(name = "pessoaId", referencedColumnName = "pessoa", insertable = false, updatable = false)
+
+    //Docente de teoria ou pratica ou ambos
+    //T-P
+    //T
+    //P
+    private String funcao;
+
+    @ManyToOne
     private Pessoa pessoa;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
-//  @JoinColumn(insertable = false, updatable = false)    
-    private TurmasPlanejamento turma;
-    
-    public Disponibilidade() {}
-    
-    public Disponibilidade(String horario, String ordem, Pessoa p, TurmasPlanejamento tP, int quadrimestre){
-        
-        this.horario = horario;
-        
+    private OfertaDisciplina ofertaDisciplina;
+
+    public Disponibilidade() {
+    }
+
+    public Disponibilidade(String ordem, Pessoa p, OfertaDisciplina oD) {
+
         this.pessoa = p;
-        
-        this.turma = tP;
-        
+
+        this.ofertaDisciplina = oD;
+
         this.ordemPreferencia = ordem;
-        
-        this.quadrimestre = quadrimestre;
-        
+
         this.id.pessoaId = p.getID();
-        this.id.turmaId = tP.getID();
-        
+        this.id.turmaId = oD.getID();
+
         //Integridade Referencial
         pessoa.getDisponibilidades().add(this);
-        turma.getDisponibilidades().add(this);
+        ofertaDisciplina.getDisponibilidades().add(this);
     }
 
     public Id getId() {
@@ -102,14 +86,6 @@ public class Disponibilidade implements Serializable {
         this.id = id;
     }
 
-    public String getHorario() {
-        return horario;
-    }
-
-    public void setHorario(String horario) {
-        this.horario = horario;
-    }
-
     public Pessoa getPessoa() {
         return pessoa;
     }
@@ -118,13 +94,23 @@ public class Disponibilidade implements Serializable {
         this.pessoa = pessoa;
     }
 
-    public TurmasPlanejamento getTurma() {
-        return turma;
+    public String getFuncao() {
+        return funcao;
     }
 
-    public void setTurma(TurmasPlanejamento turma) {
-        this.turma = turma;
+    public void setFuncao(String funcao) {
+        this.funcao = funcao;
     }
+
+    public OfertaDisciplina getOfertaDisciplina() {
+        return ofertaDisciplina;
+    }
+
+    public void setOfertaDisciplina(OfertaDisciplina ofertaDisciplina) {
+        this.ofertaDisciplina = ofertaDisciplina;
+    }
+
+    
 
     public String getOrdemPreferencia() {
         return ordemPreferencia;
@@ -134,19 +120,4 @@ public class Disponibilidade implements Serializable {
         this.ordemPreferencia = ordemPreferencia;
     }
 
-    public int getQuadrimestre() {
-        return quadrimestre;
-    }
-
-    public void setQuadrimestre(int quadrimestre) {
-        this.quadrimestre = quadrimestre;
-    }
-    
-    
-    
-    
-
-    
-    
-    
 }

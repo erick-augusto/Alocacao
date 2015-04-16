@@ -1,7 +1,7 @@
 package controller;
 
 import facade.DisponibilidadeFacade;
-import facade.TurmasPlanejamentoFacade;
+import facade.OfertaDisciplinaFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,14 +9,14 @@ import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
-import model.Afinidades;
+import model.Afinidade;
 import model.Disciplina;
 import model.Disponibilidade;
 import model.Pessoa;
-import model.TurmasPlanejamento;
+import model.OfertaDisciplina;
 import org.primefaces.event.CellEditEvent;
 import util.DisponibilidadeDataModel;
-import util.TurmasPlanejamentoDataModel;
+import util.OfertaDisciplinaDataModel;
 
 @Named(value = "disponibilidadeController")
 @SessionScoped
@@ -37,16 +37,16 @@ public class DisponibilidadeController implements Serializable {
     private List<String> ordem;
 
     @EJB
-    private TurmasPlanejamentoFacade turmasFacade;
+    private OfertaDisciplinaFacade turmasFacade;
 
     @EJB
     private DisponibilidadeFacade disponibilidadeFacade;
 
-    private List<TurmasPlanejamento> turmasEtapa1;
+    private List<OfertaDisciplina> turmasEtapa1;
 
-    private List<TurmasPlanejamento> turmasEtapa2;
+    private List<OfertaDisciplina> turmasEtapa2;
 
-    public List<TurmasPlanejamento> getTurmasEtapa2() {
+    public List<OfertaDisciplina> getTurmasEtapa2() {
 
         if (turmasEtapa2 == null) {
             turmasEtapa2 = new ArrayList<>();
@@ -55,11 +55,11 @@ public class DisponibilidadeController implements Serializable {
         return turmasEtapa2;
     }
 
-    public void setTurmasEtapa2(List<TurmasPlanejamento> turmasEtapa2) {
+    public void setTurmasEtapa2(List<OfertaDisciplina> turmasEtapa2) {
         this.turmasEtapa2 = turmasEtapa2;
     }
 
-    public List<TurmasPlanejamento> getTurmasEtapa1() {
+    public List<OfertaDisciplina> getTurmasEtapa1() {
 
         if (turmasEtapa1 == null) {
             turmasEtapa1 = new ArrayList<>();
@@ -68,7 +68,7 @@ public class DisponibilidadeController implements Serializable {
         return turmasEtapa1;
     }
 
-    public void setTurmasEtapa1(List<TurmasPlanejamento> turmasEtapa1) {
+    public void setTurmasEtapa1(List<OfertaDisciplina> turmasEtapa1) {
         this.turmasEtapa1 = turmasEtapa1;
     }
 
@@ -101,7 +101,7 @@ public class DisponibilidadeController implements Serializable {
 
         for (Disponibilidade d : usuario.getDisponibilidades()) {
 
-            if (d.getQuadrimestre() == (int) (long) quad) {
+            if (d.getOfertaDisciplina().getQuadrimestre() == (int) (long) quad) {
                 tamanho++;
             }
         }
@@ -140,11 +140,11 @@ public class DisponibilidadeController implements Serializable {
 
     public void salvarDisponibilidade() {
 
-        for (TurmasPlanejamento t : turmasEtapa1) {
+        for (OfertaDisciplina t : turmasEtapa1) {
 
             //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
             t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", "", usuario, t, t.getQuadrimestre());
+            disponibilidade = new Disponibilidade("", usuario, t);
             disponibilidadeFacade.save(disponibilidade);
 
         }
@@ -155,20 +155,20 @@ public class DisponibilidadeController implements Serializable {
     }
 
     //------------------------------------Data Model---------------------------------------------------------
-    //Data Model das TurmasPlanejamento da Etapa I------------------------------------------------------------------------
-    private TurmasPlanejamentoDataModel dataModel;
+    //Data Model das OfertaDisciplina da Etapa I------------------------------------------------------------------------
+    private OfertaDisciplinaDataModel dataModel;
 
-    public TurmasPlanejamentoDataModel getDataModel() {
+    public OfertaDisciplinaDataModel getDataModel() {
 
         if (dataModel == null) {
-            List<TurmasPlanejamento> turmas = turmasFacade.findAll();
-            dataModel = new TurmasPlanejamentoDataModel(turmas);
+            List<OfertaDisciplina> turmas = turmasFacade.findAll();
+            dataModel = new OfertaDisciplinaDataModel(turmas);
         }
 
         return dataModel;
     }
 
-    public void setDataModel(TurmasPlanejamentoDataModel dataModel) {
+    public void setDataModel(OfertaDisciplinaDataModel dataModel) {
         this.dataModel = dataModel;
     }
 
@@ -217,28 +217,28 @@ public class DisponibilidadeController implements Serializable {
     //------------------------------------Prepare das paginas web-----------------------------------------------
     //Paginas da Fase I de disponibilidade-----------------------------------------------------------------------
     //Retorna as turmas por quadrimestre
-    private List<TurmasPlanejamento> listarTodasQuad(int quad) {
+    private List<OfertaDisciplina> listarTodasQuad(int quad) {
 
         return turmasFacade.findAllQuad(quad);
     }
 
     public String prepareQuad1() {
 
-        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(1));
+        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(1));
         return "/Disponibilidade/FaseIQuad1";
 
     }
 
     public String prepareQuad2() {
 
-        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(2));
+        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(2));
         return "/Disponibilidade/FaseIQuad2";
 
     }
 
     public String prepareQuad3() {
 
-        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad(3));
+        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(3));
         return "/Disponibilidade/FaseIQuad3";
     }
 
@@ -259,7 +259,7 @@ public class DisponibilidadeController implements Serializable {
 
     private String turno;
 
-    private Set<Afinidades> afinidades;
+    private Set<Afinidade> afinidades;
 
     private Set<Disponibilidade> setDisponibilidades;
 
@@ -318,7 +318,7 @@ public class DisponibilidadeController implements Serializable {
             afinidades = usuario.getAfinidades();
 
             //Quais disciplinas ele tem afinidade
-            for (Afinidades a : afinidades) {
+            for (Afinidade a : afinidades) {
                 if (a.getEstado().equals("Adicionada")) {
                     discAfinidades.add(a.getDisciplina());
                 }
@@ -326,7 +326,7 @@ public class DisponibilidadeController implements Serializable {
             }
         }
 
-        dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTC(discAfinidades, turno, campus));
+        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarDTC(discAfinidades, turno, campus));
     }
 
     public void filtrarTurmasQuad(Long quad) {
@@ -338,7 +338,7 @@ public class DisponibilidadeController implements Serializable {
             afinidades = usuario.getAfinidades();
 
             //Quais disciplinas ele tem afinidade
-            for (Afinidades a : afinidades) {
+            for (Afinidade a : afinidades) {
                 if (a.getEstado().equals("Adicionada")) {
                     discAfinidades.add(a.getDisciplina());
                 }
@@ -348,7 +348,7 @@ public class DisponibilidadeController implements Serializable {
 
         Integer q = (int) (long) quad;
 
-        dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTCQ(discAfinidades, turno, campus, q));
+        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarDTCQ(discAfinidades, turno, campus, q));
 
         filtrarAfinidades = false;
         turno = "";
@@ -363,11 +363,11 @@ public class DisponibilidadeController implements Serializable {
             setDisponibilidades = usuario.getDisponibilidades();
 
             for (Disponibilidade d : setDisponibilidades) {
-                discEtapa1.add(d.getTurma().getDisciplina());
+                discEtapa1.add(d.getOfertaDisciplina().getDisciplina());
             }
         }
 
-        dataModel = new TurmasPlanejamentoDataModel(turmasFacade.filtrarDTC(discEtapa1, turno, campus));
+        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarDTC(discEtapa1, turno, campus));
     }
 
     public void limparFiltroTurmas() {
@@ -379,7 +379,7 @@ public class DisponibilidadeController implements Serializable {
     public void limparFiltroQuad(Long quad) {
 
         dispdataModel = null;
-        dataModel = new TurmasPlanejamentoDataModel(this.listarTodasQuad((int) (long) quad));
+        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad((int) (long) quad));
     }
 
     //Filtros para o Log das Disponibilidades da Etapa I-------------------------------------------------------

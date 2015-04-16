@@ -98,5 +98,33 @@ public class PessoaFacade extends AbstractFacade<Pessoa>{
             }
 
     }
+    
+    //Retorna usuários administradores do sistema
+    public List<Pessoa> listAdms() {
+
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Pessoa.class);
+        criteria.add(Restrictions.eq("adm", true));
+
+        List results = criteria.list();
+        session.close();
+
+        return results;
+
+    }
+    
+    public List<Pessoa> listDocentes(){
+        
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Pessoa.class);
+        criteria.add(Restrictions.eq("class", "Docente"));
+
+        List results = criteria.list();
+        session.close();
+
+        return results;
+        
+        
+    }
 
 }

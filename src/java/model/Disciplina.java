@@ -27,16 +27,16 @@ public class Disciplina implements Serializable {
     
     
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
-    private Set<Afinidades> afinidades;
+    private Set<Afinidade> afinidades;
     
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
-    private Set<TurmasPlanejamento> turmas;
+    private Set<OfertaDisciplina> turmas;
 
-    public Set<TurmasPlanejamento> getTurmas() {
+    public Set<OfertaDisciplina> getTurmas() {
         return turmas;
     }
 
-    public void setTurmas(Set<TurmasPlanejamento> turmas) {
+    public void setTurmas(Set<OfertaDisciplina> turmas) {
         this.turmas = turmas;
     }
     
@@ -47,11 +47,11 @@ public class Disciplina implements Serializable {
     }
     
 
-    public Set<Afinidades> getAfinidades() {
+    public Set<Afinidade> getAfinidades() {
         return afinidades;
     }
 
-    public void setAfinidades(Set<Afinidades> afinidades) {
+    public void setAfinidades(Set<Afinidade> afinidades) {
         this.afinidades = afinidades;
     }
     

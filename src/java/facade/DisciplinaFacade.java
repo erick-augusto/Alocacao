@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
-import model.Afinidades;
+import model.Afinidade;
 import model.Disciplina;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -105,7 +105,7 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
 ////
 ////        AfinidadesFacade afinidadeFacade = new AfinidadesFacade();
 ////
-////        for (Afinidades a : afs) {
+////        for (Afinidade a : afs) {
 ////
 ////            afinidadeFacade.remove(a);
 ////        }
