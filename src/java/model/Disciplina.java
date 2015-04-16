@@ -54,9 +54,6 @@ public class Disciplina implements Serializable {
     public void setAfinidades(Set<Afinidade> afinidades) {
         this.afinidades = afinidades;
     }
-    
-    
-    
 
     public Long getID() {
         return ID;
@@ -68,6 +65,16 @@ public class Disciplina implements Serializable {
 
     private String nome;
 
+    private String codigo;
+    
+    public String getCodigo(){
+        return codigo;
+    }
+    
+    public void setCodigo(String codigo){
+        this.codigo = codigo;
+    }
+    
     public String getNome() {
         return nome;
     }

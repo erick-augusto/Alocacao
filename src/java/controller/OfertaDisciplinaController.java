@@ -373,7 +373,7 @@ public class OfertaDisciplinaController implements Serializable{
         //Primeiro quadrimestre
             try {
 
-                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad1.csv");
+                FileReader arq = new FileReader("/home/vinivcp/NetBeansProjects/Arquivos CSV/quad1.csv");
 
                 BufferedReader lerArq = new BufferedReader(arq);
 
@@ -394,12 +394,16 @@ public class OfertaDisciplinaController implements Serializable{
                     oferta = new OfertaDisciplina();
 
                     oferta.setCurso(palavras[2]);
+                    
+                    String codigo = palavras[3];
 
-                    String nome = palavras[4];
-                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
-
+//                    String nome = palavras[4];
+//                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+                    List<Disciplina> ds = disciplinaFacade.findByCod(codigo);
+                    
                     if (!ds.isEmpty()) {
-                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                        Disciplina d = disciplinaFacade.findByCod(codigo).get(0);
+//                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
                         oferta.setDisciplina(d);
                     }
                     

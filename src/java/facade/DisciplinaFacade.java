@@ -30,6 +30,17 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
 
     }
 
+    public List<Disciplina> findByCod(String codigo){
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Disciplina.class);
+        criteria.add(Restrictions.eq("codigo", codigo));
+        
+        List results = criteria.list();
+        session.close();
+        
+        return results;
+    }
+    
     public List<Disciplina> findByName(String nome) {
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(Disciplina.class);

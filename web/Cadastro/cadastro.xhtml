@@ -88,13 +88,19 @@
 
 
                                 </p:dataTable>
-
+                                <h:panelGrid columns="2">
 
                                 <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController2.cadastrarDisciplinas()}" 
                                                  style="width: 250px; height: 25px; font-size: small" title="Cadastrar disciplinas"
                                                  value="Cadastrar disciplinas por .csv" update="disciplinaTable, @(form:msgs)" immediate="true">
                                 </p:commandButton>
-
+                                
+                                <p:commandButton icon="ui-icon-closethick"  actionListener="#{disciplinaController2.deleteAll()}" 
+                                                             style="width: 250px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                             value="Deletar Todas as Disciplinas." update="disciplinaTable, @(form:msgs)" immediate="true">
+                                </p:commandButton>
+                                </h:panelGrid>
+                                
                             </h:panelGrid>
 
                             <p:panel header="Cadastrar Nova disciplina"  >
