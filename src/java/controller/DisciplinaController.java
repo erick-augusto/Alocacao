@@ -606,6 +606,7 @@ public class DisciplinaController implements Serializable {
                 if (disciplinaExist.isEmpty()) {
                     Disciplina d = new Disciplina();
                     d.setNome(palavras[2]);
+                    d.setCodigo(palavras[1]);
 
                     if (palavras[0].substring(0, 2).equals("BC") || palavras[0].substring(0, 2).equals("BH")
                             || palavras[0].substring(0, 2).equals("BI")) {

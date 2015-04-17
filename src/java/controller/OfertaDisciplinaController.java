@@ -396,15 +396,16 @@ public class OfertaDisciplinaController implements Serializable{
                     oferta.setCurso(palavras[2]);
 
                     String nome = palavras[4];
-                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+                    
+                    String codigo = palavras[3];
+                    
+                    Disciplina d = disciplinaFacade.findByCodOrName(codigo, nome);
 
-                    if (!ds.isEmpty()) {
-                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                    if (d != null) {
+//                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
                         oferta.setDisciplina(d);
                     }
-                    
-                   
-
+  
                     oferta.setT(Integer.parseInt(palavras[5]));
                     oferta.setP(Integer.parseInt(palavras[6]));
                     oferta.setTurno(palavras[11]);
@@ -465,10 +466,13 @@ public class OfertaDisciplinaController implements Serializable{
                     oferta.setCurso(palavras[2]);
 
                     String nome = palavras[4];
-                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+                    
+                    String codigo = palavras[3];
+                    
+                    Disciplina d = disciplinaFacade.findByCodOrName(codigo, nome);
 
-                    if (!ds.isEmpty()) {
-                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                    if (d != null) {
+//                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
                         oferta.setDisciplina(d);
                     }
 
@@ -532,10 +536,13 @@ public class OfertaDisciplinaController implements Serializable{
                     oferta.setCurso(palavras[2]);
 
                     String nome = palavras[4];
-                    List<Disciplina> ds = disciplinaFacade.findByName(nome);
+                    
+                    String codigo = palavras[3];
+                    
+                    Disciplina d = disciplinaFacade.findByCodOrName(codigo, nome);
 
-                    if (!ds.isEmpty()) {
-                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
+                    if (d != null) {
+//                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
                         oferta.setDisciplina(d);
                     }
 

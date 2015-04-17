@@ -41,6 +41,38 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         return results;
 
     }
+    
+    //Localiza uma disciplina pelo código
+    public Disciplina findByCod(String codigo){
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Disciplina.class);
+        criteria.add(Restrictions.eq("codigo", codigo));
+        
+        List<Disciplina> results = criteria.list();
+        session.close();
+        
+        return results.get(0);
+    }
+    
+    public Disciplina findByCodOrName(String codigo, String nome){
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Disciplina.class);
+//        criteria.add(Restrictions.eq("codigo", codigo));
+        criteria.add(Restrictions.or(Restrictions.eq("codigo", codigo), Restrictions.eq("nome", nome)));
+        
+        List<Disciplina> results = criteria.list();
+        session.close();
+        
+        if(!results.isEmpty()){
+            return results.get(0);
+        }
+        
+        else{
+            return null;
+        }
+        
+        
+    }
 
     public Disciplina inicializarColecaoAfinidades(Disciplina d) {
 

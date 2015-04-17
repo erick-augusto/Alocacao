@@ -51,6 +51,10 @@
                                              lazy="true"   rowKey="#{disciplina.ID}">
 
 
+                                    <p:column headerText="Código"  style="width: 10%">
+                                        <h:outputText value="#{disciplina.codigo}" />
+                                    </p:column>
+                                    
                                     <p:column headerText="Nome"  sortBy="#{disciplina.nome}">
                                         <h:outputText value="#{disciplina.nome}" />
                                     </p:column>
