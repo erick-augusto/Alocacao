@@ -22,7 +22,10 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import model.Afinidade;
 import model.Disciplina;
+import model.Docente;
 import model.Pessoa;
+import org.primefaces.event.SelectEvent;
+import util.DisciplinaDataModel;
 import util.DisciplinaLazyModel;
 
 @Named(value = "disciplinaController2")
@@ -142,29 +145,178 @@ public class DisciplinaController implements Serializable {
     public void setEscolhida(Disciplina escolhida) {
         this.escolhida = escolhida;
     }
+    
+    //-------------------------------------Data Model---------------------------------------------------------
+    private DisciplinaDataModel disciplinaDataModel;
+
+    public DisciplinaDataModel getDisciplinaDataModel() {
+        if(disciplinaDataModel == null){
+            disciplinaDataModel = new DisciplinaDataModel(this.listarTodas());
+        }
+        
+        return disciplinaDataModel;
+    }
+
+    public void setDisciplinaDataModel(DisciplinaDataModel disciplinaDataModel) {
+        this.disciplinaDataModel = disciplinaDataModel;
+    }
+    
+    public int qdtAfinidades(Disciplina d){
+        
+        d = disciplinaFacade.inicializarColecaoAfinidades(d);
+        return d.getAfinidades().size();
+        
+    }
+    
+    //Retorna a lista de docentes que tem afinidade com determinada disciplina
+    //Usada no Resumo das Afinidades
+    private List<Docente> docentesDaAfinidade;
+
+    public List<Docente> getDocentesDaAfinidade() {
+
+        return docentesDaAfinidade;
+    }
+    
+    public void preencherDocentesAfinidade() {
+
+        docentesDaAfinidade = new ArrayList<>();
+        Set<Afinidade> afinidades = selecionada.getAfinidades();
+        for (Afinidade a : afinidades) {
+            docentesDaAfinidade.add((Docente) a.getPessoa());
+        }
+
+    }
+    
+    private Disciplina selecionada;
+
+    public Disciplina getSelecionada() {
+        return selecionada;
+    }
+
+    public void setSelecionada(Disciplina selecionada) {
+        this.selecionada = selecionada;
+    }
+    
+    //------------------------------Filtros de Disciplina-------------------------------------------
+    
+    private List<String> filtrosEixos;
+    
+    private List<String> filtrosSelecEixos;
+    
+    private List<String> filtrosCursos;
+    
+    private List<String> filtrosSelecCursos;
+
+    public List<String> getFiltrosEixos() {
+        return filtrosEixos;
+    }
+
+    public void setFiltrosEixos(List<String> filtrosEixos) {
+        this.filtrosEixos = filtrosEixos;
+    }
+
+    public List<String> getFiltrosSelecEixos() {
+        return filtrosSelecEixos;
+    }
+
+    public void setFiltrosSelecEixos(List<String> filtrosSelecEixos) {
+        this.filtrosSelecEixos = filtrosSelecEixos;
+    }
+
+    public List<String> getFiltrosCursos() {
+        return filtrosCursos;
+    }
+
+    public void setFiltrosCursos(List<String> filtrosCursos) {
+        this.filtrosCursos = filtrosCursos;
+    }
+
+    public List<String> getFiltrosSelecCursos() {
+        return filtrosSelecCursos;
+    }
+
+    public void setFiltrosSelecCursos(List<String> filtrosSelecCursos) {
+        this.filtrosSelecCursos = filtrosSelecCursos;
+    }
+    
+    public void filtrar() {
+
+        List<Disciplina> disciplinasFiltradas = disciplinaFacade.findByEixoCurso(filtrosSelecEixos, filtrosSelecCursos);
+        
+        disciplinaDataModel = new DisciplinaDataModel(disciplinasFiltradas);
+
+    }
+    
+    public void limparFiltro(){
+        
+        //filtros2 = null;
+        filtrosSelecCursos = null;
+        filtrosSelecEixos = null;
+//        filtros = null;
+        disciplinaDataModel = null;
+        
+    }
+    
+    
+    
 
     //--------------------------------------Lazy Data Model--------------------------------------------------------------
     
-    private DisciplinaLazyModel disciplinaDataModel;
+    private DisciplinaLazyModel disciplinaLazyModel;
     
     @PostConstruct
     public void init() {
-        disciplinaDataModel = new DisciplinaLazyModel(this.listarTodas());
+        disciplinaLazyModel = new DisciplinaLazyModel(this.listarTodas());
+        
+        filtrosEixos = new ArrayList<>();
+        filtrosEixos.add("Ciencia, Tecnologia e Inovacao");
+        filtrosEixos.add("Comunicacao e Informacao");
+        filtrosEixos.add("Energia");
+        filtrosEixos.add("Espaco, Cultura e Temporalidade");
+        filtrosEixos.add("Estado, Sociedade e Mercado");
+        filtrosEixos.add("Estrutura da Materia");
+        filtrosEixos.add("Humanidades");
+        filtrosEixos.add("Pensamento, Expressao e Significado");
+        filtrosEixos.add("Processos de Transformacao");
+        filtrosEixos.add("Mais de um eixo");
+        filtrosEixos.add("Representacao e Simulacao");
+        
+
+        filtrosCursos = new ArrayList<>();
+        filtrosCursos.add("Bacharelado em Ciencia da Computacao");
+        filtrosCursos.add("Bacharelado em Economia");
+        filtrosCursos.add("Bacharelado em Planejamento Territorial");
+        filtrosCursos.add("Bacharelado em Politicas Publicas");
+        filtrosCursos.add("Bacharelado em Relacoes Internacionais");
+        filtrosCursos.add("Ciencias Biologicas");
+        filtrosCursos.add("Engenharia Aeroespacial");
+        filtrosCursos.add("Engenharia Ambiental e Urbana");
+        filtrosCursos.add("Engenharia Biomedica");
+        filtrosCursos.add("Engenharia de Automacao e Robotica");
+        filtrosCursos.add("Engenharia de Energia");
+        filtrosCursos.add("Engenharia de Gestao");
+        filtrosCursos.add("Engenharia de Informacao");
+        filtrosCursos.add("Engenharia de Materiais");
+        filtrosCursos.add("Filosofia");
+        filtrosCursos.add("Fisica");
+        filtrosCursos.add("Licenciaturas");
+        filtrosCursos.add("Quimica");
+        
     }
     
     public DisciplinaLazyModel getDisciplinaLazyModel() {
         
-        if(disciplinaDataModel == null){
-            disciplinaDataModel = new DisciplinaLazyModel(this.listarTodas());
+        if(disciplinaLazyModel == null){
+            disciplinaLazyModel = new DisciplinaLazyModel(this.listarTodas());
         }
         
         
-        return this.disciplinaDataModel;
+        return this.disciplinaLazyModel;
     }
     
     public void recriarModelo() {
     
-        disciplinaDataModel = null;
+        disciplinaLazyModel = null;
 
     }
   
@@ -214,7 +366,7 @@ public class DisciplinaController implements Serializable {
             disciplinaFacade.save(disciplinaSalvar);
             JsfUtil.addSuccessMessage("Disciplina " + disciplinaSalvar.getNome() + " cadastrada com sucesso!");
             disciplinaSalvar = null;
-            disciplinaDataModel = null;
+            disciplinaLazyModel = null;
             
         } catch (Exception e) {
             JsfUtil.addErrorMessage("Não foi possível cadastrar a disciplina");
@@ -226,7 +378,7 @@ public class DisciplinaController implements Serializable {
             disciplinaFacade.merge(disciplina);
             JsfUtil.addSuccessMessage("Disciplina " + disciplina.getNome() + " editada com sucesso!");
             disciplina = new Disciplina();
-            disciplinaDataModel = null;
+            disciplinaLazyModel = null;
             
         } catch (Exception e) {
             JsfUtil.addErrorMessage("Não foi possível editar a disciplina");
@@ -271,7 +423,7 @@ public class DisciplinaController implements Serializable {
     }
     
     public void delete() {
-        disciplina = (Disciplina) disciplinaDataModel.getRowData();
+        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
         
         
         try {
@@ -329,17 +481,17 @@ public class DisciplinaController implements Serializable {
 
     public String index() {
         disciplina = null;
-        disciplinaDataModel = null;
+        disciplinaLazyModel = null;
         return "/index";
     }
 
     public String prepareEdit() {
-        disciplina = (Disciplina) disciplinaDataModel.getRowData();
+        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
         return "/Cadastro/editDisciplina";
     }
 
     public String prepareView() {
-        disciplina = (Disciplina) disciplinaDataModel.getRowData();
+        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
         //disciplina = disciplinaFacade.find(disciplina.getID());
         //disciplinaFacade.edit(disciplinaFacade.find(disciplina.getID()));
         //disciplinaFacade.edit(disciplina);

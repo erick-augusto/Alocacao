@@ -7,13 +7,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
+import model.Afinidade;
+import model.Disciplina;
 import model.Docente;
 import model.Pessoa;
+import util.DocenteDataModel;
 import util.PessoaLazyModel;
 
 @Named(value = "docenteController")
@@ -58,6 +63,54 @@ public class DocenteController implements Serializable{
     public void setDocenteSalvar(Docente docenteSalvar) {
         this.docenteSalvar = docenteSalvar;
     }
+    
+    //-----------------------------------------DataModel--------------------------------------------------
+    private DocenteDataModel docenteDataModel;
+
+    public DocenteDataModel getDocenteDataModel() {
+        
+        if(docenteDataModel == null){
+            docenteDataModel = new DocenteDataModel(this.listarTodas());
+        }
+        
+        return docenteDataModel;
+    }
+
+    public void setDocenteDataModel(DocenteDataModel docenteDataModel) {
+        this.docenteDataModel = docenteDataModel;
+    }
+    
+    public int qdtAfinidades(Docente d){
+        
+        
+        return d.getAfinidades().size();
+        
+    }
+    
+    //Retorna a lista de docentes que tem afinidade com determinada disciplina
+    //Usada no Resumo das Afinidades
+    private List<Disciplina> afinidadesDoDocente;
+
+    public List<Disciplina> getAfinidadesDoDocente() {
+        return afinidadesDoDocente;
+    }
+
+    public void setAfinidadesDoDocente(List<Disciplina> afinidadesDoDocente) {
+        this.afinidadesDoDocente = afinidadesDoDocente;
+    }
+
+    public void preencherAfinidadesDoDocente() {
+        
+        afinidadesDoDocente = new ArrayList<>();
+        
+        Set<Afinidade> afinidades = docente.getAfinidades();
+        
+        for(Afinidade a: afinidades){
+            afinidadesDoDocente.add(a.getDisciplina());
+        }
+
+    }
+    
     
     //-----------------------------------------LazyDataModel------------------------------------------------------
     
@@ -120,6 +173,10 @@ public class DocenteController implements Serializable{
         }
 
         docenteLazyModel = null;
+    }
+    
+    public List<Docente> listarTodas(){
+        return docenteFacade.findAll();
     }
     
     //----------------------------------------Páginas web------------------------------------------------------
