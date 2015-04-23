@@ -1,5 +1,6 @@
 package controller;
 
+import facade.AfinidadeFacade;
 import facade.DocenteFacade;
 import facade.PessoaFacade;
 import java.io.BufferedReader;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
@@ -18,6 +20,8 @@ import model.Afinidade;
 import model.Disciplina;
 import model.Docente;
 import model.Pessoa;
+import util.AfinidadeDataModel;
+import util.AfinidadesLazyModel;
 import util.DocenteDataModel;
 import util.PessoaLazyModel;
 
@@ -40,6 +44,9 @@ public class DocenteController implements Serializable{
     
     @EJB
     private PessoaFacade pessoaFacade;
+    
+    @EJB
+    private AfinidadeFacade afinidadeFacade;
     
     //----------------------------------------Getters e Setters----------------------------------------------------
 
@@ -80,36 +87,134 @@ public class DocenteController implements Serializable{
         this.docenteDataModel = docenteDataModel;
     }
     
-    public int qdtAfinidades(Docente d){
+    public int qtdAfinidades(Docente d){
+        
+        Set<Afinidade> afinidades = d.getAfinidades();
+        int qtd = 0;
+        
+        for(Afinidade a: afinidades){
+            if(a.getEstado().equals("Adicionada")){
+                qtd++;
+            }
+        }
         
         
-        return d.getAfinidades().size();
+        return qtd;
         
     }
     
     //Retorna a lista de docentes que tem afinidade com determinada disciplina
     //Usada no Resumo das Afinidades
-    private List<Disciplina> afinidadesDoDocente;
+//    private List<Disciplina> afinidadesDoDocente;
+//
+//    public List<Disciplina> getAfinidadesDoDocente() {
+//        return afinidadesDoDocente;
+//    }
+//
+//    public void setAfinidadesDoDocente(List<Disciplina> afinidadesDoDocente) {
+//        this.afinidadesDoDocente = afinidadesDoDocente;
+//    }
+//
+//    public void preencherAfinidadesDoDocente() {
+//        
+//        afinidadesDoDocente = new ArrayList<>();
+//        
+//        Set<Afinidade> afinidades = docente.getAfinidades();
+//        
+//        for(Afinidade a: afinidades){
+//            afinidadesDoDocente.add(a.getDisciplina());
+//        }
+//
+//    }
+    
+    
+    //Afinidades de acordo com o docente
+    private AfinidadeDataModel afinidadesDoDocente;
+    
+    private AfinidadeDataModel afinidadesFiltradas;
 
-    public List<Disciplina> getAfinidadesDoDocente() {
+    public AfinidadeDataModel getAfinidadesFiltradas() {
+        return afinidadesFiltradas;
+    }
+
+    public void setAfinidadesFiltradas(AfinidadeDataModel afinidadesFiltradas) {
+        this.afinidadesFiltradas = afinidadesFiltradas;
+    }
+    
+    
+
+    public AfinidadeDataModel getAfinidadesDoDocente() {
+        
+        if(afinidadesDoDocente == null){
+//            Set<Afinidade> all = docente.getAfinidades();
+//            Set<Afinidade> adicionadas = new HashSet<>();
+//            for(Afinidade a: all){
+//                if(a.getEstado().equals("Adicionada")){
+//                    adicionadas.add(a);
+//                }
+//            }
+//            
+//            List<Afinidade> afs = new ArrayList<>();
+//            afs.addAll(adicionadas);
+//            afinidadesDoDocente = new AfinidadesLazyModel(afs);
+            
+            afinidadesDoDocente = new AfinidadeDataModel(afinidadeFacade.findAll());
+        }
+        
         return afinidadesDoDocente;
     }
 
-    public void setAfinidadesDoDocente(List<Disciplina> afinidadesDoDocente) {
+    public void setAfinidadesDoDocente(AfinidadeDataModel afinidadesDoDocente) {
         this.afinidadesDoDocente = afinidadesDoDocente;
     }
-
-    public void preencherAfinidadesDoDocente() {
+    
+    public void preencherAfinidadesDoDocente(){
         
-        afinidadesDoDocente = new ArrayList<>();
-        
-        Set<Afinidade> afinidades = docente.getAfinidades();
-        
-        for(Afinidade a: afinidades){
-            afinidadesDoDocente.add(a.getDisciplina());
+        if(incluirRemovidas){
+            afinidadesDoDocente = new AfinidadeDataModel((List<Afinidade>) docente.getAfinidades());
         }
-
+        
+        else{
+            
+            Set<Afinidade> all = docente.getAfinidades();
+            Set<Afinidade> adicionadas = new HashSet<>();
+            for(Afinidade a: all){
+                if(a.getEstado().equals("Adicionada")){
+                    adicionadas.add(a);
+                }
+            }
+            
+            List<Afinidade> afs = new ArrayList<>();
+            afs.addAll(adicionadas);
+            afinidadesDoDocente = new AfinidadeDataModel(afs);
+            
+        }
+        
+        
     }
+    
+    public void falseIncluirRemovidas(){
+        
+        incluirRemovidas = false;
+        
+    }
+    
+    //inclui afinidades removidas
+    private boolean incluirRemovidas;
+
+    public boolean isIncluirRemovidas() {
+        return incluirRemovidas;
+    }
+
+    public void setIncluirRemovidas(boolean incluirRemovidas) {
+        this.incluirRemovidas = incluirRemovidas;
+    }
+    
+    
+    
+    
+    
+    
     
     
     //-----------------------------------------LazyDataModel------------------------------------------------------

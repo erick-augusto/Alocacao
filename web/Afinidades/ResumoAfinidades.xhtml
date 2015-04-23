@@ -103,7 +103,7 @@
                                 </p:dataTable>
 
                                 <p:commandButton id="viewDocentes" style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                                 value="Ver detalhes" actionListener="#{disciplinaController2.preencherDocentesAfinidade}"
+                                                 value="Ver detalhes" actionListener="#{disciplinaController2.preencherAfinidadesDisciplina}"
                                                  immediate="true" oncomplete="PF('afinidadeDialog').show();" icon="ui-icon-search"> 
                                 </p:commandButton>
 
@@ -113,20 +113,37 @@
 
                             <p:dialog header="Afinidades da disciplina" widgetVar="afinidadeDialog" dynamic="true"
                                       draggable="false" resizable="false" maximizable="true" showEffect="fade">
+                                
+                                <p:dataTable var="af" value="#{disciplinaController2.afinidadesDaDisciplina}" paginator="true" rows="10"
+                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         rowsPerPageTemplate="5,10,15"  id="afinidadeTable" lazy="true"
+                                         emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
+                                         style="width: 800px; " 
+                                         styleClass="panelCenter" 
+                                         paginatorPosition="top"
+                                         rowStyleClass="#{af.estado eq 'Removida' ? 'colored' : null}">>
 
-                                <p:dataList value="#{disciplinaController2.docentesDaAfinidade}" var="docente" 
-                                            paginator="true" rows="10" styleClass="paginated" paginatorPosition="bottom">
-                                    <f:facet name="header">
-                                        Docentes
-                                    </f:facet>
-                                    <h:outputText value="#{docente.nome}"/>
-                                </p:dataList>
+                                <p:column headerText="Docente">
+                                    <h:outputText value="#{af.pessoa.nome}" />
+                                </p:column>
+                                <p:column headerText="Disciplina">
+                                    <h:outputText value="#{af.disciplina.nome}" />
+                                </p:column>
+                                <p:column headerText="Data">
+                                    <h:outputText value="#{af.dataAcao}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                    </h:outputText>
+                                </p:column>
+                                    <p:column headerText="Estado" sortBy="#{af.estado}">
+                                    <h:outputText value="#{af.estado}"/>
+                                </p:column>
+
+                            </p:dataTable>
 
                             </p:dialog>
                                 
                             </h:form>
                             
-
                         </p:tab>
                         <p:tab title="Docentes">
                             
@@ -152,13 +169,14 @@
                                         <h:outputText value="#{docente.nome}" style="width: 33%"/>
                                     </p:column>  
                                     <p:column headerText="Qdt. Afinidades" style="width: 15%; text-align: center">
-                                        <h:outputText value="#{docenteController.qdtAfinidades(docente)}" style="width: 15%"/>
+                                        <h:outputText value="#{docenteController.qtdAfinidades(docente)}" style="width: 15%"/>
                                     </p:column>
 
                                 </p:dataTable>
 
                                 <p:commandButton id="viewAfinidades" style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                                 value="Ver detalhes" actionListener="#{docenteController.preencherAfinidadesDoDocente}"
+                                                 value="Ver detalhes"  
+                                                 
                                                  immediate="true" oncomplete="PF('docenteDialog').show();" icon="ui-icon-search"> 
                                 </p:commandButton>
 
@@ -166,19 +184,44 @@
 
 
 
-                            <p:dialog header="Afinidades da docente" widgetVar="docenteDialog" dynamic="true"
-                                      draggable="false" resizable="false" maximizable="true" showEffect="fade">
+                                <p:dialog id="docenteDialog" header="Afinidades do docente" widgetVar="docenteDialog" dynamic="true"
+                                          draggable="false" resizable="false" maximizable="true" showEffect="fade" >
 
-                                <p:dataList value="#{docenteController.afinidadesDoDocente}" var="disciplina" 
-                                            paginator="true" rows="10" styleClass="paginated" paginatorPosition="bottom">
-                                    <f:facet name="header">
-                                        Disciplinas
-                                    </f:facet>
-                                    <h:outputText value="#{disciplina.nome}"/>
-                                </p:dataList>
 
-                            </p:dialog>
-                                
+                                    <h:form>
+                                        <p:dataTable var="af" value="#{docenteController.afinidadesDoDocente}" paginator="true" rows="10"
+                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                     rowsPerPageTemplate="5,10,15"  id="afinidadeTable2" 
+                                                     emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
+                                                     style="width: 800px; " 
+                                                     styleClass="panelCenter" 
+                                                     paginatorPosition="top"
+                                                     rowStyleClass="#{af.estado eq 'Removida' ? 'colored' : null}">
+
+                                            <p:column headerText="Docente">
+                                                <h:outputText value="#{af.pessoa.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Disciplina" >
+                                                <h:outputText value="#{af.disciplina.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Data">
+                                                <h:outputText value="#{af.dataAcao}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Estado" sortBy="#{af.estado}">
+                                                <h:outputText value="#{af.estado}"/>
+                                            </p:column>
+                                            
+
+                                        </p:dataTable>
+                                    </h:form>
+                                        
+                                    
+
+
+                                </p:dialog>
+
                             </h:form>
 
                         </p:tab>

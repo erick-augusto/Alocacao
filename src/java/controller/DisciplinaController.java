@@ -24,7 +24,7 @@ import model.Afinidade;
 import model.Disciplina;
 import model.Docente;
 import model.Pessoa;
-import org.primefaces.event.SelectEvent;
+import util.AfinidadesLazyModel;
 import util.DisciplinaDataModel;
 import util.DisciplinaLazyModel;
 
@@ -51,6 +51,9 @@ public class DisciplinaController implements Serializable {
     
     @EJB
     private PessoaFacade pessoaFacade;
+    
+    @EJB
+    private AfinidadeFacade afinidadeFacade;
     
     
     //Lista de Afinidade, tanto com as disciplinas adicionadas, quanto removidas
@@ -164,28 +167,61 @@ public class DisciplinaController implements Serializable {
     public int qdtAfinidades(Disciplina d){
         
         d = disciplinaFacade.inicializarColecaoAfinidades(d);
-        return d.getAfinidades().size();
         
+        Set<Afinidade> afinidades = d.getAfinidades();
+        int qtd = 0;
+        for(Afinidade a: afinidades){
+            if(a.getEstado().equals("Adicionada")){
+                qtd++;
+            }
+        }
+        
+        return qtd;        
     }
     
     //Retorna a lista de docentes que tem afinidade com determinada disciplina
     //Usada no Resumo das Afinidades
-    private List<Docente> docentesDaAfinidade;
+//    private List<Docente> docentesDaAfinidade;
+//
+//    public List<Docente> getDocentesDaAfinidade() {
+//
+//        return docentesDaAfinidade;
+//    }
+//    
+//    public void preencherDocentesAfinidade() {
+//
+//        docentesDaAfinidade = new ArrayList<>();
+//        Set<Afinidade> afinidades = selecionada.getAfinidades();
+//        for (Afinidade a : afinidades) {
+//            docentesDaAfinidade.add((Docente) a.getPessoa());
+//        }
+//
+//    }
+    
+    
+    //Lista de afinidades dos docentes com aquela disciplina
+    private AfinidadesLazyModel afinidadesDaDisciplina;
 
-    public List<Docente> getDocentesDaAfinidade() {
+    public AfinidadesLazyModel getAfinidadesDaDisciplina() {
+        
+        if(afinidadesDaDisciplina == null){
+            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidadeFacade.findAll());
+        }
+        
+        return afinidadesDaDisciplina;
+    }
 
-        return docentesDaAfinidade;
+    public void setAfinidadesDaDisciplina(AfinidadesLazyModel afinidadesDaDisciplina) {
+        this.afinidadesDaDisciplina = afinidadesDaDisciplina;
     }
     
-    public void preencherDocentesAfinidade() {
-
-        docentesDaAfinidade = new ArrayList<>();
-        Set<Afinidade> afinidades = selecionada.getAfinidades();
-        for (Afinidade a : afinidades) {
-            docentesDaAfinidade.add((Docente) a.getPessoa());
-        }
-
+    public void preencherAfinidadesDisciplina(){
+        
+        afinidadesDaDisciplina = new AfinidadesLazyModel((List<Afinidade>) selecionada.getAfinidades());
+        
     }
+    
+    
     
     private Disciplina selecionada;
 
