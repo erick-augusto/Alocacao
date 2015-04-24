@@ -26,46 +26,7 @@ public class AfinidadeFacade extends AbstractFacade<Afinidade>{
 
     }
     
-//    public List<Afinidades> findByName(String nome){
-//        Session session = getSessionFactory().openSession();
-//        Criteria criteria = session.createCriteria(Afinidade.class);
-//        criteria.add(Restrictions.eq("nome", nome));
-//        
-//        List results = criteria.list();
-//        session.close();
-//        
-//        return results;
-//        
-//    }
-    
-    
-//    public void salvarAfinidade(){
-//        
-//        Session session = getSessionFactory().openSession();
-//        session.beginTransaction();
-//        Disciplina d = (Disciplina)session.get(Disciplina.class, 2L);
-//        Pessoa p = (Pessoa)session.get(Pessoa.class, 2L);
-//        
-//        Afinidade afinidade = new Afinidade();
-//        
-//        afinidade.setDisciplina(d);
-//        afinidade.setPessoa(p);
-//        afinidade.setEstado("Adicionada");
-//        
-//        Calendar cal = Calendar.getInstance();
-//        afinidade.setDataAcao(cal.getTime());
-//        
-//        d.getAfinidades().add(afinidade);
-//        
-//        session.save(d);
-//        
-//        
-//        session.getTransaction().commit();
-//        session.close();
-//        
-//        
-//    }
-    
+
     public Afinidade findByIDs(Long disciplinaId, Long pessoaId){
         
        try {

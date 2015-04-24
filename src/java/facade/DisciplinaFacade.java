@@ -3,9 +3,7 @@ package facade;
 import controller.HibernateUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.ejb.Stateless;
-import model.Afinidade;
 import model.Disciplina;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -13,7 +11,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 
 @Stateless

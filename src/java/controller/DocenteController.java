@@ -17,11 +17,9 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import model.Afinidade;
-import model.Disciplina;
 import model.Docente;
 import model.Pessoa;
 import util.AfinidadeDataModel;
-import util.AfinidadesLazyModel;
 import util.DocenteDataModel;
 import util.PessoaLazyModel;
 
@@ -103,29 +101,7 @@ public class DocenteController implements Serializable{
         
     }
     
-    //Retorna a lista de docentes que tem afinidade com determinada disciplina
-    //Usada no Resumo das Afinidades
-//    private List<Disciplina> afinidadesDoDocente;
-//
-//    public List<Disciplina> getAfinidadesDoDocente() {
-//        return afinidadesDoDocente;
-//    }
-//
-//    public void setAfinidadesDoDocente(List<Disciplina> afinidadesDoDocente) {
-//        this.afinidadesDoDocente = afinidadesDoDocente;
-//    }
-//
-//    public void preencherAfinidadesDoDocente() {
-//        
-//        afinidadesDoDocente = new ArrayList<>();
-//        
-//        Set<Afinidade> afinidades = docente.getAfinidades();
-//        
-//        for(Afinidade a: afinidades){
-//            afinidadesDoDocente.add(a.getDisciplina());
-//        }
-//
-//    }
+   
     
     
     //Afinidades de acordo com o docente
@@ -210,7 +186,67 @@ public class DocenteController implements Serializable{
         this.incluirRemovidas = incluirRemovidas;
     }
     
+    //------------------------------Filtros de Docente-------------------------------------------
     
+    private List<String> filtrosCentros;
+    
+    private List<String> filtrosSelecCentros;
+    
+    private List<String> filtrosAreaAtuacao;
+    
+    private List<String> filtrosSelecAreaAtuacao;
+
+    public List<String> getFiltrosCentros() {
+        return filtrosCentros;
+    }
+
+    public void setFiltrosCentros(List<String> filtrosCentros) {
+        this.filtrosCentros = filtrosCentros;
+    }
+
+    public List<String> getFiltrosSelecCentros() {
+        return filtrosSelecCentros;
+    }
+
+    public void setFiltrosSelecCentros(List<String> filtrosSelecCentros) {
+        this.filtrosSelecCentros = filtrosSelecCentros;
+    }
+
+    public List<String> getFiltrosAreaAtuacao() {
+        return filtrosAreaAtuacao;
+    }
+
+    public void setFiltrosAreaAtuacao(List<String> filtrosAreaAtuacao) {
+        this.filtrosAreaAtuacao = filtrosAreaAtuacao;
+    }
+
+    public List<String> getFiltrosSelecAreaAtuacao() {
+        return filtrosSelecAreaAtuacao;
+    }
+
+    public void setFiltrosSelecAreaAtuacao(List<String> filtrosSelecAreaAtuacao) {
+        this.filtrosSelecAreaAtuacao = filtrosSelecAreaAtuacao;
+    }
+
+    
+    
+    public void filtrar() {
+
+        List<Docente> docentesFiltrados = docenteFacade.findByCentroArea(filtrosSelecCentros, filtrosSelecAreaAtuacao);
+        
+        docenteDataModel = new DocenteDataModel(docentesFiltrados);
+
+    }
+    
+    public void limparFiltro(){
+        
+        //filtros2 = null;
+        filtrosSelecAreaAtuacao = null;
+        filtrosSelecCentros = null;
+//        filtros = null;
+        docenteDataModel = null;
+        
+    }
     
     
     
@@ -233,6 +269,14 @@ public class DocenteController implements Serializable{
     @PostConstruct
     public void init() {
         docenteLazyModel = new PessoaLazyModel(pessoaFacade.listDocentes());
+        
+        filtrosCentros = new ArrayList<>();
+        filtrosCentros.add("CMCC");
+        filtrosCentros.add("CECS");
+        filtrosCentros.add("CCNH");
+        
+        filtrosAreaAtuacao = new ArrayList<>();
+        filtrosAreaAtuacao.add("Cognicao");
     }
     
     
