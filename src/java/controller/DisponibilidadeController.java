@@ -156,13 +156,13 @@ public class DisponibilidadeController implements Serializable {
 //        }
     }
 
-    public void salvarDisponibilidade(int quad) {
+    public void salvarDisponibilidade() {
 
         for (OfertaDisciplina t : turmasEtapa1) {
 
             //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
             t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", usuario, t, quad);
+            disponibilidade = new Disponibilidade("", usuario, t);
             disponibilidadeFacade.save(disponibilidade);
 
         }

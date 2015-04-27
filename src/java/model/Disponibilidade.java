@@ -54,8 +54,6 @@ public class Disponibilidade implements Serializable {
    
     private String tp;
 
-    private int quad;
-
     @ManyToOne
     private Pessoa pessoa;
 
@@ -65,7 +63,7 @@ public class Disponibilidade implements Serializable {
     public Disponibilidade() {
     }
 
-    public Disponibilidade(String ordem, Pessoa p, OfertaDisciplina oD, int quad) {
+    public Disponibilidade(String ordem, Pessoa p, OfertaDisciplina oD) {
 
         this.pessoa = p;
 

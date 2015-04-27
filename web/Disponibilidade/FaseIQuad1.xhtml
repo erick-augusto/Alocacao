@@ -138,7 +138,7 @@
                             </p:dataTable>
 
                             <p:commandButton id="buttonSe" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                             value="Selecionar" actionListener="#{disponibilidadeController.salvarDisponibilidade(1)}"
+                                             value="Selecionar" actionListener="#{disponibilidadeController.salvarDisponibilidade()}"
                                              immediate="true" oncomplete="PF('dlg').show();" > 
                             </p:commandButton>
 
@@ -156,7 +156,7 @@
                     <br/>
                     <br/>
 
-                    <p:dataTable var="disp" value="#{disponibilidadeController.getDispdataModel()}" 
+                    <p:dataTable var="disp" value="#{disponibilidadeController.getDispdataModel(1)}" 
                                  style="margin-bottom:0; text-align: center; width: 600px"
                                  id="dispTable"
                                  rowKey="#{disp.Id}" editable="true"

@@ -82,7 +82,7 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
             Criteria criteria = session.createCriteria(Disponibilidade.class);
             criteria.add(Restrictions.eq("pessoa", pessoa));
             if(quad != 0){
-                criteria.add(Restrictions.eq("quadrimestre", quad));
+                 criteria.createAlias("ofertaDisciplina", "t").add(Restrictions.eq("t.quadrimestre", quad));
             }
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             List resultado = criteria.list();
