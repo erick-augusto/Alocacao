@@ -179,33 +179,14 @@ public class DisciplinaController implements Serializable {
         return qtd;        
     }
     
-    //Retorna a lista de docentes que tem afinidade com determinada disciplina
-    //Usada no Resumo das Afinidades
-//    private List<Docente> docentesDaAfinidade;
-//
-//    public List<Docente> getDocentesDaAfinidade() {
-//
-//        return docentesDaAfinidade;
-//    }
-//    
-//    public void preencherDocentesAfinidade() {
-//
-//        docentesDaAfinidade = new ArrayList<>();
-//        Set<Afinidade> afinidades = selecionada.getAfinidades();
-//        for (Afinidade a : afinidades) {
-//            docentesDaAfinidade.add((Docente) a.getPessoa());
-//        }
-//
-//    }
-    
-    
     //Lista de afinidades dos docentes com aquela disciplina
     private AfinidadesLazyModel afinidadesDaDisciplina;
 
     public AfinidadesLazyModel getAfinidadesDaDisciplina() {
         
         if(afinidadesDaDisciplina == null){
-            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidadeFacade.findAll());
+            List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
+            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
         }
         
         return afinidadesDaDisciplina;
@@ -217,7 +198,8 @@ public class DisciplinaController implements Serializable {
     
     public void preencherAfinidadesDisciplina(){
         
-        afinidadesDaDisciplina = new AfinidadesLazyModel((List<Afinidade>) selecionada.getAfinidades());
+        List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
+            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
         
     }
     

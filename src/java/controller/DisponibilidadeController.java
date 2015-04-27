@@ -98,7 +98,7 @@ public class DisponibilidadeController implements Serializable {
     public List<String> getTipoDisp(Disponibilidade d){
             
             List<String> tp;
-            tp = new ArrayList<String>();
+            tp = new ArrayList<>();
             tp.add("Selecione");
             if(d.getOfertaDisciplina().getT() > 0){
                 tp.add("Teoria");
@@ -140,20 +140,11 @@ public class DisponibilidadeController implements Serializable {
     }
 
     public void onCellEdit(CellEditEvent event) {
-//        Object oldValue = event.getOldValue();
-//        
-//        Object newValue = event.getNewValue();
-//        
-//        int indice = event.getRowIndex();
 
         Disponibilidade d = (Disponibilidade) dispdataModel.getRowData();
 
         disponibilidadeFacade.merge(d);
-
-//        if(newValue != null && !newValue.equals(oldValue)) {
-//            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Cell Changed", "Old: " + oldValue + ", New:" + newValue);
-//            FacesContext.getCurrentInstance().addMessage(null, msg);
-//        }
+        
     }
 
     public void salvarDisponibilidade() {
@@ -168,8 +159,7 @@ public class DisponibilidadeController implements Serializable {
         }
 
         dispdataModel = null;
-
-//        org.primefaces.context.RequestContext.getCurrentInstance().execute("dlg.show();"); 
+        
     }
 
     //------------------------------------Data Model---------------------------------------------------------
@@ -455,5 +445,8 @@ public class DisponibilidadeController implements Serializable {
         dispdataModel = new DisponibilidadeDataModel(disponibilidades);
 
     }
+    
+    
+    
 
 }

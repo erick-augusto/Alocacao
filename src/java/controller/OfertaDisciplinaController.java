@@ -24,6 +24,7 @@ import model.Disciplina;
 import model.Disponibilidade;
 import model.Pessoa;
 import model.OfertaDisciplina;
+import util.DisponibilidadeDataModel;
 import util.OfertaDisciplinaDataModel;
 import util.OfertaDisciplinaLazyModel;
 
@@ -352,14 +353,51 @@ public class OfertaDisciplinaController implements Serializable{
         return JsfUtil.getSelectItems(ofertaDisciplinaFacade.findAll(), true);
     }
 
-    //--------------------------------------------------------------------------------------------------------------
+    //Resumo Fase I--------------------------------------------------------------------------------------------------------------
 
-//    public void recriarModelo() {
-//    
-//        pessoaDataModel = null;
-//
-//    }
+    public int qdtDocentesDisponibilidade(OfertaDisciplina of){
+        
+        of = ofertaDisciplinaFacade.inicializarColecaoDisponibilidades(of);
+        
+        Set<Disponibilidade> disponibilidades = of.getDisponibilidades();
+        
+        return disponibilidades.size();        
+    }
     
+    private DisponibilidadeDataModel docentesPorDisciplina;
+
+    public DisponibilidadeDataModel getDocentesPorDisciplina() {
+        
+        if(docentesPorDisciplina == null){
+            docentesPorDisciplina = new DisponibilidadeDataModel();
+        }
+        
+        return docentesPorDisciplina;
+    }
+
+    public void setDocentesPorDisciplina(DisponibilidadeDataModel docentesPorDisciplina) {
+        this.docentesPorDisciplina = docentesPorDisciplina;
+    }
+    
+//    public AfinidadesLazyModel getAfinidadesDaDisciplina() {
+//        
+//        if(afinidadesDaDisciplina == null){
+//            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidadeFacade.findAll());
+//        }
+//        
+//        return afinidadesDaDisciplina;
+//    }
+//
+//    public void setAfinidadesDaDisciplina(AfinidadesLazyModel afinidadesDaDisciplina) {
+//        this.afinidadesDaDisciplina = afinidadesDaDisciplina;
+//    }
+//    
+//    public void preencherAfinidadesDisciplina(){
+//        
+//        afinidadesDaDisciplina = new AfinidadesLazyModel((List<Afinidade>) selecionada.getAfinidades());
+//        
+//    }
+
     
     //Cadastro-------------------------------------------------------------------------------------------
 
@@ -377,8 +415,8 @@ public class OfertaDisciplinaController implements Serializable{
                 BufferedReader lerArq = new BufferedReader(arq);
 
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê a primeira linha 
-                // a variável "linha" recebe o valor "null" quando o processo 
+                // lê d primeira linha 
+                // d variável "linha" recebe o valor "null" quando o processo 
                 // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
@@ -447,8 +485,8 @@ public class OfertaDisciplinaController implements Serializable{
                 BufferedReader lerArq = new BufferedReader(arq);
 
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê a primeira linha 
-                // a variável "linha" recebe o valor "null" quando o processo 
+                // lê d primeira linha 
+                // d variável "linha" recebe o valor "null" quando o processo 
                 // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
@@ -517,8 +555,8 @@ public class OfertaDisciplinaController implements Serializable{
                 BufferedReader lerArq = new BufferedReader(arq);
 
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê a primeira linha 
-                // a variável "linha" recebe o valor "null" quando o processo 
+                // lê d primeira linha 
+                // d variável "linha" recebe o valor "null" quando o processo 
                 // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
@@ -590,8 +628,8 @@ public class OfertaDisciplinaController implements Serializable{
                 BufferedReader lerArq = new BufferedReader(arq);
 
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê a primeira linha 
-                // a variável "linha" recebe o valor "null" quando o processo 
+                // lê d primeira linha 
+                // d variável "linha" recebe o valor "null" quando o processo 
                 // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
@@ -650,8 +688,8 @@ public class OfertaDisciplinaController implements Serializable{
                 BufferedReader lerArq = new BufferedReader(arq);
 
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê a primeira linha 
-                // a variável "linha" recebe o valor "null" quando o processo 
+                // lê d primeira linha 
+                // d variável "linha" recebe o valor "null" quando o processo 
                 // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
@@ -710,8 +748,8 @@ public class OfertaDisciplinaController implements Serializable{
                 BufferedReader lerArq = new BufferedReader(arq);
 
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê a primeira linha 
-                // a variável "linha" recebe o valor "null" quando o processo 
+                // lê d primeira linha 
+                // d variável "linha" recebe o valor "null" quando o processo 
                 // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
@@ -773,8 +811,8 @@ public class OfertaDisciplinaController implements Serializable{
                     BufferedReader lerArq = new BufferedReader(arq);
 
                     String linha = lerArq.readLine(); //cabeçalho
-                    // lê a primeira linha 
-                    // a variável "linha" recebe o valor "null" quando o processo 
+                    // lê d primeira linha 
+                    // d variável "linha" recebe o valor "null" quando o processo 
                     // de repetição atingir o final do arquivo texto 
 
                     linha = lerArq.readLine();
@@ -835,8 +873,8 @@ public class OfertaDisciplinaController implements Serializable{
                         BufferedReader lerArq = new BufferedReader(arq);
 
                         String linha = lerArq.readLine(); //cabeçalho
-                        // lê a primeira linha 
-                        // a variável "linha" recebe o valor "null" quando o processo 
+                        // lê d primeira linha 
+                        // d variável "linha" recebe o valor "null" quando o processo 
                         // de repetição atingir o final do arquivo texto 
 
                         linha = lerArq.readLine();
@@ -898,8 +936,8 @@ public class OfertaDisciplinaController implements Serializable{
                 BufferedReader lerArq = new BufferedReader(arq);
 
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê a primeira linha 
-                // a variável "linha" recebe o valor "null" quando o processo 
+                // lê d primeira linha 
+                // d variável "linha" recebe o valor "null" quando o processo 
                 // de repetição atingir o final do arquivo texto 
 
                 linha = lerArq.readLine();
