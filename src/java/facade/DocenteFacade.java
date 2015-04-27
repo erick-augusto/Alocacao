@@ -45,18 +45,62 @@ public class DocenteFacade extends AbstractFacade<Docente>{
 
             Session session = getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Docente.class);
-            
 
             if (!centros.isEmpty()) {
 
-                for (String centro : centros) {
-                    criteria.add(Restrictions.eq("centro", centro));
-                    criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                    List resultado = criteria.list();
-                    docentes.addAll(resultado);
+                if (!areas.isEmpty()) {
+                    for (String centro : centros) {
+                        for (String area : areas) {
+                            criteria.add(Restrictions.eq("centro", centro));
+                            criteria.add(Restrictions.eq("areaAtuacao", area));
+                            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                            List resultado = criteria.list();
+                            docentes.addAll(resultado);
+                        }
+
+                    }
+                } else {
+
+                    for (String centro : centros) {
+
+                        criteria.add(Restrictions.eq("centro", centro));
+                        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                        List resultado = criteria.list();
+                        docentes.addAll(resultado);
+
+                    }
+
                 }
 
+            } else {
+                if (!areas.isEmpty()) {
+
+                    for (String area : areas) {
+                        criteria.add(Restrictions.eq("areaAtuacao", area));
+                        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                        List resultado = criteria.list();
+                        docentes.addAll(resultado);
+                    }
+
+                }
             }
+
+            return docentes;
+
+        } catch (HibernateException e) {
+            return null;
+        }
+
+    }
+    
+    public List<Docente> findByArea(List<String> areas) {
+
+        List<Docente> docentes = new ArrayList<>();
+
+        try {
+
+            Session session = getSessionFactory().openSession();
+            Criteria criteria = session.createCriteria(Docente.class);
 
             if (!areas.isEmpty()) {
 
@@ -76,6 +120,5 @@ public class DocenteFacade extends AbstractFacade<Docente>{
         }
 
     }
-
 
 }

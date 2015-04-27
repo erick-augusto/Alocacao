@@ -100,10 +100,7 @@ public class DocenteController implements Serializable{
         return qtd;
         
     }
-    
-   
-    
-    
+ 
     //Afinidades de acordo com o docente
     private AfinidadeDataModel afinidadesDoDocente;
     
@@ -122,17 +119,6 @@ public class DocenteController implements Serializable{
     public AfinidadeDataModel getAfinidadesDoDocente() {
         
         if(afinidadesDoDocente == null){
-//            Set<Afinidade> all = docente.getAfinidades();
-//            Set<Afinidade> adicionadas = new HashSet<>();
-//            for(Afinidade a: all){
-//                if(a.getEstado().equals("Adicionada")){
-//                    adicionadas.add(a);
-//                }
-//            }
-//            
-//            List<Afinidade> afs = new ArrayList<>();
-//            afs.addAll(adicionadas);
-//            afinidadesDoDocente = new AfinidadesLazyModel(afs);
             
             afinidadesDoDocente = new AfinidadeDataModel(afinidadeFacade.findAll());
         }
@@ -232,18 +218,17 @@ public class DocenteController implements Serializable{
     
     public void filtrar() {
 
-        List<Docente> docentesFiltrados = docenteFacade.findByCentroArea(filtrosSelecCentros, filtrosSelecAreaAtuacao);
+        List<Docente> docentesFiltrados = docenteFacade.findByArea(filtrosSelecAreaAtuacao);
         
         docenteDataModel = new DocenteDataModel(docentesFiltrados);
+        filtrosSelecAreaAtuacao = null;
 
     }
     
     public void limparFiltro(){
-        
-        //filtros2 = null;
+     
         filtrosSelecAreaAtuacao = null;
         filtrosSelecCentros = null;
-//        filtros = null;
         docenteDataModel = null;
         
     }
@@ -271,12 +256,17 @@ public class DocenteController implements Serializable{
         docenteLazyModel = new PessoaLazyModel(pessoaFacade.listDocentes());
         
         filtrosCentros = new ArrayList<>();
-        filtrosCentros.add("CMCC");
-        filtrosCentros.add("CECS");
         filtrosCentros.add("CCNH");
-        
+        filtrosCentros.add("CECS");
+        filtrosCentros.add("CMCC");
+   
         filtrosAreaAtuacao = new ArrayList<>();
+        filtrosAreaAtuacao.add("Ciencia da Computacao");
         filtrosAreaAtuacao.add("Cognicao");
+        filtrosAreaAtuacao.add("Ensino de Matematica");
+        filtrosAreaAtuacao.add("Matematica");
+        
+        
     }
     
     
@@ -383,6 +373,54 @@ public class DocenteController implements Serializable{
         JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
 
     }
+    
+    public void cadastrarDocentesCMCC() {
+
+        String[] palavras;
+
+        try {
+
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/Docentes CMCC.csv"), "UTF-8"))) {
+                
+                String linha = lerArq.readLine(); //cabeçalho
+                
+                linha = lerArq.readLine();
+                
+                while (linha != null) {
+                    
+                    linha = linha.replaceAll("\"", "");
+                    
+                    palavras = linha.split("_");
+                    
+                    List<Docente> docentes = docenteFacade.findByName(palavras[0]);
+                    
+                    if (docentes.isEmpty()) {
+                        
+                        Docente d = new Docente();
+                        
+                        d.setNome(palavras[0]);
+                        d.setSiape(palavras[1]);
+                        d.setEmail(palavras[4]);
+                        d.setCentro(palavras[2]);
+                        d.setAreaAtuacao(palavras[3]);
+                        d.setAdm(false);
+                        
+                        docenteFacade.save(d);
+                        
+                    }
+                    
+                    linha = lerArq.readLine();
+                }
+            } 
+
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+        }
+        
+        docenteLazyModel = null;
+        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
+
+    }
   
     private String trataNome(String nome) { 
         
@@ -407,5 +445,70 @@ public class DocenteController implements Serializable{
 return retorno;
 
 } 
+    
+    public void cadastrarArea(){
+        
+        String[] palavras;
+
+        try {
+
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/professores.csv"), "UTF-8"))) {
+                
+                String linha = lerArq.readLine(); //cabeçalho
+                
+                linha = lerArq.readLine();
+                
+                while (linha != null) {
+                    
+                    linha = linha.replaceAll("\"", "");
+                    
+                    palavras = linha.split("_");
+                    
+                    List<Docente> docentes = docenteFacade.findByName(trataNome(palavras[0]));
+                    
+                    if (!docentes.isEmpty()) {
+                        
+                        Docente d = docentes.get(0);
+                        
+                        d.setAreaAtuacao(palavras[1]);
+                        
+                        docenteFacade.edit(d);
+                        
+                    }
+                    
+                    linha = lerArq.readLine();
+                }
+            } 
+
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+        }
+        
+        docenteLazyModel = null;
+        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
+        
+        
+    }
+    
+    public List<String> completeArea(String query){
+        
+        query = query.toLowerCase();
+        
+        List<String> areas = new ArrayList<>();
+        areas.add("Ciência da Computação");
+        areas.add("Cognição");
+        areas.add("Ensino de Matemática");
+        areas.add("Matemática");
+        
+        List<String> filteredAreas = new ArrayList<>();
+
+        for (String a : areas ) {
+            if (a.toLowerCase().startsWith(query)) {
+                filteredAreas.add(a);
+            }
+        }
+        return filteredAreas;
+        
+    }
    
 }

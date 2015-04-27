@@ -130,8 +130,8 @@
 
                         <p:tab title="Docentes">
                             <h:panelGrid columns="1" cellpadding="10">
-
-                                <p:dataTable var="docente" value="#{docenteController.docenteLazyModel}" paginator="true" rows="5"
+                               
+                                    <p:dataTable var="docente" value="#{docenteController.docenteLazyModel}" paginator="true" rows="5"
                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                              rowsPerPageTemplate="5,10,15" 
                                              selectionMode="single" 
@@ -148,6 +148,9 @@
                                     </p:column>
                                     <p:column headerText="Centro" style="width: 10%">
                                         <h:outputText value="#{docente.centro}" />
+                                    </p:column>
+                                    <p:column headerText="Área" style="width: 10%">
+                                        <h:outputText value="#{docente.areaAtuacao}" />
                                     </p:column>
                                     <p:column headerText="E-mail">
                                         <h:outputText value="#{docente.email}" />
@@ -179,10 +182,16 @@
 
 
                                 </p:dataTable>
+                                
 
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{docenteController.cadastrarDocentes()}"
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{docenteController.cadastrarDocentesCMCC()}"
                                                  style="width: 250px; height: 25px; font-size: small" 
                                                  value="Cadastrar docentes por .csv"  update="@all" immediate="true">
+                                </p:commandButton>
+                                
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{docenteController.cadastrarArea()}"
+                                                 style="width: 250px; height: 25px; font-size: small" 
+                                                 value="Cadastrar areas conhecimento"  update="@all" immediate="true">
                                 </p:commandButton>
 
 
@@ -200,6 +209,11 @@
                                     <p:autoComplete id="completeCentro" forceSelection="true" 
                                                     value="#{docenteController.docenteSalvar.centro}" 
                                                     completeMethod="#{pessoaController.completeCentro}" size="7" />
+                                    
+                                    <h:outputText value="Área: "/>
+                                    <p:autoComplete id="completeArea" forceSelection="true" 
+                                                    value="#{docenteController.docenteSalvar.areaAtuacao}" 
+                                                    completeMethod="#{docenteController.completeArea}"/>
 
                                     <h:outputText value="Email: "/>
                                     <h:inputText value="#{docenteController.docenteSalvar.email}"/>
