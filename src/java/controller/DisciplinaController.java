@@ -78,7 +78,7 @@ public class DisciplinaController implements Serializable {
     //Disciplinas escolhidas
     private List<Disciplina> escolhidas;
     
-
+    
     //----------------------------------------Getters e Setters--------------------------------------------------------------------------------------------------------------
     
     public Disciplina getDisciplina() {

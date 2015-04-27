@@ -33,12 +33,12 @@ public class DisponibilidadeController implements Serializable {
     private Disponibilidade disponibilidade;
 
     private Pessoa usuario;
-
+    
     private List<String> ordem;
 
     @EJB
     private OfertaDisciplinaFacade turmasFacade;
-
+    
     @EJB
     private DisponibilidadeFacade disponibilidadeFacade;
 
@@ -79,7 +79,7 @@ public class DisponibilidadeController implements Serializable {
     public void setUsuario(Pessoa usuario) {
         this.usuario = usuario;
     }
-
+    
     public List<String> getOrdem() {
 
         int tamanho = usuario.getDisponibilidades().size();
@@ -95,6 +95,24 @@ public class DisponibilidadeController implements Serializable {
         return ordem;
     }
 
+    public List<String> getTipoDisp(Disponibilidade d){
+            
+            List<String> tp;
+            tp = new ArrayList<String>();
+            tp.add("Selecione");
+            if(d.getOfertaDisciplina().getT() > 0){
+                tp.add("Teoria");
+            }
+            if(d.getOfertaDisciplina().getP() > 0){
+                tp.add("Prática");
+            }
+            if(d.getOfertaDisciplina().getP() > 0  && d.getOfertaDisciplina().getT() > 0 ){
+                tp.add("Teoria & Prática");
+            }
+            return tp;
+        
+    }
+    
     public List<String> getOrdem(Long quad) {
 
         int tamanho = 0;
