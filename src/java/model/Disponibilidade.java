@@ -46,12 +46,14 @@ public class Disponibilidade implements Serializable {
     private Id id = new Id();
 
     private String ordemPreferencia;
-
+    
     //Docente de teoria ou pratica ou ambos
     //T-P
     //T
     //P
-    private String funcao;
+   
+    private String tp;
+    
 
     @ManyToOne
     private Pessoa pessoa;
@@ -74,8 +76,8 @@ public class Disponibilidade implements Serializable {
         this.id.turmaId = oD.getID();
 
         //Integridade Referencial
-        pessoa.getDisponibilidades().add(this);
-        ofertaDisciplina.getDisponibilidades().add(this);
+        pessoa.getDisponibilidades().add(Disponibilidade.this);
+        ofertaDisciplina.getDisponibilidades().add(Disponibilidade.this);
     }
 
     public Id getId() {
@@ -93,15 +95,7 @@ public class Disponibilidade implements Serializable {
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
     }
-
-    public String getFuncao() {
-        return funcao;
-    }
-
-    public void setFuncao(String funcao) {
-        this.funcao = funcao;
-    }
-
+    
     public OfertaDisciplina getOfertaDisciplina() {
         return ofertaDisciplina;
     }
@@ -118,6 +112,14 @@ public class Disponibilidade implements Serializable {
 
     public void setOrdemPreferencia(String ordemPreferencia) {
         this.ordemPreferencia = ordemPreferencia;
+    }
+
+    public String getTp() {
+        return tp;
+    }
+
+    public void setTp(String tp) {
+        this.tp = tp;
     }
 
 }
