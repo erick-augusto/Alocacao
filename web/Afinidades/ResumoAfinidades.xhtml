@@ -11,7 +11,7 @@
     </h:head>
     <h:body>
         <h:outputStylesheet library="css" name="style.css" />
-        <h:form>
+        <h:form  prependId="false">
             <p:layout fullPage="true"> 
 
                 <p:layoutUnit style="text-align:center" position="north" size="65"  resizable="true" 
@@ -87,7 +87,7 @@
                                                  rowKey="#{disciplina.ID}"
                                                  style="width: 700px" >
 
-                                        <p:ajax event="rowSelectRadio"/> 
+                                        <p:ajax event="rowSelectRadio" update="disciplinasTable"/> 
 
 
 
@@ -104,45 +104,67 @@
 
                                     <p:commandButton id="viewDocentes" style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
                                                      value="Ver detalhes" actionListener="#{disciplinaController2.preencherAfinidadesDisciplina()}"
-                                                     immediate="true" oncomplete="PF('afinidadeDialog').show();" icon="ui-icon-search"> 
+                                                     immediate="true" oncomplete="PF('afinidadeDialog').show();" icon="ui-icon-search"
+                                                     update ="dialogDisciplina" > 
                                     </p:commandButton>
 
                                 </h:panelGrid>
 
 
 
-                                <p:dialog header="Afinidades da disciplina" widgetVar="afinidadeDialog" dynamic="true"
-                                          draggable="false" resizable="false" maximizable="true" showEffect="fade">
+                            <p:dialog id="dialogDisciplina" header="Afinidades da disciplina" widgetVar="afinidadeDialog" 
+                                      dynamic="true" draggable="false" resizable="true" maximizable="true" showEffect="fade" 
+                                      closable="false">
 
-                                    <p:dataTable var="af" value="#{disciplinaController2.afinidadesDaDisciplina}" paginator="true" rows="10"
-                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                 rowsPerPageTemplate="5,10,15"  id="afinidadeTable" lazy="true"
-                                                 emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
-                                                 style="width: 800px; " 
-                                                 styleClass="panelCenter" 
-                                                 paginatorPosition="top"
-                                                 rowStyleClass="#{af.estado eq 'Removida' ? 'colored' : null}" >
+                                
+                                <h:panelGrid columns="1">
+                                    
+                                    <h:form>
+                                        <center>
+                                      
+                                        
+                                        <p:dataTable var="af" value="#{disciplinaController2.afinidadesDaDisciplina}" paginator="true" rows="10"
+                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                     rowsPerPageTemplate="5,10,15"  id="afinidadeTable" lazy="true"
+                                                     emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
+                                                     style="width: 800px; " 
+                                                     styleClass="panelCenter" 
+                                                     paginatorPosition="top"
+                                                     rowStyleClass="#{af.estado eq 'Removida' ? 'colored' : null}" >
 
-                                        <p:column headerText="Docente">
-                                            <h:outputText value="#{af.pessoa.nome}" />
-                                        </p:column>
-                                        <p:column headerText="Disciplina">
-                                            <h:outputText value="#{af.disciplina.nome}" />
-                                        </p:column>
-                                        <p:column headerText="Data">
-                                            <h:outputText value="#{af.dataAcao}">
-                                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
-                                            </h:outputText>
-                                        </p:column>
-                                        <p:column headerText="Estado" sortBy="#{af.estado}">
-                                            <h:outputText value="#{af.estado}"/>
-                                        </p:column>
+                                            <p:column headerText="Docente">
+                                                <h:outputText value="#{af.pessoa.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Disciplina">
+                                                <h:outputText value="#{af.disciplina.nome}" />
+                                            </p:column>
+                                            <p:column headerText="Data">
+                                                <h:outputText value="#{af.dataAcao}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                                </h:outputText>
+                                            </p:column>
+                                            <p:column headerText="Estado" sortBy="#{af.estado}">
+                                                <h:outputText value="#{af.estado}"/>
+                                            </p:column>
 
-                                    </p:dataTable>
+                                        </p:dataTable>
+                                    </center>
+                                    </h:form>
+                                    
 
-                                </p:dialog>
+                                    
 
-                            
+                                </h:panelGrid>
+                                
+                                <center>
+                                    <p:commandButton style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
+                                                         value="Ok" actionListener="#{disciplinaController2.limparSelecao()}"
+                                                         oncomplete="PF('afinidadeDialog').hide();" update="disciplinasTable"> 
+                                        </p:commandButton>
+                                </center>
+                                
+
+                            </p:dialog>
 
                         </p:tab>
                         
@@ -151,7 +173,8 @@
                            
 
                                 <p:panel id="toggleableD" header="Filtros" toggleable="true" toggleSpeed="550" closeSpeed="500" 
-                                         widgetVar="panelFiltroDocente" style="margin-bottom:20px; width: 350px; font-size: medium; " collapsed="true" closeTitle="Painel">
+                                         widgetVar="panelFiltroDocente" style="margin-bottom:20px; width: 350px; font-size: medium; "
+                                         collapsed="true" closeTitle="Painel">
 
                                     <h:panelGrid columns="2"  cellspacing="10">
 
@@ -207,18 +230,25 @@
                                     </p:dataTable>
 
                                     <p:commandButton id="viewDisciplinas" style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                                     value="Ver detalhes"
-                                                     immediate="true" oncomplete="PF('afinidadeDocenteDialog').show();" icon="ui-icon-search"> 
+                                                     value="Ver detalhes" actionListener="#{docenteController.preencherAfinidadesDoDocente()}"
+                                                     immediate="true" oncomplete="PF('afinidadeDocenteDialog').show();" icon="ui-icon-search"
+                                                     update="dialogDocente" > 
                                     </p:commandButton>
-
                                 </h:panelGrid>
 
 
 
-                                <p:dialog header="Afinidades do docente" widgetVar="afinidadeDocenteDialog" dynamic="true"
+                                <p:dialog  id="dialogDocente" header="Afinidades do docente" widgetVar="afinidadeDocenteDialog" dynamic="true"
                                           draggable="false" resizable="false" maximizable="true" showEffect="fade">
 
-                                    <p:dataTable var="af" value="#{docenteController.afinidadesDoDocente}" paginator="true" rows="10"
+                                          <p:commandButton style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
+                                                           value="Ver adicionadas" actionListener="#{docenteController.verSoAdicionadas()}"
+                                                     immediate="true"  
+                                                     update="afinidadeTableDocente" > 
+                                    </p:commandButton>
+                                    
+                                    
+                                        <p:dataTable var="af" value="#{docenteController.afinidadesDoDocente}" paginator="true" rows="10"
                                                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                  rowsPerPageTemplate="5,10,15"  id="afinidadeTableDocente" lazy="true"
                                                  emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
@@ -240,7 +270,7 @@
                                         </p:column>
 
                                     </p:dataTable>
-
+                              
                                 </p:dialog>
 
                             

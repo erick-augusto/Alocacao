@@ -145,9 +145,6 @@
 
                         </p:tabView>
                     </p:panel>
-                    
-                    
-                    
 
                     <p:panel id="painelDataTable" style="border-color: transparent" >
 
@@ -161,13 +158,13 @@
                                      paginatorPosition="top">
 
                             <p:column headerText="Disciplina">
-                                <h:outputText value="#{d.turma.disciplina.nome}" />
+                                <h:outputText value="#{d.ofertaDisciplina.disciplina.nome}" />
                             </p:column>
                             <p:column headerText="Turno">
-                                <h:outputText value="#{d.turma.turno}" />
+                                <h:outputText value="#{d.ofertaDisciplina.turno}" />
                             </p:column>
                             <p:column headerText="Câmpus">
-                                <h:outputText value="#{d.turma.campus}"/>
+                                <h:outputText value="#{d.ofertaDisciplina.campus}"/>
                             </p:column>
                             <p:column headerText="Docente">
                                 <h:outputText value="#{d.pessoa.nome}"/>
@@ -176,7 +173,7 @@
                                 <h:outputText value="#{d.ordemPreferencia}"/>
                             </p:column>
                             <p:column headerText="Quadrimestre">
-                                <h:outputText value="#{d.quadrimestre}"/>
+                                <h:outputText value="#{d.ofertaDisciplina.quadrimestre}"/>
                             </p:column>
                         </p:dataTable>
 

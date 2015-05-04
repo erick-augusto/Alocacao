@@ -20,6 +20,7 @@ import model.Afinidade;
 import model.Docente;
 import model.Pessoa;
 import util.AfinidadeDataModel;
+import util.AfinidadesLazyModel;
 import util.DocenteDataModel;
 import util.PessoaLazyModel;
 
@@ -118,10 +119,10 @@ public class DocenteController implements Serializable{
 
     public AfinidadeDataModel getAfinidadesDoDocente() {
         
-        if(afinidadesDoDocente == null){
-            
-            afinidadesDoDocente = new AfinidadeDataModel(afinidadeFacade.findAll());
-        }
+//        if(afinidadesDoDocente == null){
+//            
+//            afinidadesDoDocente = new AfinidadeDataModel(afinidadeFacade.findAll());
+//        }
         
         return afinidadesDoDocente;
     }
@@ -132,25 +133,51 @@ public class DocenteController implements Serializable{
     
     public void preencherAfinidadesDoDocente(){
         
-        if(incluirRemovidas){
-            afinidadesDoDocente = new AfinidadeDataModel((List<Afinidade>) docente.getAfinidades());
-        }
+//        if(incluirRemovidas){
+//            afinidadesDoDocente = new AfinidadeDataModel((List<Afinidade>) docente.getAfinidades());
+//        }
+//        
+//        else{
+//            
+//            Set<Afinidade> all = docente.getAfinidades();
+//            Set<Afinidade> adicionadas = new HashSet<>();
+//            for(Afinidade a: all){
+//                if(a.getEstado().equals("Adicionada")){
+//                    adicionadas.add(a);
+//                }
+//            }
+//            
+//            List<Afinidade> afs = new ArrayList<>();
+//            afs.addAll(adicionadas);
+//            afinidadesDoDocente = new AfinidadeDataModel(afs);
+//            
+//        }
         
-        else{
-            
-            Set<Afinidade> all = docente.getAfinidades();
-            Set<Afinidade> adicionadas = new HashSet<>();
-            for(Afinidade a: all){
-                if(a.getEstado().equals("Adicionada")){
-                    adicionadas.add(a);
-                }
-            }
-            
-            List<Afinidade> afs = new ArrayList<>();
-            afs.addAll(adicionadas);
-            afinidadesDoDocente = new AfinidadeDataModel(afs);
-            
+        List<Afinidade> afinidades;
+        if (docente != null) {
+            afinidades = new ArrayList<>(docente.getAfinidades());
+
+        } else {
+            afinidades = new ArrayList<>();
         }
+
+        afinidadesDoDocente = new AfinidadeDataModel(afinidades);
+     
+    }
+    
+    public void verSoAdicionadas(){
+        
+        List<Afinidade> afinidades = new ArrayList<>(docente.getAfinidades());
+        List<Afinidade> adicionadas  = new ArrayList<>();
+        
+        for(Afinidade a: afinidades){
+            if(a.getEstado().equals("Adicionada")){
+                adicionadas.add(a);
+            }
+        }
+
+        afinidadesDoDocente = new AfinidadeDataModel(adicionadas);
+        
         
         
     }

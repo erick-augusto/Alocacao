@@ -22,7 +22,6 @@ import javax.faces.convert.FacesConverter;
 import javax.inject.Named;
 import model.Afinidade;
 import model.Disciplina;
-import model.Docente;
 import model.Pessoa;
 import util.AfinidadesLazyModel;
 import util.DisciplinaDataModel;
@@ -183,12 +182,20 @@ public class DisciplinaController implements Serializable {
     private AfinidadesLazyModel afinidadesDaDisciplina;
 
     public AfinidadesLazyModel getAfinidadesDaDisciplina() {
-        
-        if(afinidadesDaDisciplina == null){
-            List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
-            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
-        }
-        
+
+//        if (afinidadesDaDisciplina == null) {
+//
+//            if (selecionada != null) {
+//                List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
+//                afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
+//            }
+////            else{
+////                List<Afinidade> afinidades = new ArrayList<>();
+////                afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
+//            }
+//
+////        }
+
         return afinidadesDaDisciplina;
     }
 
@@ -196,13 +203,24 @@ public class DisciplinaController implements Serializable {
         this.afinidadesDaDisciplina = afinidadesDaDisciplina;
     }
     
-    public void preencherAfinidadesDisciplina(){
-        
-        List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
-            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
-        
+    public void preencherAfinidadesDisciplina() {
+
+        List<Afinidade> afinidades;
+        if (selecionada != null) {
+            afinidades = new ArrayList<>(selecionada.getAfinidades());
+
+        } else {
+            afinidades = new ArrayList<>();
+        }
+
+        afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
+
     }
     
+    public void limparSelecao(){
+        selecionada = null;
+        afinidadesDaDisciplina = null;
+    }
     
     
     private Disciplina selecionada;
@@ -478,7 +496,6 @@ public class DisciplinaController implements Serializable {
     }
     
     public Disciplina buscar(Long id) {
-
         return disciplinaFacade.find(id);
     }
 
@@ -486,7 +503,6 @@ public class DisciplinaController implements Serializable {
         return disciplinaFacade.findAll();
     }
  
-
     //---------------------------------------Páginas web------------------------------------------------------------
     public String prepareCreate(int i) {
         disciplina = new Disciplina();

@@ -116,31 +116,26 @@ public class OfertaDisciplinaFacade extends AbstractFacade<OfertaDisciplina>{
             List<OfertaDisciplina> turmas = new ArrayList<>();
 
             Session session = getSessionFactory().openSession();
-            
 
-            if(!disciplinas.isEmpty()){
-                
+            if (!disciplinas.isEmpty()) {
+
                 for (Disciplina d : disciplinas) {
 
                     Criteria criteria = session.createCriteria(OfertaDisciplina.class);
-                    
-                if (!campus.equals("")) {
-                    criteria.add(Restrictions.eq("campus", campus));
-                }
 
-                if (!turno.equals("")) {
-                    criteria.add(Restrictions.eq("turno", turno));
-                }
-                
-//                    Query query = session.createQuery("from OfertaDisciplina t where t.disciplina_disciplina_id = :id ");
-//                    query.setParameter("id", d.getID());
-                criteria.add(Restrictions.eq("disciplina", d));
-                criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
-                List resultado = criteria.list();
-                
-//                    List resultado = query.list();
+                    if (!campus.equals("")) {
+                        criteria.add(Restrictions.eq("campus", campus));
+                    }
+
+                    if (!turno.equals("")) {
+                        criteria.add(Restrictions.eq("turno", turno));
+                    }
+
+                    criteria.add(Restrictions.eq("disciplina", d));
+                    criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
+                    List resultado = criteria.list();
                     turmas.addAll(resultado);
-            }
+                }
             }
             
             else{
@@ -155,7 +150,10 @@ public class OfertaDisciplinaFacade extends AbstractFacade<OfertaDisciplina>{
                     criteria.add(Restrictions.eq("turno", turno));
                 }
                 
-                criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
+                if(quadrimestre != 0){
+                    criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
+                }
+                
                 List resultado = criteria.list();
                 turmas.addAll(resultado);
                 

@@ -1,8 +1,6 @@
 package facade;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

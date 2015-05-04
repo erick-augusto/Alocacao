@@ -64,6 +64,8 @@ public class OfertaDisciplinaController implements Serializable{
     
     private String turno;
     
+    private int quadrimestre;
+    
     
     //-------------------------------------Getters e Setters--------------------------------------------------------
 
@@ -122,7 +124,32 @@ public class OfertaDisciplinaController implements Serializable{
     public void setTurno(String turno) {
         this.turno = turno;
     }
+
+    public int getQuadrimestre() {
+        return quadrimestre;
+    }
+
+    public void setQuadrimestre(int quadrimestre) {
+        this.quadrimestre = quadrimestre;
+    }
     
+    //Filtrar as disponibilidades por disciplina
+    public void filtrarDisp() {
+
+        List<OfertaDisciplina> ofertas;
+
+        List<Disciplina> d = new ArrayList<>();
+        
+        ofertas = ofertaDisciplinaFacade.filtrarDTCQ(d, turno, campus, quadrimestre);
+
+        dataModel = new OfertaDisciplinaDataModel(ofertas);
+
+    }
+
+    public void limparFiltroDisp() {
+
+        dataModel = null;
+    }
     
     
 
@@ -316,20 +343,7 @@ public class OfertaDisciplinaController implements Serializable{
             t = ofertaDisciplinaFacade.inicializarColecaoDisponibilidades(t);
             Set<Disponibilidade> ds = t.getDisponibilidades();
             Pessoa atual;
-
-//            for (Disponibilidade d : ds) {
-//                oferta.getDisponibilidades().remove(d);
-//                atual = d.getPessoa();
-//                atual.getDisponibilidades().remove(d);
-//                pessoaFacade.edit(atual);
-//                if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
-//                    LoginBean.setUsuario(atual);
-//                }
-//                disponibilidadeFacade.remove(d);
-//
-//            }
             ofertaDisciplinaFacade.remove(t);
-
         }
         
         if(q == 1){
@@ -343,7 +357,6 @@ public class OfertaDisciplinaController implements Serializable{
                 ofertas3LazyModel = null;
             }
         }
-        
         
     }
     
@@ -379,25 +392,6 @@ public class OfertaDisciplinaController implements Serializable{
         this.docentesPorDisciplina = docentesPorDisciplina;
     }
     
-//    public AfinidadesLazyModel getAfinidadesDaDisciplina() {
-//        
-//        if(afinidadesDaDisciplina == null){
-//            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidadeFacade.findAll());
-//        }
-//        
-//        return afinidadesDaDisciplina;
-//    }
-//
-//    public void setAfinidadesDaDisciplina(AfinidadesLazyModel afinidadesDaDisciplina) {
-//        this.afinidadesDaDisciplina = afinidadesDaDisciplina;
-//    }
-//    
-//    public void preencherAfinidadesDisciplina(){
-//        
-//        afinidadesDaDisciplina = new AfinidadesLazyModel((List<Afinidade>) selecionada.getAfinidades());
-//        
-//    }
-
     
     //Cadastro-------------------------------------------------------------------------------------------
 
@@ -1000,47 +994,9 @@ public class OfertaDisciplinaController implements Serializable{
         return buscar(key);
         
     }
-    
-    
-
-    
-    //AutoComplete----------------------------------------------------------------------------------------
-//    public List<Pessoa> completePessoa(String query) {
-//        
-//       query = query.toLowerCase();
-//        
-//        List<Pessoa> allPessoas = this.listarTodas();
-//        List<Pessoa> filteredPessoas = new ArrayList<>();
-//
-//        for (Pessoa p : allPessoas) {
-//            if (p.getNome().toLowerCase().startsWith(query)) {
-//                filteredPessoas.add(p);
-//            }
-//        }
-//        return filteredPessoas;
-//    }
-
-//    public List<Disciplina> completeDisciplina(String query) {
-//        List<Disciplina> allDisciplinas = this.listarTodas();
-//        List<Disciplina> filteredDisciplinas = new ArrayList<>();
-//
-//        for (int i = 0; i < allDisciplinas.size(); i++) {
-//            Disciplina d = allDisciplinas.get(i);
-//            if (d.getNome().toLowerCase().contains(query)) {
-//                filteredDisciplinas.add(d);
-//            }
-//        }
-//
-//        return filteredDisciplinas;
-//    }
-
-    //----------------------------------------------------------------------------------------------------
-
-    
-    
+        
     //---------------------------------------------------------------------------------------------------
     
-
     @FacesConverter(forClass = OfertaDisciplina.class)
     public static class OfertaDisciplinaControllerConverter implements Converter {
 
