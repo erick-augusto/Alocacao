@@ -20,7 +20,6 @@ import model.Afinidade;
 import model.Docente;
 import model.Pessoa;
 import util.AfinidadeDataModel;
-import util.AfinidadesLazyModel;
 import util.DocenteDataModel;
 import util.PessoaLazyModel;
 
@@ -102,10 +101,12 @@ public class DocenteController implements Serializable{
         
     }
  
-    //Afinidades de acordo com o docente
+    //Afinidades de acordo com o docente----------------------------------------------------------------
     private AfinidadeDataModel afinidadesDoDocente;
     
     private AfinidadeDataModel afinidadesFiltradas;
+    
+    private boolean mostrarAdicionadas;
 
     public AfinidadeDataModel getAfinidadesFiltradas() {
         return afinidadesFiltradas;
@@ -114,6 +115,17 @@ public class DocenteController implements Serializable{
     public void setAfinidadesFiltradas(AfinidadeDataModel afinidadesFiltradas) {
         this.afinidadesFiltradas = afinidadesFiltradas;
     }
+
+    public boolean isMostrarAdicionadas() {
+        return mostrarAdicionadas;
+    }
+
+    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
+        this.mostrarAdicionadas = mostrarAdicionadas;
+    }
+
+    
+    
     
     
 
@@ -165,21 +177,23 @@ public class DocenteController implements Serializable{
      
     }
     
-    public void verSoAdicionadas(){
-        
+    public void verSoAdicionadas() {
+
         List<Afinidade> afinidades = new ArrayList<>(docente.getAfinidades());
-        List<Afinidade> adicionadas  = new ArrayList<>();
-        
-        for(Afinidade a: afinidades){
-            if(a.getEstado().equals("Adicionada")){
-                adicionadas.add(a);
+        List<Afinidade> adicionadas = new ArrayList<>();
+
+        if (mostrarAdicionadas) {
+            for (Afinidade a : afinidades) {
+                if (a.getEstado().equals("Adicionada")) {
+                    adicionadas.add(a);
+                }
             }
+
+            afinidadesDoDocente = new AfinidadeDataModel(adicionadas);
+        } else {
+            afinidadesDoDocente = new AfinidadeDataModel(afinidades);
         }
 
-        afinidadesDoDocente = new AfinidadeDataModel(adicionadas);
-        
-        
-        
     }
     
     public void falseIncluirRemovidas(){

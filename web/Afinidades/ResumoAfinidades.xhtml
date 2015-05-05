@@ -238,17 +238,30 @@
 
 
 
-                                <p:dialog  id="dialogDocente" header="Afinidades do docente" widgetVar="afinidadeDocenteDialog" dynamic="true"
-                                          draggable="false" resizable="false" maximizable="true" showEffect="fade">
+                            <p:dialog  id="dialogDocente" header="Afinidades do docente" widgetVar="afinidadeDocenteDialog" dynamic="true"
+                                       draggable="false" resizable="false" maximizable="true" showEffect="fade">
 
-                                          <p:commandButton style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                                           value="Ver adicionadas" actionListener="#{docenteController.verSoAdicionadas()}"
-                                                     immediate="true"  
-                                                     update="afinidadeTableDocente" > 
-                                    </p:commandButton>
+                                <h:panelGrid columns="1">
                                     
+                                  
+                                        
+                                        <b>Docente:</b>
                                     
-                                        <p:dataTable var="af" value="#{docenteController.afinidadesDoDocente}" paginator="true" rows="10"
+                                    <h:outputText value="#{docenteController.docente.nome}" />
+                                    
+                                    <br/>
+
+                                    <h:outputText value="Mostrar apenas disciplinas adicionadas: " />
+                                    
+                                    <p:selectBooleanButton id="value2" value="#{docenteController.mostrarAdicionadas}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px">
+                                        <p:ajax update="afinidadeTableDocente" listener="#{docenteController.verSoAdicionadas()}" />
+                                    </p:selectBooleanButton>
+                                        
+                                    <br/>
+                                    
+                                   
+                                    
+                                    <p:dataTable var="af" value="#{docenteController.afinidadesDoDocente}" paginator="true" rows="10"
                                                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                  rowsPerPageTemplate="5,10,15"  id="afinidadeTableDocente" lazy="true"
                                                  emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
@@ -265,13 +278,15 @@
                                                 <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
                                             </h:outputText>
                                         </p:column>
-                                        <p:column headerText="Estado" sortBy="#{af.estado}">
+                                        <p:column headerText="Estado">
                                             <h:outputText value="#{af.estado}"/>
                                         </p:column>
 
                                     </p:dataTable>
-                              
-                                </p:dialog>
+
+                                </h:panelGrid>
+
+                            </p:dialog>
 
                             
 
