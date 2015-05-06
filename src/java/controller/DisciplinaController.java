@@ -23,6 +23,7 @@ import javax.inject.Named;
 import model.Afinidade;
 import model.Disciplina;
 import model.Pessoa;
+import util.AfinidadeDataModel;
 import util.AfinidadesLazyModel;
 import util.DisciplinaDataModel;
 import util.DisciplinaLazyModel;
@@ -123,15 +124,6 @@ public class DisciplinaController implements Serializable {
         this.escolhidas = escolhidas;
     }
     
-    //    public Disciplina getDisciplina() {
-//        return disciplina;
-//    }
-//
-//    public void setDisciplina(Disciplina disciplina) {
-//        this.disciplina = disciplina;
-//    }
-    
-    
     public Disciplina getDisponivel() {
         return disponivel;
     }
@@ -147,6 +139,16 @@ public class DisciplinaController implements Serializable {
     public void setEscolhida(Disciplina escolhida) {
         this.escolhida = escolhida;
     }
+
+    public boolean isMostrarAdicionadas() {
+        return mostrarAdicionadas;
+    }
+
+    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
+        this.mostrarAdicionadas = mostrarAdicionadas;
+    }
+    
+    
     
     //-------------------------------------Data Model---------------------------------------------------------
     private DisciplinaDataModel disciplinaDataModel;
@@ -181,20 +183,10 @@ public class DisciplinaController implements Serializable {
     //Lista de afinidades dos docentes com aquela disciplina
     private AfinidadesLazyModel afinidadesDaDisciplina;
 
+    private boolean mostrarAdicionadas;
+    
+    
     public AfinidadesLazyModel getAfinidadesDaDisciplina() {
-
-//        if (afinidadesDaDisciplina == null) {
-//
-//            if (selecionada != null) {
-//                List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
-//                afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
-//            }
-////            else{
-////                List<Afinidade> afinidades = new ArrayList<>();
-////                afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
-//            }
-//
-////        }
 
         return afinidadesDaDisciplina;
     }
@@ -213,6 +205,7 @@ public class DisciplinaController implements Serializable {
             afinidades = new ArrayList<>();
         }
 
+        mostrarAdicionadas = false;
         afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
 
     }
@@ -231,6 +224,25 @@ public class DisciplinaController implements Serializable {
 
     public void setSelecionada(Disciplina selecionada) {
         this.selecionada = selecionada;
+    }
+    
+    public void verSoAdicionadas() {
+
+        List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
+        List<Afinidade> adicionadas = new ArrayList<>();
+
+        if (mostrarAdicionadas) {
+            for (Afinidade a : afinidades) {
+                if (a.getEstado().equals("Adicionada")) {
+                    adicionadas.add(a);
+                }
+            }
+
+            afinidadesDaDisciplina = new AfinidadesLazyModel(adicionadas);
+        } else {
+            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
+        }
+
     }
     
     //------------------------------Filtros de Disciplina-------------------------------------------
