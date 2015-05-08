@@ -116,19 +116,6 @@ public class Pessoa implements Serializable, Comparable<Pessoa> {
         this.disponibilidades = disponibilidades;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<Credito> creditos;
-
-    public Set<Credito> getCreditos() {
-        return creditos;
-    }
-
-    public void setCreditos(Set<Credito> creditos) {
-        this.creditos = creditos;
-    }
-    
-    
-
     @Override
     public int hashCode() {
         int hash = 0;

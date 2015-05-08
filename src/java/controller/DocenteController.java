@@ -1,6 +1,7 @@
 package controller;
 
 import facade.AfinidadeFacade;
+import facade.CreditoFacade;
 import facade.DocenteFacade;
 import facade.PessoaFacade;
 import java.io.BufferedReader;
@@ -9,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
@@ -17,6 +17,8 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import model.Afinidade;
+import model.Credito;
+import model.Disponibilidade;
 import model.Docente;
 import model.Pessoa;
 import util.AfinidadeDataModel;
@@ -28,7 +30,7 @@ import util.PessoaLazyModel;
 public class DocenteController implements Serializable{
     
     public DocenteController(){
-        
+        quad = 1;
     }
     
     //Docente atual
@@ -36,6 +38,8 @@ public class DocenteController implements Serializable{
     
     //Docente para salvar
     private Docente docenteSalvar;
+    
+    private double creditos;
     
     @EJB
     private DocenteFacade docenteFacade;
@@ -45,6 +49,9 @@ public class DocenteController implements Serializable{
     
     @EJB
     private AfinidadeFacade afinidadeFacade;
+    
+    @EJB
+    private CreditoFacade creditoFacade;
     
     //----------------------------------------Getters e Setters----------------------------------------------------
 
@@ -69,7 +76,72 @@ public class DocenteController implements Serializable{
         this.docenteSalvar = docenteSalvar;
     }
     
+    public AfinidadeDataModel getAfinidadesFiltradas() {
+        return afinidadesFiltradas;
+    }
+
+    public void setAfinidadesFiltradas(AfinidadeDataModel afinidadesFiltradas) {
+        this.afinidadesFiltradas = afinidadesFiltradas;
+    }
+
+    public boolean isMostrarAdicionadas() {
+        return mostrarAdicionadas;
+    }
+
+    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
+        this.mostrarAdicionadas = mostrarAdicionadas;
+    }
+
+    public double getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(double creditos) {
+        this.creditos = creditos;
+    }
+
+    public int getQuad() {
+        return quad;
+    }
+
+    public void setQuad(int quad) {
+        this.quad = quad;
+    }
+    
+    
+    
+    //------------------------------Fase I da alocação didática-----------------------------------------
+    public void salvarCreditos(Long quad){
+  
+        Credito credito = new Credito();
+        docente = (Docente) LoginBean.getUsuario();
+        Integer quadrimestre = (int) (long) quad;
+        credito.setQuadrimestre(quadrimestre);
+        credito.setQuantidade(creditos);
+        credito.setDocente(docente);
+        
+        
+        try {
+            creditoFacade.save(credito);
+            JsfUtil.addSuccessMessage("Créditos salvos com sucesso!");
+
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível salvar os créditos " + e.getMessage());
+
+        }
+        
+        creditos = 0.0;
+//        docente.getCreditos().add(credito);
+//        
+//        editar();
+  
+        
+    }
+    
+    
     //-----------------------------------------DataModel--------------------------------------------------
+    
+    
     private DocenteDataModel docenteDataModel;
 
     public DocenteDataModel getDocenteDataModel() {
@@ -84,6 +156,15 @@ public class DocenteController implements Serializable{
     public void setDocenteDataModel(DocenteDataModel docenteDataModel) {
         this.docenteDataModel = docenteDataModel;
     }
+    
+    //-----------------------------------Resumo Afinidades-------------------------------------------------------------------------------------------
+    
+    //Afinidades de acordo com o docente----------------------------------------------------------------
+    private AfinidadeDataModel afinidadesDoDocente;
+    
+    private AfinidadeDataModel afinidadesFiltradas;
+    
+    private boolean mostrarAdicionadas;
     
     public int qtdAfinidades(Docente d){
         
@@ -101,40 +182,28 @@ public class DocenteController implements Serializable{
         
     }
  
-    //Afinidades de acordo com o docente----------------------------------------------------------------
-    private AfinidadeDataModel afinidadesDoDocente;
-    
-    private AfinidadeDataModel afinidadesFiltradas;
-    
-    private boolean mostrarAdicionadas;
-
-    public AfinidadeDataModel getAfinidadesFiltradas() {
-        return afinidadesFiltradas;
-    }
-
-    public void setAfinidadesFiltradas(AfinidadeDataModel afinidadesFiltradas) {
-        this.afinidadesFiltradas = afinidadesFiltradas;
-    }
-
-    public boolean isMostrarAdicionadas() {
-        return mostrarAdicionadas;
-    }
-
-    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
-        this.mostrarAdicionadas = mostrarAdicionadas;
-    }
-
+    //-----------------------------------Resumo Fase I-------------------------------------------------------------------------------------------
+    //Quadrimestre para visualização dos docentes no resumo
+    private int quad;
     
     
     
-    
-
-    public AfinidadeDataModel getAfinidadesDoDocente() {
+    public int qtdDisponibilidades(Docente d){
         
-//        if(afinidadesDoDocente == null){
-//            
-//            afinidadesDoDocente = new AfinidadeDataModel(afinidadeFacade.findAll());
-//        }
+        Set<Disponibilidade> all = d.getDisponibilidades();
+        List<Disponibilidade> byQuad = new ArrayList<>();
+        
+        for(Disponibilidade disp : all){
+            if(disp.getOfertaDisciplina().getQuadrimestre() == quad){
+                byQuad.add(disp);
+            }
+        }
+        
+        return byQuad.size();
+        
+    }
+    
+    public AfinidadeDataModel getAfinidadesDoDocente() {
         
         return afinidadesDoDocente;
     }
@@ -144,26 +213,7 @@ public class DocenteController implements Serializable{
     }
     
     public void preencherAfinidadesDoDocente(){
-        
-//        if(incluirRemovidas){
-//            afinidadesDoDocente = new AfinidadeDataModel((List<Afinidade>) docente.getAfinidades());
-//        }
-//        
-//        else{
-//            
-//            Set<Afinidade> all = docente.getAfinidades();
-//            Set<Afinidade> adicionadas = new HashSet<>();
-//            for(Afinidade a: all){
-//                if(a.getEstado().equals("Adicionada")){
-//                    adicionadas.add(a);
-//                }
-//            }
-//            
-//            List<Afinidade> afs = new ArrayList<>();
-//            afs.addAll(adicionadas);
-//            afinidadesDoDocente = new AfinidadeDataModel(afs);
-//            
-//        }
+
         
         List<Afinidade> afinidades;
         if (docente != null) {
@@ -259,10 +309,14 @@ public class DocenteController implements Serializable{
     
     public void filtrar() {
 
-        List<Docente> docentesFiltrados = docenteFacade.findByArea(filtrosSelecAreaAtuacao);
+        if (!filtrosSelecAreaAtuacao.isEmpty()) {
+            List<Docente> docentesFiltrados = docenteFacade.findByArea(filtrosSelecAreaAtuacao);
+
+            docenteDataModel = new DocenteDataModel(docentesFiltrados);
+            filtrosSelecAreaAtuacao = null;
+        }
+
         
-        docenteDataModel = new DocenteDataModel(docentesFiltrados);
-        filtrosSelecAreaAtuacao = null;
 
     }
     

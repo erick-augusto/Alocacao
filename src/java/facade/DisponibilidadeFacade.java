@@ -1,6 +1,7 @@
 package facade;
 
 import controller.HibernateUtil;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import model.Disciplina;
@@ -200,6 +201,46 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
         }
 
         
+    }
+    
+    public List<Disponibilidade> findByAreaQuad(List<String> areasAtuacao, int quad){
+        
+       try {
+
+            Session session = getSessionFactory().openSession();
+           Criteria criteria = session.createCriteria(Disponibilidade.class);
+           List<Disponibilidade> disponibilidades = new ArrayList<>();
+
+           if (quad != 0) {
+
+               if (areasAtuacao != null) {
+
+                   for (String a : areasAtuacao) {
+
+                       criteria.createAlias("ofertaDisciplina", "o").add(Restrictions.eq("o.quadrimestre", quad));
+                       criteria.createAlias("pessoa", "p").add(Restrictions.eq("p.areaAtuacao", a));
+                       criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                       List resultado = criteria.list();
+                       disponibilidades.addAll(resultado);
+                       criteria = session.createCriteria(Disponibilidade.class);
+                   }
+
+               } else {
+                   criteria.createAlias("ofertaDisciplina", "o").add(Restrictions.eq("o.quadrimestre", quad));
+                   List resultado = criteria.list();
+                   disponibilidades.addAll(resultado);
+                   criteria = session.createCriteria(Disponibilidade.class);
+               }
+
+           }
+
+            session.close();
+            return disponibilidades;
+            
+        } catch (HibernateException e) {
+            return null;
+        }
+     
     }
     
   

@@ -33,7 +33,7 @@
                     </p:layoutUnit> 
 
                     <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
-                        <p:messages id="msgs" showDetail="true"/>   
+                        <p:messages id="msgs" showDetail="true" showSummary="false"/>   
                     </p:layoutUnit>
 
                     <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
@@ -44,6 +44,22 @@
                     </p:layoutUnit> 
 
                     <p:layoutUnit position="center">
+                        
+                        <p:panel id="PainelCreditos" header="Planejamento de créditos">
+                            <h:panelGrid columns="2" cellpadding="5" class="ui-grid">
+                                <h:outputLabel value="Quantidade de créditos: " />
+                                <p:spinner id="creditos" value="#{docenteController.creditos}" 
+                                           stepFactor="0.5" min="0" max="30" />
+                                <p:commandButton    icon="ui-icon-disk"  actionListener="#{docenteController.salvarCreditos(3)}"
+                                                    update="PainelCreditos, msgs"  style="width: 100px; height: 25px" value="Salvar">
+                                </p:commandButton>
+
+                            </h:panelGrid>
+
+
+                        </p:panel>
+                        
+                        <br/>
 
                         <p:panel id="toggleable" header="Filtros" toggleable="true" toggleSpeed="500" closeSpeed="500" 
                                  widgetVar="panel" style="margin-bottom:20px; width: 400px; font-size: medium; " collapsed="true" closeTitle="Painel">

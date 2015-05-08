@@ -132,6 +132,18 @@ public class OfertaDisciplinaController implements Serializable{
     public void setQuadrimestre(int quadrimestre) {
         this.quadrimestre = quadrimestre;
     }
+
+    public DisponibilidadeDataModel getDispDataModel() {
+        return dispDataModel;
+    }
+
+    public void setDispDataModel(DisponibilidadeDataModel dispDataModel) {
+        this.dispDataModel = dispDataModel;
+    }
+    
+    
+    
+    //------------------------------------------------------------------------------------------------------------
     
     //Filtrar as disponibilidades por disciplina
     public void filtrarDisp() {
@@ -151,6 +163,23 @@ public class OfertaDisciplinaController implements Serializable{
         dataModel = null;
     }
     
+    //Resumo Fase I-------------------------------------------------------------------------------------------
+    DisponibilidadeDataModel dispDataModel;
+    
+    public void preencherDisponibilidadesOferta() {
+
+        List<Disponibilidade> disponibilidades;
+        if (oferta != null) {
+            disponibilidades = new ArrayList<>(oferta.getDisponibilidades());
+
+        } else {
+            disponibilidades = new ArrayList<>();
+        }
+
+        
+        dispDataModel = new DisponibilidadeDataModel(disponibilidades);
+
+    }
     
 
     //---------------------------------------Páginas web------------------------------------------------------------

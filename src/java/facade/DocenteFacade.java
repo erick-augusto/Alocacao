@@ -102,7 +102,7 @@ public class DocenteFacade extends AbstractFacade<Docente>{
             Session session = getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Docente.class);
 
-            if (!areas.isEmpty()) {
+//            if (!areas.isEmpty()) {
 
                 for (String area : areas) {
                     criteria.add(Restrictions.eq("areaAtuacao", area));
@@ -111,7 +111,7 @@ public class DocenteFacade extends AbstractFacade<Docente>{
                     docentes.addAll(resultado);
                 }
 
-            }
+//            }
 
             return docentes;
 

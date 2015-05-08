@@ -1,10 +1,12 @@
 package model;
 
 import java.io.Serializable;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Credito implements Serializable {
@@ -15,7 +17,7 @@ public class Credito implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long ID;
     
-    private int quantidade;
+    private double quantidade;
     
     private int quadrimestre;
     
@@ -27,11 +29,11 @@ public class Credito implements Serializable {
         this.ID = ID;
     }
 
-    public int getQuantidade() {
+    public double getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(int quantidade) {
+    public void setQuantidade(double quantidade) {
         this.quantidade = quantidade;
     }
 
@@ -42,6 +44,19 @@ public class Credito implements Serializable {
     public void setQuadrimestre(int quadrimestre) {
         this.quadrimestre = quadrimestre;
     }
+    
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    private Docente docente;
+
+    public Docente getDocente() {
+        return docente;
+    }
+
+    public void setDocente(Docente docente) {
+        this.docente = docente;
+    }
+    
+    
     
     @Override
     public int hashCode() {

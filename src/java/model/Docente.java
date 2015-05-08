@@ -1,7 +1,10 @@
 package model;
 
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 @Entity
 @DiscriminatorValue("Docente")
@@ -22,6 +25,19 @@ public class Docente extends Pessoa{
     public void setAreaAtuacao(String areaAtuacao) {
         this.areaAtuacao = areaAtuacao;
     }
+    
+    @OneToMany(mappedBy = "docente",cascade = CascadeType.ALL)
+    private List<Credito> creditos;
+
+    public List<Credito> getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(List<Credito> creditos) {
+        this.creditos = creditos;
+    }
+    
+    
 
     @Override
     public int hashCode() {
