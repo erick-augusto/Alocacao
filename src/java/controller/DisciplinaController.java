@@ -297,10 +297,8 @@ public class DisciplinaController implements Serializable {
     
     public void limparFiltro(){
         
-        //filtros2 = null;
         filtrosSelecCursos = null;
         filtrosSelecEixos = null;
-//        filtros = null;
         disciplinaDataModel = null;
         
     }

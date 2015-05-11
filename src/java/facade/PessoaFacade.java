@@ -37,6 +37,7 @@ public class PessoaFacade extends AbstractFacade<Pessoa>{
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(Pessoa.class);
         criteria.add(Restrictions.eq("nome", nome));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         
         List results = criteria.list();
         session.close();
@@ -118,6 +119,7 @@ public class PessoaFacade extends AbstractFacade<Pessoa>{
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(Pessoa.class);
         criteria.add(Restrictions.eq("class", "Docente"));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
         List results = criteria.list();
         session.close();

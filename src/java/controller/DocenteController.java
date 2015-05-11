@@ -22,6 +22,7 @@ import model.Disponibilidade;
 import model.Docente;
 import model.Pessoa;
 import util.AfinidadeDataModel;
+import util.DisponibilidadeDataModel;
 import util.DocenteDataModel;
 import util.PessoaLazyModel;
 
@@ -159,7 +160,7 @@ public class DocenteController implements Serializable{
     
     //-----------------------------------Resumo Afinidades-------------------------------------------------------------------------------------------
     
-    //Afinidades de acordo com o docente----------------------------------------------------------------
+    //Afinidades de acordo com o docente
     private AfinidadeDataModel afinidadesDoDocente;
     
     private AfinidadeDataModel afinidadesFiltradas;
@@ -181,29 +182,8 @@ public class DocenteController implements Serializable{
         return qtd;
         
     }
- 
-    //-----------------------------------Resumo Fase I-------------------------------------------------------------------------------------------
-    //Quadrimestre para visualização dos docentes no resumo
-    private int quad;
     
-    
-    
-    public int qtdDisponibilidades(Docente d){
-        
-        Set<Disponibilidade> all = d.getDisponibilidades();
-        List<Disponibilidade> byQuad = new ArrayList<>();
-        
-        for(Disponibilidade disp : all){
-            if(disp.getOfertaDisciplina().getQuadrimestre() == quad){
-                byQuad.add(disp);
-            }
-        }
-        
-        return byQuad.size();
-        
-    }
-    
-    public AfinidadeDataModel getAfinidadesDoDocente() {
+     public AfinidadeDataModel getAfinidadesDoDocente() {
         
         return afinidadesDoDocente;
     }
@@ -252,7 +232,7 @@ public class DocenteController implements Serializable{
         
     }
     
-    //inclui afinidades removidas
+    //inclui all removidas
     private boolean incluirRemovidas;
 
     public boolean isIncluirRemovidas() {
@@ -262,6 +242,62 @@ public class DocenteController implements Serializable{
     public void setIncluirRemovidas(boolean incluirRemovidas) {
         this.incluirRemovidas = incluirRemovidas;
     }
+ 
+    //-----------------------------------Resumo Fase I-------------------------------------------------------------------------------------------
+    
+    private DisponibilidadeDataModel disponibilidadesDocente;
+    
+    //Quadrimestre para visualização dos docentes no resumo
+    private int quad;
+    
+    public int qtdDisponibilidades(Docente d){
+        
+        Set<Disponibilidade> all = d.getDisponibilidades();
+        List<Disponibilidade> byQuad = new ArrayList<>();
+        
+        for(Disponibilidade disp : all){
+            if(disp.getOfertaDisciplina().getQuadrimestre() == quad){
+                byQuad.add(disp);
+            }
+        }
+        
+        return byQuad.size();
+        
+    }
+
+    public DisponibilidadeDataModel getDisponibilidadesDocente() {
+        return disponibilidadesDocente;
+    }
+
+    public void setDisponibilidadesDocente(DisponibilidadeDataModel disponibilidadesDocente) {
+        this.disponibilidadesDocente = disponibilidadesDocente;
+    }
+    
+    public void preencherDisponibilidadesDoDocente() {
+
+        List<Disponibilidade> all;
+
+        if (docente != null) {
+            all = new ArrayList<>(docente.getDisponibilidades());
+            List<Disponibilidade> byQuad = new ArrayList<>();
+            for (Disponibilidade d : all) {
+                if (d.getOfertaDisciplina().getQuadrimestre() == quad) {
+                    byQuad.add(d);
+                }
+            }
+            disponibilidadesDocente = new DisponibilidadeDataModel(byQuad);
+
+        } else { //caso o usuario não tenha clicado em nada, para não dar nullpointer
+            all = new ArrayList<>();
+            disponibilidadesDocente = new DisponibilidadeDataModel(all);
+
+        }
+
+    }
+    
+    
+    
+   
     
     //------------------------------Filtros de Docente-------------------------------------------
     
@@ -325,14 +361,10 @@ public class DocenteController implements Serializable{
         filtrosSelecAreaAtuacao = null;
         filtrosSelecCentros = null;
         docenteDataModel = null;
+        quad = 1;
         
     }
-    
-    
-    
-    
-    
-    
+
     //-----------------------------------------LazyDataModel------------------------------------------------------
     
     private PessoaLazyModel docenteLazyModel;
