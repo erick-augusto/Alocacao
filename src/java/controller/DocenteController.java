@@ -28,19 +28,42 @@ import util.PessoaLazyModel;
 
 @Named(value = "docenteController")
 @SessionScoped
-public class DocenteController implements Serializable{
+public class DocenteController extends Filtros implements Serializable{
     
     public DocenteController(){
-        quad = 1;
+        quad = 1; //O primeiro quadrimestre é exibido por default
     }
     
-    //Docente atual
+    //Docente atual----------------------------------------------------
     private Docente docente;
     
-    //Docente para salvar
+    public Docente getDocente() {
+        return docente;
+    }
+
+    public void setDocente(Docente docente) {
+        this.docente = docente;
+    }
+    
+    
+    //Docente para salvar-------------------------------------------------
     private Docente docenteSalvar;
     
-    private double creditos;
+    public Docente getDocenteSalvar() {
+        
+        if(docenteSalvar == null){
+            docenteSalvar = new Docente();
+        }
+        
+        return docenteSalvar;
+    }
+
+    public void setDocenteSalvar(Docente docenteSalvar) {
+        this.docenteSalvar = docenteSalvar;
+    }
+    
+    
+    
     
     @EJB
     private DocenteFacade docenteFacade;
@@ -56,26 +79,9 @@ public class DocenteController implements Serializable{
     
     //----------------------------------------Getters e Setters----------------------------------------------------
 
-    public Docente getDocente() {
-        return docente;
-    }
+    
 
-    public void setDocente(Docente docente) {
-        this.docente = docente;
-    }
-
-    public Docente getDocenteSalvar() {
-        
-        if(docenteSalvar == null){
-            docenteSalvar = new Docente();
-        }
-        
-        return docenteSalvar;
-    }
-
-    public void setDocenteSalvar(Docente docenteSalvar) {
-        this.docenteSalvar = docenteSalvar;
-    }
+    
     
     public AfinidadeDataModel getAfinidadesFiltradas() {
         return afinidadesFiltradas;
@@ -93,13 +99,7 @@ public class DocenteController implements Serializable{
         this.mostrarAdicionadas = mostrarAdicionadas;
     }
 
-    public double getCreditos() {
-        return creditos;
-    }
-
-    public void setCreditos(double creditos) {
-        this.creditos = creditos;
-    }
+    
 
     public int getQuad() {
         return quad;
@@ -112,6 +112,20 @@ public class DocenteController implements Serializable{
     
     
     //------------------------------Fase I da alocação didática-----------------------------------------
+   
+    //Creditos por quadrimestre para o planejamento anual
+    private double creditos;
+    
+    public double getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(double creditos) {
+        this.creditos = creditos;
+    }
+    
+    //Associa a quantidade de créditos ao quadrimestre atual e ao docente que está fazendo
+    //o planejamento
     public void salvarCreditos(Long quad){
   
         Credito credito = new Credito();
@@ -120,8 +134,7 @@ public class DocenteController implements Serializable{
         credito.setQuadrimestre(quadrimestre);
         credito.setQuantidade(creditos);
         credito.setDocente(docente);
-        
-        
+    
         try {
             creditoFacade.save(credito);
             JsfUtil.addSuccessMessage("Créditos salvos com sucesso!");
@@ -131,12 +144,7 @@ public class DocenteController implements Serializable{
 
         }
         
-        creditos = 0.0;
-//        docente.getCreditos().add(credito);
-//        
-//        editar();
-  
-        
+        creditos = 0.0;      
     }
     
     
@@ -301,65 +309,16 @@ public class DocenteController implements Serializable{
     
     //------------------------------Filtros de Docente-------------------------------------------
     
-    private List<String> filtrosCentros;
-    
-    private List<String> filtrosSelecCentros;
-    
-    private List<String> filtrosAreaAtuacao;
-    
-    private List<String> filtrosSelecAreaAtuacao;
 
-    public List<String> getFiltrosCentros() {
-        return filtrosCentros;
-    }
-
-    public void setFiltrosCentros(List<String> filtrosCentros) {
-        this.filtrosCentros = filtrosCentros;
-    }
-
-    public List<String> getFiltrosSelecCentros() {
-        return filtrosSelecCentros;
-    }
-
-    public void setFiltrosSelecCentros(List<String> filtrosSelecCentros) {
-        this.filtrosSelecCentros = filtrosSelecCentros;
-    }
-
-    public List<String> getFiltrosAreaAtuacao() {
-        return filtrosAreaAtuacao;
-    }
-
-    public void setFiltrosAreaAtuacao(List<String> filtrosAreaAtuacao) {
-        this.filtrosAreaAtuacao = filtrosAreaAtuacao;
-    }
-
-    public List<String> getFiltrosSelecAreaAtuacao() {
-        return filtrosSelecAreaAtuacao;
-    }
-
-    public void setFiltrosSelecAreaAtuacao(List<String> filtrosSelecAreaAtuacao) {
-        this.filtrosSelecAreaAtuacao = filtrosSelecAreaAtuacao;
-    }
-
-    
-    
     public void filtrar() {
 
-        if (!filtrosSelecAreaAtuacao.isEmpty()) {
-            List<Docente> docentesFiltrados = docenteFacade.findByArea(filtrosSelecAreaAtuacao);
-
-            docenteDataModel = new DocenteDataModel(docentesFiltrados);
-            filtrosSelecAreaAtuacao = null;
-        }
-
-        
-
+        docenteDataModel = new DocenteDataModel(filtrarDocente(docenteDataModel, docenteFacade));
     }
     
     public void limparFiltro(){
      
-        filtrosSelecAreaAtuacao = null;
-        filtrosSelecCentros = null;
+        limparFiltroDocente();
+        
         docenteDataModel = null;
         quad = 1;
         
@@ -381,18 +340,6 @@ public class DocenteController implements Serializable{
     @PostConstruct
     public void init() {
         docenteLazyModel = new PessoaLazyModel(pessoaFacade.listDocentes());
-        
-        filtrosCentros = new ArrayList<>();
-        filtrosCentros.add("CCNH");
-        filtrosCentros.add("CECS");
-        filtrosCentros.add("CMCC");
-   
-        filtrosAreaAtuacao = new ArrayList<>();
-        filtrosAreaAtuacao.add("Ciencia da Computacao");
-        filtrosAreaAtuacao.add("Cognicao");
-        filtrosAreaAtuacao.add("Ensino de Matematica");
-        filtrosAreaAtuacao.add("Matematica");
-        
         
     }
     
@@ -617,25 +564,6 @@ return retorno;
         
     }
     
-    public List<String> completeArea(String query){
-        
-        query = query.toLowerCase();
-        
-        List<String> areas = new ArrayList<>();
-        areas.add("Ciência da Computação");
-        areas.add("Cognição");
-        areas.add("Ensino de Matemática");
-        areas.add("Matemática");
-        
-        List<String> filteredAreas = new ArrayList<>();
-
-        for (String a : areas ) {
-            if (a.toLowerCase().startsWith(query)) {
-                filteredAreas.add(a);
-            }
-        }
-        return filteredAreas;
-        
-    }
+    
    
 }

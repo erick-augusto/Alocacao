@@ -42,11 +42,11 @@
                         <p:tab title="Disciplinas">
                             <h:panelGrid columns="1" cellpadding="10">
 
-                                <p:dataTable var="disciplina" value="#{disciplinaController2.disciplinaLazyModel}" paginator="true" rows="5"
+                                <p:dataTable var="disciplina" value="#{disciplinaController.disciplinaLazyModel}" paginator="true" rows="5"
                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                              rowsPerPageTemplate="5,10,15" 
                                              selectionMode="single" 
-                                             selection="#{disciplinaController2.disciplina}" 
+                                             selection="#{disciplinaController.disciplina}" 
                                              id="disciplinaTable" 
                                              lazy="true"   rowKey="#{disciplina.ID}">
 
@@ -67,7 +67,7 @@
                                         </f:facet>
 
                                         <p:commandButton style="width: 95px;height: 30px; font-size: small"
-                                                         action="#{disciplinaController2.delete()}" value="Deletar" immediate="true" 
+                                                         action="#{disciplinaController.delete()}" value="Deletar" immediate="true" 
                                                          update="disciplinaTable" icon="ui-icon-trash"/>
 
 
@@ -80,7 +80,7 @@
                                         </f:facet>
 
                                         <p:commandButton style="width: 95px;height: 30px; font-size: small"
-                                                         action="#{disciplinaController2.prepareEdit()}" value="Editar" immediate="true" 
+                                                         action="#{disciplinaController.prepareEdit()}" value="Editar" immediate="true" 
                                                          update="disciplinaTable" icon="ui-icon-pencil"/>
 
 
@@ -90,7 +90,7 @@
                                 </p:dataTable>
 
 
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController2.cadastrarDisciplinas()}" 
+                                <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController.cadastrarDisciplinas()}" 
                                                  style="width: 250px; height: 25px; font-size: small" title="Cadastrar disciplinas"
                                                  value="Cadastrar disciplinas por .csv" update="disciplinaTable, @(form:msgs)" immediate="true">
                                 </p:commandButton>
@@ -100,22 +100,22 @@
                             <p:panel header="Cadastrar Nova disciplina"  >
                                 <h:panelGrid columns="2" id="criarDisciplina">
                                     <h:outputText value="Nome: "/>
-                                    <h:inputText value="#{disciplinaController2.disciplinaSalvar.nome}" size="100"/>
+                                    <h:inputText value="#{disciplinaController.disciplinaSalvar.nome}" size="100"/>
 
                                     <h:outputText value="Eixo: "/>
                                     <p:autoComplete id="completeEixo" forceSelection="true" 
-                                                    value="#{disciplinaController2.disciplinaSalvar.eixo}" 
-                                                    completeMethod="#{disciplinaController2.completeEixo}" size="100" />
+                                                    value="#{disciplinaController.disciplinaSalvar.eixo}" 
+                                                    completeMethod="#{disciplinaController.completeEixo}" size="100" />
 
                                     <h:outputText value="Curso: "/>
                                     <p:autoComplete id="completeCurso" forceSelection="true" 
-                                                    value="#{disciplinaController2.disciplinaSalvar.curso}" 
-                                                    completeMethod="#{disciplinaController2.completeCurso}" size="100" />
+                                                    value="#{disciplinaController.disciplinaSalvar.curso}" 
+                                                    completeMethod="#{disciplinaController.completeCurso}" size="100" />
 
                                 </h:panelGrid>
                                 <p:separator/>
                                 <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
-                                                 ajax="true"  value="Salvar" actionListener="#{disciplinaController2.salvar()}"
+                                                 ajax="true"  value="Salvar" actionListener="#{disciplinaController.salvar()}"
                                                  update="@(form:msgs),disciplinaTable,criarDisciplina" icon="ui-icon-disk"> 
                                 </p:commandButton>
 
@@ -148,7 +148,7 @@
                                 <p:tab title="1 Quadrimestre">
 
                                     <h:panelGrid columns="1" cellpadding="10">
-                                        <p:dataTable var="turma1" value="#{turmasPlanejamentoController.ofertas1LazyModel}" paginator="true" rows="10"
+                                        <p:dataTable var="turma1" value="#{ofertaController.ofertas1LazyModel}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="5,10,15" 
                                                      selectionMode="single" 
@@ -184,12 +184,12 @@
                                         </p:dataTable>
 
                                         <h:panelGrid columns="2">
-                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad1()}" 
+                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{ofertaController.turmaQuad1()}" 
                                                              style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
                                                              value="Cadastrar turmas por .csv" update="turma1PTable" immediate="true">
                                             </p:commandButton>
 
-                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(1)}" 
+                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{ofertaController.deleteAllQuad(1)}" 
                                                              style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
                                                              value="Deletar turmas 1 Quad." update="@(form:turma1PTable)" immediate="true">
                                             </p:commandButton>
@@ -205,7 +205,7 @@
                                 <p:tab title="2 Quadrimestre">
 
                                     <h:panelGrid columns="1" cellpadding="10">
-                                        <p:dataTable var="turma2" value="#{turmasPlanejamentoController.ofertas2LazyModel}" paginator="true" rows="10"
+                                        <p:dataTable var="turma2" value="#{ofertaController.ofertas2LazyModel}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="5,10,15" 
                                                      selectionMode="single" 
@@ -240,12 +240,12 @@
                                         </p:dataTable>
 
                                         <h:panelGrid columns="2">
-                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad2()}" 
+                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{ofertaController.turmaQuad2()}" 
                                                              style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
                                                              value="Cadastrar turmas por .csv" update="turma2PTable" immediate="true">
                                             </p:commandButton>
 
-                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(2)}" 
+                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{ofertaController.deleteAllQuad(2)}" 
                                                              style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
                                                              value="Deletar turmas 2 Quad." update="@(form:turma2PTable)" immediate="true">
                                             </p:commandButton>
@@ -259,7 +259,7 @@
                                 <p:tab title="3 Quadrimestre">
 
                                     <h:panelGrid columns="1" cellpadding="10">
-                                        <p:dataTable var="turma3" value="#{turmasPlanejamentoController.ofertas3LazyModel}" paginator="true" rows="10"
+                                        <p:dataTable var="turma3" value="#{ofertaController.ofertas3LazyModel}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="5,10,15" 
                                                      selectionMode="single"  
@@ -297,12 +297,12 @@
 
 
                                         <h:panelGrid columns="2">
-                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{turmasPlanejamentoController.turmaQuad3()}" 
+                                            <p:commandButton icon="ui-icon-disk"  actionListener="#{ofertaController.turmaQuad3()}" 
                                                              style="width: 245px; height: 25px; font-size: small" title="Cadastrar disciplinas"
                                                              value="Cadastrar turmas por .csv" update="turma3PTable" immediate="true">
                                             </p:commandButton>
 
-                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmasPlanejamentoController.deleteAllQuad(3)}" 
+                                            <p:commandButton icon="ui-icon-closethick"  actionListener="#{ofertaController.deleteAllQuad(3)}" 
                                                              style="width: 245px; height: 25px; font-size: small" title="Deletar disciplinas"
                                                              value="Deletar turmas 3 Quad." update="@(form:turma3PTable)" immediate="true">
                                             </p:commandButton>

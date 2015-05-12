@@ -47,7 +47,7 @@
                                     <h:panelGrid columns="2">
                                         <p:outputLabel value="Disciplina:" for="DisciplinaComplete" />
                                         <p:autoComplete id="DisciplinaComplete" value="#{disponibilidadeController.disciplina}" 
-                                                        completeMethod="#{disciplinaController2.completeDisciplina}"
+                                                        completeMethod="#{disciplinaController.completeDisciplina}"
                                                         var="disciplina" itemLabel="#{disciplina.nome}" itemValue="#{disciplina}" 
                                                         converter="disciplinaCompleteConverter" forceSelection="true" size="60" />
                                     </h:panelGrid>

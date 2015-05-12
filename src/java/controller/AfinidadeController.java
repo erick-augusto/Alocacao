@@ -2,13 +2,11 @@ package controller;
 
 import facade.AfinidadeFacade;
 import facade.DisciplinaFacade;
-import facade.PessoaFacade;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
@@ -20,69 +18,20 @@ import javax.inject.Named;
 import model.Afinidade;
 import model.Disciplina;
 import model.Pessoa;
-import util.AfinidadesLazyModel;
 
 @Named(value = "afinidadesController")
 @SessionScoped
-public class AfinidadeController implements Serializable{
+public class AfinidadeController extends Filtros implements Serializable{
     
     private static final long serialVersionUID = 1L;
     
     public AfinidadeController() {
         
- 
     }
     
-    //Guarda o afinidade atual
+    //Guarda a afinidade atual
     private Afinidade afinidade;
-
-    //Disciplina 
-    private Disciplina disciplina;
     
-    private Disciplina paraAdicionar;
-    
-    private Disciplina paraRemover;
-  
-    //Disciplinas disponiveis
-    private List<Disciplina> disponiveis;
-
-    //Disciplinas escolhidas
-    private List<Disciplina> escolhidas;
-    
-    private List<Afinidade> afinidadesAtivas;
-    
-    private Pessoa pessoa;
-    
-    private Pessoa pessoaFiltro;
-
-    private List<Afinidade> afinidadesFiltradas;
-      
-    //Se for "true" mostra no Data model as disciplinas que foram incluídas e depois removidas
-    //Utilizada na busca pela disciplina
-    private boolean incluirRemovidasD;
-
-    
-    //Se for "true" mostra no Data model as disciplinas que foram incluídas e depois removidas
-    //utilizada na busca pelo docente
-    private boolean incluirRemovidasP;
-
-    
-    @EJB
-    private AfinidadeFacade afinidadeFacade;
-    private AfinidadesLazyModel afinidadesLazyModel;
-    
-    @EJB
-    private PessoaFacade pessoaFacade;
-    
-    @EJB
-    private DisciplinaFacade disciplinaFacade;
-    private AfinidadesLazyModel afinidadeDataModel;
-    
-    
-
-
-    //------------------------------------Getters e Setters----------------------------------------------------------------
-
     public Afinidade getAfinidade() {
         return afinidade;
     }
@@ -90,6 +39,9 @@ public class AfinidadeController implements Serializable{
     public void setAfinidade(Afinidade afinidade) {
         this.afinidade = afinidade;
     }
+
+    //Disciplina 
+    private Disciplina disciplina;
     
     public Disciplina getDisciplina() {
         return disciplina;
@@ -99,6 +51,12 @@ public class AfinidadeController implements Serializable{
         this.disciplina = disciplina;
     }
     
+    
+    
+    private List<Afinidade> todasAfinidades;
+    
+    private Pessoa pessoa;
+    
     public Pessoa getPessoa() {
         return pessoa;
     }
@@ -107,34 +65,18 @@ public class AfinidadeController implements Serializable{
         this.pessoa = pessoa;
     }
     
-    public boolean isIncluirRemovidasD() {
-        return incluirRemovidasD;
-    }
-
-    public void setIncluirRemovidasD(boolean incluirRemovidasD) {
-        this.incluirRemovidasD = incluirRemovidasD;
-    }
+    @EJB
+    private AfinidadeFacade afinidadeFacade;
     
-    public boolean isIncluirRemovidasP() {
-        return incluirRemovidasP;
-    }
-
-    public void setIncluirRemovidasP(boolean incluirRemovidasP) {
-        this.incluirRemovidasP = incluirRemovidasP;
-    }
-
-    public List<Disciplina> getEscolhidas() {
-        return escolhidas;
-    }
-
-    public void setEscolhidas(List<Disciplina> escolhidas) {
-        this.escolhidas = escolhidas;
-    }
-
-    public void setDisponiveis(List<Disciplina> disponiveis) {
-        this.disponiveis = disponiveis;
-    }
-
+    @EJB
+    private DisciplinaFacade disciplinaFacade;
+  
+    
+//---------------------------------------Definir afinidade-------------------------------------------------------------------------
+    
+    //Guarda a disciplina que o docente selecionou para adicionar como tendo afinidade
+    private Disciplina paraAdicionar;
+    
     public Disciplina getParaAdicionar() {
         return paraAdicionar;
     }
@@ -142,7 +84,10 @@ public class AfinidadeController implements Serializable{
     public void setParaAdicionar(Disciplina paraAdicionar) {
         this.paraAdicionar = paraAdicionar;
     }
-
+    
+    //Guarda a disciplina que antes o docente possuía afinidade, mas não possui mais e vai remover
+    private Disciplina paraRemover;
+    
     public Disciplina getParaRemover() {
         return paraRemover;
     }
@@ -150,91 +95,30 @@ public class AfinidadeController implements Serializable{
     public void setParaRemover(Disciplina paraRemover) {
         this.paraRemover = paraRemover;
     }
-
-    public Pessoa getPessoaFiltro() {
-        return pessoaFiltro;
-    }
-
-    public void setPessoaFiltro(Pessoa pessoaFiltro) {
-        this.pessoaFiltro = pessoaFiltro;
-    }
     
+    //Disciplinas disponiveis------------------------------------------------------
+    private List<Disciplina> disponiveis;
     
-
-//---------------------------------------------------CRUD-------------------------------------------------------
-    private List<Afinidade> listarTodas() {
-        return afinidadeFacade.findAll();
-
-    }
-
-    
-    public void salvarNoBanco() {
-
-        try {
-            afinidadeFacade.save(afinidade);
-//            JsfUtil.addSuccessMessage("Afinidade " + afinidade.getNome() + " criado com sucesso!");
-            afinidade = null;
-//            recriarModelo();
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
-
-        }
-
-    }
-
-    public Afinidade buscar(Long id) {
-
-        return afinidadeFacade.find(id);
-    }
-
-    public void editar() {
-        try {
-            afinidadeFacade.edit(afinidade);
-            JsfUtil.addSuccessMessage("Afinidades Editado com sucesso!");
-            afinidade = null;
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar o afinidade: " + e.getMessage());
-
-        }
-    }
-
-    public void delete() {
-//        afinidade = (Afinidade) afinidadeDataModel.getRowData();
-        try {
-            afinidadeFacade.remove(afinidade);
-            afinidade = null;
-            JsfUtil.addSuccessMessage("Afinidades Deletado");
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
-        }
-
-//        recriarModelo();
-    }
-    
-    public SelectItem[] getItemsAvaiableSelectOne() {
-        return JsfUtil.getSelectItems(afinidadeFacade.findAll(), true);
-    }
-    
-    //----------------------------Preenchimento das listas Disponiveis e Escolhidas-----------------------------------------------------
-
-    //Esse método vê quais disciplinas a pessoa já escolheu,
-    //para exibir só as que ela ainda não selecionou 
-    //(não estão salvas na afinidade, ou estão salvas como "Removida", porque ela pode escolher de novo nesse caso)
+    /*
+    Esse método vê quais disciplinas o docente já escolheu,
+    para exibir só as que ele ainda não selecionou 
+    (não estão salvas na afinidade, ou estão salvas como "Removida", 
+    porque ele pode escolher de novo nesse caso)
+    */
     public List<Disciplina> getDisponiveis() {
 
         if (disponiveis == null) {
             
             //Usuário que fez o logon
             pessoa = LoginBean.getUsuario();
-//            pessoa = pessoaFacade.reinicializarUsuario(pessoa);
 
             //Todas as afinidades do usuario
-            afinidadesAtivas = new ArrayList(pessoa.getAfinidades());
+            todasAfinidades = new ArrayList(pessoa.getAfinidades());
             
             escolhidas = new ArrayList<>();
             
             //Adiciona ao array escolhidas as disciplinas que estao como "Adicionada" em afinidades
-            for(Afinidade a: afinidadesAtivas){
+            for(Afinidade a: todasAfinidades){
                 
                 if(a.getEstado().equals("Adicionada")){
                     escolhidas.add(a.getDisciplina());
@@ -254,6 +138,50 @@ public class AfinidadeController implements Serializable{
         return disponiveis;
     }
     
+    public void setDisponiveis(List<Disciplina> disponiveis) {
+        this.disponiveis = disponiveis;
+    }
+
+    //Disciplinas escolhidas---------------------------------------------------------
+    private List<Disciplina> escolhidas;
+    
+    public List<Disciplina> getEscolhidas() {
+        return escolhidas;
+    }
+
+    public void setEscolhidas(List<Disciplina> escolhidas) {
+        this.escolhidas = escolhidas;
+    }
+    
+    public void filtrar() {
+        
+        disponiveis = disciplinaFacade.findByEixoCurso(super.getFiltrosSelecEixos(), super.getFiltrosSelecCursos());
+        
+        for (Disciplina t : escolhidas) {
+            disponiveis.remove(t);
+        }
+
+    }
+      
+    public void limparFiltro(){
+
+        super.setFiltrosSelecEixos(null);
+        super.setFiltrosSelecCursos(null);
+        disponiveis = null;
+        
+    }
+    
+
+//---------------------------------------------------CRUD-------------------------------------------------------
+    private List<Afinidade> listarTodas() {
+        return afinidadeFacade.findAll();
+
+    }
+    
+    public Afinidade buscar(Long id) {
+
+        return afinidadeFacade.find(id);
+    }
     
     public void salvarAfinidade() {
         
@@ -274,7 +202,7 @@ public class AfinidadeController implements Serializable{
     public void removerAfinidade(){
         
         //Percorre a lista de afinidades da pessoa e muda o status de Adicionada para removida
-        for(Afinidade a: afinidadesAtivas){
+        for(Afinidade a: todasAfinidades){
             
             if(a.getDisciplina() == paraRemover){
 
@@ -291,9 +219,13 @@ public class AfinidadeController implements Serializable{
         paraAdicionar = null;
                  
     }
-    
 
-    //---------------------------------------Páginas web------------------------------------------------------------
+    public SelectItem[] getItemsAvaiableSelectOne() {
+        return JsfUtil.getSelectItems(listarTodas(), true);
+    }
+
+
+//----------------------------------------Páginas web------------------------------------------------------------
     public String prepareCreate(int i) {
         afinidade = new Afinidade();
         if (i == 1) {
@@ -309,219 +241,14 @@ public class AfinidadeController implements Serializable{
         return "/Afinidades/DefinirAfinidade";
     }
 
-    public String index() {
-        afinidade = null;
-//        afinidadeDataModel = null;
-        return "/index";
-    }
-//
-//    public String prepareEdit() {
-//        afinidade = (Afinidade) afinidadeDataModel.getRowData();
-//        return "Edit";
-//    }
-
-//    public String prepareView() {
-//        afinidade = (Afinidade) afinidadeDataModel.getRowData();
-//        //afinidade = afinidadeFacade.find(afinidade.getID());
-//        //afinidadeFacade.edit(afinidadeFacade.find(afinidade.getID()));
-//        //afinidadeFacade.edit(afinidade);
-//        return "View";
-//    }
-    
-    //------------------------------Filtros de Disciplina-------------------------------------------
-    
-    private List<String> filtrosEixos;
-    
-    private List<String> filtrosSelecEixos;
-    
-    private List<String> filtrosCursos;
-    
-    private List<String> filtrosSelecCursos;
-           
-    
-    @PostConstruct
-    public void init() {
-//        afinidadesLazyModel = new AfinidadesLazyModel(this.listarTodas());
-        filtrosEixos = new ArrayList<>();
-        filtrosEixos.add("Ciencia, Tecnologia e Inovacao");
-        filtrosEixos.add("Comunicacao e Informacao");
-        filtrosEixos.add("Energia");
-        filtrosEixos.add("Espaco, Cultura e Temporalidade");
-        filtrosEixos.add("Estado, Sociedade e Mercado");
-        filtrosEixos.add("Estrutura da Materia");
-        filtrosEixos.add("Humanidades");
-        filtrosEixos.add("Pensamento, Expressao e Significado");
-        filtrosEixos.add("Processos de Transformacao");
-        filtrosEixos.add("Mais de um eixo");
-        filtrosEixos.add("Representacao e Simulacao");
-        
-
-        filtrosCursos = new ArrayList<>();
-        filtrosCursos.add("Bacharelado em Ciencia da Computacao");
-        filtrosCursos.add("Bacharelado em Economia");
-        filtrosCursos.add("Bacharelado em Planejamento Territorial");
-        filtrosCursos.add("Bacharelado em Politicas Publicas");
-        filtrosCursos.add("Bacharelado em Relacoes Internacionais");
-        filtrosCursos.add("Ciencias Biologicas");
-        filtrosCursos.add("Engenharia Aeroespacial");
-        filtrosCursos.add("Engenharia Ambiental e Urbana");
-        filtrosCursos.add("Engenharia Biomedica");
-        filtrosCursos.add("Engenharia de Automação e Robotica");
-        filtrosCursos.add("Engenharia de Energia");
-        filtrosCursos.add("Engenharia de Gestao");
-        filtrosCursos.add("Engenharia de Informacao");
-        filtrosCursos.add("Engenharia de Materiais");
-        filtrosCursos.add("Filosofia");
-        filtrosCursos.add("Fisica");
-        filtrosCursos.add("Licenciaturas");
-        filtrosCursos.add("Quimica");
-        
-        
-    }
-
-    public List<String> getFiltrosEixos() {
-        return filtrosEixos;
-    }
-
-    public void setFiltrosEixos(List<String> filtrosEixos) {
-        this.filtrosEixos = filtrosEixos;
-    }
-
-    public List<String> getFiltrosSelecEixos() {
-        return filtrosSelecEixos;
-    }
-
-    public void setFiltrosSelecEixos(List<String> filtrosSelecEixos) {
-        this.filtrosSelecEixos = filtrosSelecEixos;
-    }
-
-    public List<String> getFiltrosCursos() {
-        return filtrosCursos;
-    }
-
-    public void setFiltrosCursos(List<String> filtrosCursos) {
-        this.filtrosCursos = filtrosCursos;
-    }
-
-    public List<String> getFiltrosSelecCursos() {
-        return filtrosSelecCursos;
-    }
-
-    public void setFiltrosSelecCursos(List<String> filtrosSelecCursos) {
-        this.filtrosSelecCursos = filtrosSelecCursos;
-    }
-    
-    public void filtrar() {
-
-//        source = disciplinaFacade.findByEixo(filtros);
-        
-        disponiveis = disciplinaFacade.findByEixoCurso(filtrosSelecEixos, filtrosSelecCursos);
-        
-        for (Disciplina t : escolhidas) {
-            disponiveis.remove(t);
-        }
-
-    }
-    
-    public void limparFiltro(){
-        
-        //filtros2 = null;
-        filtrosSelecCursos = null;
-        filtrosSelecEixos = null;
-//        filtros = null;
-        disponiveis = null;
-        
-    }
+ 
+ 
     
     
-    //---------------------------LazyData Model--------------------------------------------------------------------
+
     
-    public int getTotal() {
-        
-        if(afinidadesLazyModel == null){
-            return 0;
-        }
-        else{
-           return afinidadesLazyModel.getRowCount(); 
-        }
-                
-    }
-     
-    
-
-    public AfinidadesLazyModel getAfinidadesLazyModel() {
-//        if(afinidadesLazyModel == null){
-//            afinidadesLazyModel = new AfinidadesLazyModel(this.listarTodas());
-//        }
-        
-        return afinidadesLazyModel;
-    }
-
-    public void setAfinidadesLazyModel(AfinidadesLazyModel afinidadesLazyModel) {
-        this.afinidadesLazyModel = afinidadesLazyModel;
-    }
-    
-    //Preenche o LazyModel com as afinidades de acordo com a disciplina escolhida
-    public void povoarLazyModelD() {
-
-        disciplina = disciplinaFacade.inicializarColecaoAfinidades(disciplina);
-        afinidadesFiltradas = new ArrayList(disciplina.getAfinidades());
-
-        if (!incluirRemovidasD) {
-
-//                for (Afinidade a : afinidadesFiltradas) {
-//                    if (a.getEstado().equals("Removida")) {
-//                        afinidadesFiltradas.remove(a);
-//                    }
-//                }
-            for (int i = 0; i < afinidadesFiltradas.size(); i++) {
-                if (afinidadesFiltradas.get(i).getEstado().equals("Removida")) {
-                    afinidadesFiltradas.remove(afinidadesFiltradas.get(i));
-                    --i;
-                }
-            }
-
-        }
-        afinidadesLazyModel = new AfinidadesLazyModel(afinidadesFiltradas);
-        disciplina = null;
-        incluirRemovidasD = false;
-
-    }
-    
-    public void limparLazyModel(){
-        afinidadesLazyModel = null;
-    }
-
-    //Preenche o LazyModel com as afinidades de acordo com o docente escolhido
-    public void povoarLazyModelP() {
-
-        afinidadesFiltradas = new ArrayList(pessoaFiltro.getAfinidades());
-
-        if (!incluirRemovidasP) {
-
-//                for (Afinidade a : afinidadesFiltradas) {
-//                    if (a.getEstado().equals("Removida")) {
-//                        afinidadesFiltradas.remove(a);
-//                    }
-//                }
-            for (int i = 0; i < afinidadesFiltradas.size(); i++) {
-                if (afinidadesFiltradas.get(i).getEstado().equals("Removida")) {
-                    afinidadesFiltradas.remove(afinidadesFiltradas.get(i));
-                    --i;
-                }
-            }
-
-        }
-
-        afinidadesLazyModel = new AfinidadesLazyModel(afinidadesFiltradas);
-        pessoa = null;
-        incluirRemovidasP = false;
-
-    }
-   
     //---------------------------------------------------------------------------------------------------
     
-
     @FacesConverter(forClass = Afinidade.class)
     public static class AfinidadesControllerConverter implements Converter {
 

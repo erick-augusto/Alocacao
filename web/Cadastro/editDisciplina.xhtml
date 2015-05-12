@@ -40,22 +40,22 @@
                     <p:panel header="Editar disciplina"  >
                                 <h:panelGrid columns="2" id="editarDisciplina">
                                     <h:outputText value="Nome: "/>
-                                    <h:inputText value="#{disciplinaController2.disciplina.nome}"  size="100"/>
+                                    <h:inputText value="#{disciplinaController.disciplina.nome}"  size="100"/>
 
                                     <h:outputText value="Eixo: "/>
                                     <p:autoComplete id="completeEixo" forceSelection="true" 
-                                                    value="#{disciplinaController2.disciplina.eixo}" 
-                                                    completeMethod="#{disciplinaController2.completeEixo}"  size="100"/>
+                                                    value="#{disciplinaController.disciplina.eixo}" 
+                                                    completeMethod="#{disciplinaController.completeEixo}"  size="100"/>
 
                                     <h:outputText value="Curso: "/>
                                     <p:autoComplete id="completeCurso" forceSelection="true" 
-                                                    value="#{disciplinaController2.disciplina.curso}" 
-                                                    completeMethod="#{disciplinaController2.completeCurso}"  size="100"/>
+                                                    value="#{disciplinaController.disciplina.curso}" 
+                                                    completeMethod="#{disciplinaController.completeCurso}"  size="100"/>
 
                                 </h:panelGrid>
                             <p:separator/>
                             <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
-                                             ajax="true"  value="Editar" actionListener="#{disciplinaController2.editar()}"
+                                             ajax="true"  value="Editar" actionListener="#{disciplinaController.editar()}"
                                              update="@(form:msgs),editarDisciplina" icon="ui-icon-disk"> 
                             </p:commandButton>
                             

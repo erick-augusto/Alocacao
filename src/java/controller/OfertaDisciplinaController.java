@@ -29,9 +29,9 @@ import util.OfertaDisciplinaDataModel;
 import util.OfertaDisciplinaLazyModel;
 
 
-@Named(value = "turmasPlanejamentoController")
+@Named(value = "ofertaController")
 @SessionScoped
-public class OfertaDisciplinaController implements Serializable{
+public class OfertaDisciplinaController extends Filtros implements Serializable {
     
     public OfertaDisciplinaController() {
         
@@ -1023,6 +1023,16 @@ public class OfertaDisciplinaController implements Serializable{
         return buscar(key);
         
     }
+
+//    @Override
+//    protected void filtrar() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
+//
+//    @Override
+//    protected void limparFiltro() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
         
     //---------------------------------------------------------------------------------------------------
     
@@ -1035,7 +1045,7 @@ public class OfertaDisciplinaController implements Serializable{
                 return null;
             }
             OfertaDisciplinaController controller = (OfertaDisciplinaController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "turmasPlanejamentoController");
+                    getValue(facesContext.getELContext(), null, "ofertaController");
             return controller.getTurma(getKey(value));
         }
 

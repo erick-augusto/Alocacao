@@ -23,12 +23,11 @@ import javax.inject.Named;
 import model.Afinidade;
 import model.Disciplina;
 import model.Pessoa;
-import util.AfinidadeDataModel;
 import util.AfinidadesLazyModel;
 import util.DisciplinaDataModel;
 import util.DisciplinaLazyModel;
 
-@Named(value = "disciplinaController2")
+@Named(value = "disciplinaController")
 @SessionScoped
 public class DisciplinaController implements Serializable {
 
@@ -493,7 +492,7 @@ public class DisciplinaController implements Serializable {
                
            }
            
-//           TurmasPlanejamentoController tpc = new TurmasPlanejamentoController();
+//           OfertaController tpc = new OfertaController();
         
             disciplinaFacade.remove(disciplina);
             disciplina = null;
@@ -845,7 +844,7 @@ public class DisciplinaController implements Serializable {
                 return null;
             }
             DisciplinaController controller = (DisciplinaController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "disciplinaController2");
+                    getValue(facesContext.getELContext(), null, "disciplinaController");
             return controller.getDisciplina(getKey(value));
         }
 

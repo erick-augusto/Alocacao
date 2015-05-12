@@ -130,7 +130,7 @@
                                 <p:column headerText="Curso" style="width: 33%">
                                     <h:outputText value="#{turma.curso}" style="width: 33%"/>
                                 </p:column>  
-                                <p:column headerText="Disciplina" style="width: 33%">
+                                <p:column headerText="Disciplina" style="width: 33%" filterBy="#{turma.disciplina.nome}">
                                     <h:outputText value="#{turma.disciplina.nome}" style="width: 33%"/>
                                 </p:column>
                                 <p:column headerText="Teoria" style="width: 6%">

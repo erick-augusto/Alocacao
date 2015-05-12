@@ -46,14 +46,14 @@
                                     <h:panelGrid columns="2"  cellspacing="10">
 
 
-                                        <p:selectCheckboxMenu value="#{disciplinaController2.filtrosSelecEixos}" label="Eixos"
+                                        <p:selectCheckboxMenu value="#{disciplinaController.filtrosSelecEixos}" label="Eixos"
                                                               filter="true" filterMatchMode="startsWith" panelStyle="width:350px" >
-                                            <f:selectItems value="#{disciplinaController2.filtrosEixos}" />
+                                            <f:selectItems value="#{disciplinaController.filtrosEixos}" />
                                         </p:selectCheckboxMenu>
 
-                                        <p:selectCheckboxMenu value="#{disciplinaController2.filtrosSelecCursos}" label="Cursos"
+                                        <p:selectCheckboxMenu value="#{disciplinaController.filtrosSelecCursos}" label="Cursos"
                                                               filter="true" filterMatchMode="startsWith" panelStyle="width:350px">
-                                            <f:selectItems value="#{disciplinaController2.filtrosCursos}" />
+                                            <f:selectItems value="#{disciplinaController.filtrosCursos}" />
                                         </p:selectCheckboxMenu>
 
                                     </h:panelGrid>
@@ -61,12 +61,12 @@
                                     <p:separator/>
 
                                     <h:panelGrid columns="2">
-                                        <p:commandButton    icon="ui-icon-search"  actionListener="#{disciplinaController2.filtrar()}"
+                                        <p:commandButton    icon="ui-icon-search"  actionListener="#{disciplinaController.filtrar()}"
                                                             update="@(form:disciplinasTable)"  style="width: 30px; height: 25px" title="Filtrar disciplinas"
                                                             >
                                         </p:commandButton>
 
-                                        <p:commandButton    ajax="false"  actionListener="#{disciplinaController2.limparFiltro()}"
+                                        <p:commandButton    ajax="false"  actionListener="#{disciplinaController.limparFiltro()}"
                                                             update="@(form:disciplinasTable)" icon="ui-icon-closethick" 
                                                             style="width: 30px; height: 25px" title="Limpar filtros">
                                         </p:commandButton>
@@ -80,10 +80,10 @@
                                 </p:panel>
 
                                 <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
-                                    <p:dataTable var="disciplina" value="#{disciplinaController2.disciplinaDataModel}" 
+                                    <p:dataTable var="disciplina" value="#{disciplinaController.disciplinaDataModel}" 
                                                  scrollRows="20" scrollable="true"
                                                  scrollHeight="430" 
-                                                 selection="#{disciplinaController2.selecionada}" id="disciplinasTable"
+                                                 selection="#{disciplinaController.selecionada}" id="disciplinasTable"
                                                  rowKey="#{disciplina.ID}"
                                                  style="width: 700px" >
 
@@ -97,13 +97,13 @@
                                             <h:outputText value="#{disciplina.nome}" style="width: 33%"/>
                                         </p:column>  
                                         <p:column headerText="Qdt. Afinidades" style="width: 15%; text-align: center">
-                                            <h:outputText value="#{disciplinaController2.qdtAfinidades(disciplina)}" style="width: 15%"/>
+                                            <h:outputText value="#{disciplinaController.qdtAfinidades(disciplina)}" style="width: 15%"/>
                                         </p:column>
 
                                     </p:dataTable>
 
                                     <p:commandButton id="viewDocentes" style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                                     value="Ver detalhes" actionListener="#{disciplinaController2.preencherAfinidadesDisciplina()}"
+                                                     value="Ver detalhes" actionListener="#{disciplinaController.preencherAfinidadesDisciplina()}"
                                                      immediate="true" oncomplete="PF('afinidadeDialog').show();" icon="ui-icon-search"
                                                      update ="dialogDisciplina" > 
                                     </p:commandButton>
@@ -123,21 +123,21 @@
                                         
                                         <b>Disciplina:</b>
                                     
-                                    <h:outputText value="#{disciplinaController2.selecionada.nome}" />
+                                    <h:outputText value="#{disciplinaController.selecionada.nome}" />
                                     
                                     <br/>
 
                                     <h:outputText value="Mostrar apenas docentes que adicionaram as disciplinas: " />
                                     
-                                    <p:selectBooleanButton id="booleanDiscButton" value="#{disciplinaController2.mostrarAdicionadas}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px">
-                                        <p:ajax update="afinidadeTable" listener="#{disciplinaController2.verSoAdicionadas()}" />
+                                    <p:selectBooleanButton id="booleanDiscButton" value="#{disciplinaController.mostrarAdicionadas}" onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" style="width:60px">
+                                        <p:ajax update="afinidadeTable" listener="#{disciplinaController.verSoAdicionadas()}" />
                                     </p:selectBooleanButton>
                                         
                                     <br/>
                                     
                                    
                                     
-                                    <p:dataTable var="af" value="#{disciplinaController2.afinidadesDaDisciplina}" paginator="true" rows="10"
+                                    <p:dataTable var="af" value="#{disciplinaController.afinidadesDaDisciplina}" paginator="true" rows="10"
                                                      paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                      rowsPerPageTemplate="5,10,15"  id="afinidadeTable" lazy="true"
                                                      emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"

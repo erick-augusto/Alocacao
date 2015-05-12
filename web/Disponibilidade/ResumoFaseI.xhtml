@@ -46,21 +46,21 @@
                                 <h:panelGrid columns="1">
 
                                     <h:panelGrid columns="2" cellpadding="5">
-                                        <p:selectCheckboxMenu value="#{disciplinaController2.filtrosSelecEixos}" label="Eixos"
+                                        <p:selectCheckboxMenu value="#{ofertaController.filtrosSelecEixos}" label="Eixos"
                                                               filter="true" filterMatchMode="startsWith" panelStyle="width:350px" >
-                                            <f:selectItems value="#{disciplinaController2.filtrosEixos}" />
+                                            <f:selectItems value="#{ofertaController.filtrosEixos}" />
                                         </p:selectCheckboxMenu>
 
 
-                                        <p:selectCheckboxMenu value="#{disciplinaController2.filtrosSelecCursos}" label="Cursos"
+                                        <p:selectCheckboxMenu value="#{disciplinaController.filtrosSelecCursos}" label="Cursos"
                                                               filter="true" filterMatchMode="startsWith" panelStyle="width:350px">
-                                            <f:selectItems value="#{disciplinaController2.filtrosCursos}" />
+                                            <f:selectItems value="#{disciplinaController.filtrosCursos}" />
                                         </p:selectCheckboxMenu>
                                     </h:panelGrid>
 
                                     <h:panelGrid columns="2" cellpadding="5">
                                         <p:outputLabel for="campus" value="Câmpus:" />
-                                        <p:selectOneRadio id="campus" value="#{turmasPlanejamentoController.campus}">
+                                        <p:selectOneRadio id="campus" value="#{ofertaController.campus}">
                                             <f:selectItem itemLabel="SA" itemValue="SA" />
                                             <f:selectItem itemLabel="SB" itemValue="SB" />
                                         </p:selectOneRadio>
@@ -68,7 +68,7 @@
 
                                     <h:panelGrid columns="2" cellpadding="5">
                                         <p:outputLabel for="turno" value="Turno:" />
-                                        <p:selectOneRadio id="turno" value="#{turmasPlanejamentoController.turno}">
+                                        <p:selectOneRadio id="turno" value="#{ofertaController.turno}">
                                             <f:selectItem itemLabel="D" itemValue="D" />
                                             <f:selectItem itemLabel="N" itemValue="N" />
                                         </p:selectOneRadio>
@@ -76,7 +76,7 @@
 
                                     <h:panelGrid columns="2" cellpadding="5">
                                         <p:outputLabel for="quadrimestre" value="Quadrimestre:" />
-                                        <p:selectOneRadio id="quadrimestre" value="#{turmasPlanejamentoController.quadrimestre}">
+                                        <p:selectOneRadio id="quadrimestre" value="#{ofertaController.quadrimestre}">
                                             <f:selectItem itemLabel="1" itemValue="1" />
                                             <f:selectItem itemLabel="2" itemValue="2" />
                                             <f:selectItem itemLabel="3" itemValue="3" />
@@ -91,12 +91,12 @@
                                 <h:panelGrid columns="2">
 
                                     <p:commandButton id="buttonDisciplina" style="width: 30px; height: 30px; font-size: smaller; position: relative"  
-                                                     actionListener="#{turmasPlanejamentoController.filtrarDisp()}"
+                                                     actionListener="#{ofertaController.filtrarDisp()}"
                                                      icon="ui-icon-search" 
                                                      update="@(form:ofertaDisciplinasTable)"> 
                                     </p:commandButton>
                                     <p:commandButton style="width: 30px; height: 30px; font-size: smaller; position: relative"  
-                                                     actionListener="#{turmasPlanejamentoController.limparFiltroDisp()}"
+                                                     actionListener="#{ofertaController.limparFiltroDisp()}"
                                                      icon="ui-icon-closethick" 
                                                      update="@all"> 
                                     </p:commandButton>
@@ -110,10 +110,10 @@
 
 
                             <h:panelGrid id="painelDisciplina" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
-                                <p:dataTable var="oferta" value="#{turmasPlanejamentoController.dataModel}" 
+                                <p:dataTable var="oferta" value="#{ofertaController.dataModel}" 
                                              scrollRows="20" scrollable="true"
                                              scrollHeight="430" 
-                                             selection="#{turmasPlanejamentoController.oferta}" id="ofertaDisciplinasTable"
+                                             selection="#{ofertaController.oferta}" id="ofertaDisciplinasTable"
                                              rowKey="#{oferta.ID}"
                                              style="width: 700px" >
 
@@ -125,7 +125,7 @@
                                         <h:outputText value="#{oferta.disciplina.nome}" style="width: 33%"/>
                                     </p:column>  
                                     <p:column headerText="Qtd. Docentes" style="width: 15%; text-align: center">
-                                        <h:outputText value="#{turmasPlanejamentoController.qdtDocentesDisponibilidade(oferta)}" style="width: 15%"/>
+                                        <h:outputText value="#{ofertaController.qdtDocentesDisponibilidade(oferta)}" style="width: 15%"/>
                                     </p:column>
                                     <p:column headerText="Qtd. Turmas" style="width: 15%">
                                         <h:outputText value="#{oferta.numTurmas}" style="width: 15%"/>
@@ -143,7 +143,7 @@
                                 </p:dataTable>
 
                                 <p:commandButton id="viewDocentes" style="width: 160px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                                 value="Ver detalhes" actionListener="#{turmasPlanejamentoController.preencherDisponibilidadesOferta()}"
+                                                 value="Ver detalhes" actionListener="#{ofertaController.preencherDisponibilidadesOferta()}"
                                                  immediate="true" oncomplete="PF('ofertaDialog').show();" icon="ui-icon-search"> 
                                 </p:commandButton>
 
@@ -160,13 +160,13 @@
 
                                     <b>Oferta:</b>
 
-                                    <h:outputText value="#{turmasPlanejamentoController.oferta.disciplina.nome},
-                                                  #{turmasPlanejamentoController.oferta.campus}, 
-                                                  #{turmasPlanejamentoController.oferta.turno}" />
+                                    <h:outputText value="#{ofertaController.oferta.disciplina.nome},
+                                                  #{ofertaController.oferta.campus}, 
+                                                  #{ofertaController.oferta.turno}" />
 
                                     <br/>
 
-                                    <p:dataTable var="d" value="#{turmasPlanejamentoController.dispDataModel}" paginator="true" rows="10"
+                                    <p:dataTable var="d" value="#{ofertaController.dispDataModel}" paginator="true" rows="10"
                                                  paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                                  rowsPerPageTemplate="5,10,15"  id="dispTable" lazy="true"
                                                  emptyMessage="Nenhum resultado foi encontrado para esse critério de busca"
