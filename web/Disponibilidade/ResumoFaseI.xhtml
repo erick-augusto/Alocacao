@@ -248,6 +248,9 @@
                                     <p:column headerText="Docente" style="width: 33%" filterBy="#{docente.nome}" filterMatchMode="contains">
                                         <h:outputText value="#{docente.nome}" style="width: 33%"/>
                                     </p:column>  
+                                    <p:column headerText="Creditos planejados" style="width: 15%; text-align: center">
+                                        <h:outputText value="#{docenteController.creditosQuad(docente)}" style="width: 15%"/>
+                                    </p:column>
                                     <p:column headerText="Qdt. Disponibilidades" style="width: 15%; text-align: center">
                                         <h:outputText value="#{docenteController.qtdDisponibilidades(docente)}" style="width: 15%"/>
                                     </p:column>

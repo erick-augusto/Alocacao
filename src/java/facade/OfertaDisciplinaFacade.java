@@ -178,15 +178,18 @@ public class OfertaDisciplinaFacade extends AbstractFacade<OfertaDisciplina>{
 
     }
     
-    //Lista as turmas por quadrimestre
+    /**
+     * Lista as ofertas de disciplina por quadrimestre
+     * @param quadrimestre int
+     * @return Lista de ofertas de disciplinas filtradas
+     */
     public List<OfertaDisciplina> findAllQuad(int quadrimestre) {
         
         Session session = getSessionFactory().openSession();
         Criteria crit = session.createCriteria(OfertaDisciplina.class);
         crit.add(Restrictions.eq("quadrimestre", quadrimestre));
-        crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//faz um select distinct
-
-        //crit.setMaxResults(50);
+        crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        
         List results = crit.list();
         
         session.close();

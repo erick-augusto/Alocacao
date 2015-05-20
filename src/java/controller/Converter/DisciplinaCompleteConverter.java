@@ -1,23 +1,24 @@
-package controller;
+package controller.Converter;
 
+import controller.*;
 import java.math.BigDecimal;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import model.Pessoa;
+import model.Disciplina;
 
-//Classe utilizada para o Autocomplete dos docentes
-@FacesConverter("pessoaCompleteConverter")
-    public class PessoaCompleteConverter implements Converter {
+//Utilizada para o autocomplete dos docentes
+@FacesConverter("disciplinaCompleteConverter")
+    public class DisciplinaCompleteConverter implements Converter {
 
         @Override
         public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
             if (value == null || value.length() == 0) {
                 return null;
             }
-            PessoaController controller = (PessoaController) facesContext.getApplication().getELResolver().
-                    getValue(facesContext.getELContext(), null, "pessoaController");
+            DisciplinaController controller = (DisciplinaController) facesContext.getApplication().getELResolver().
+                    getValue(facesContext.getELContext(), null, "disciplinaController");
             return controller.buscar(getKey(value));
         }
 
@@ -38,12 +39,12 @@ import model.Pessoa;
             if (object == null) {
                 return null;
             }
-            if (object instanceof Pessoa) {
-                Pessoa p = (Pessoa) object;               
-                return getStringKey(new BigDecimal(p.getID().toString()).setScale(0, BigDecimal.ROUND_HALF_UP).longValue());
+            if (object instanceof Disciplina) {
+                Disciplina d = (Disciplina) object;               
+                return getStringKey(new BigDecimal(d.getID().toString()).setScale(0, BigDecimal.ROUND_HALF_UP).longValue());
 
             } else {
-                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Pessoa.class.getName());
+                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Disciplina.class.getName());
             }
         }
     }

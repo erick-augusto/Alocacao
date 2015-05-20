@@ -116,7 +116,7 @@ public class LoginBean implements Serializable {
 //            }
             
 
-            usuario = pessoaFacade.findByLogin2(username);
+            usuario = pessoaFacade.findByUsername(username);
 
             if (usuario != null) {
                 loggedIn = true;

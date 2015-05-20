@@ -28,50 +28,37 @@ public class DisponibilidadeController implements Serializable {
         usuario = LoginBean.getUsuario();
 
     }
-
-    //Atributos de Disponibilidade controller
+ 
     private Disponibilidade disponibilidade;
-
-    private Pessoa usuario;
-    
-    private List<String> ordem;
+ 
 
     @EJB
     private OfertaDisciplinaFacade turmasFacade;
     
     @EJB
     private DisponibilidadeFacade disponibilidadeFacade;
+    
+    
+    
+//-----------------------------------Fase I Alocacao-----------------------------------------------------    
 
-    private List<OfertaDisciplina> turmasEtapa1;
+    private List<OfertaDisciplina> ofertasEtapa1;
+    
+    public List<OfertaDisciplina> getOfertasEtapa1() {
 
-    private List<OfertaDisciplina> turmasEtapa2;
-
-    public List<OfertaDisciplina> getTurmasEtapa2() {
-
-        if (turmasEtapa2 == null) {
-            turmasEtapa2 = new ArrayList<>();
+        if (ofertasEtapa1 == null) {
+            ofertasEtapa1 = new ArrayList<>();
         }
 
-        return turmasEtapa2;
+        return ofertasEtapa1;
     }
 
-    public void setTurmasEtapa2(List<OfertaDisciplina> turmasEtapa2) {
-        this.turmasEtapa2 = turmasEtapa2;
+    public void setOfertasEtapa1(List<OfertaDisciplina> ofertasEtapa1) {
+        this.ofertasEtapa1 = ofertasEtapa1;
     }
-
-    public List<OfertaDisciplina> getTurmasEtapa1() {
-
-        if (turmasEtapa1 == null) {
-            turmasEtapa1 = new ArrayList<>();
-        }
-
-        return turmasEtapa1;
-    }
-
-    public void setTurmasEtapa1(List<OfertaDisciplina> turmasEtapa1) {
-        this.turmasEtapa1 = turmasEtapa1;
-    }
-
+    
+    private Pessoa usuario;
+    
     public Pessoa getUsuario() {
         return usuario;
     }
@@ -79,6 +66,85 @@ public class DisponibilidadeController implements Serializable {
     public void setUsuario(Pessoa usuario) {
         this.usuario = usuario;
     }
+    
+    //Data Model das OfertaDisciplina da Etapa I
+    private OfertaDisciplinaDataModel dataModel;
+
+    public OfertaDisciplinaDataModel getDataModel() {
+
+        if (dataModel == null) {
+            List<OfertaDisciplina> turmas = turmasFacade.findAll();
+            dataModel = new OfertaDisciplinaDataModel(turmas);
+        }
+
+        return dataModel;
+    }
+
+    public void setDataModel(OfertaDisciplinaDataModel dataModel) {
+        this.dataModel = dataModel;
+    }
+    
+    //guarda as disponibilidades escolhidas pelo docente em cada quadrimestre
+    private DisponibilidadeDataModel dispdataModel;
+
+    public DisponibilidadeDataModel getDispdataModel() {
+
+        if (dispdataModel == null) {
+
+            List<Disponibilidade> d = disponibilidadeFacade.findByDocente(usuario);
+
+            dispdataModel = new DisponibilidadeDataModel(d);
+
+        }
+
+        return dispdataModel;
+    }
+
+    public DisponibilidadeDataModel getDispdataModel(int quad) {
+
+        if (dispdataModel == null) {
+
+            List<Disponibilidade> d = disponibilidadeFacade.findByDocenteQuad(usuario, quad);
+
+            dispdataModel = new DisponibilidadeDataModel(d);
+
+        }
+
+        return dispdataModel;
+    }
+
+    public void setDispdataModel(DisponibilidadeDataModel dispdataModel) {
+        this.dispdataModel = dispdataModel;
+    }
+    
+    public void salvarDisponibilidade() {
+
+        for (OfertaDisciplina t : ofertasEtapa1) {
+
+            //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
+            t = turmasFacade.inicializarColecaoDisponibilidades(t);
+            disponibilidade = new Disponibilidade("", usuario, t);
+            disponibilidadeFacade.save(disponibilidade);
+
+        }
+
+        dispdataModel = null;
+        
+    }
+
+    
+    //Método para editar as escolhas de disponibilidade, definindo a ordem de preferencia e 
+    //se prefere dar teoria ou prática ou ambos
+    public void onCellEdit(CellEditEvent event) {
+
+        Disponibilidade d = (Disponibilidade) dispdataModel.getRowData();
+
+        disponibilidadeFacade.merge(d);
+        
+    }
+
+    //Usado para ordem de preferência do docente na escolha da oferta de disciplina
+    private List<String> ordem;
     
     public List<String> getOrdem() {
 
@@ -93,24 +159,6 @@ public class DisponibilidadeController implements Serializable {
         }
 
         return ordem;
-    }
-
-    public List<String> getTipoDisp(Disponibilidade d){
-            
-            List<String> tp;
-            tp = new ArrayList<>();
-            tp.add("Selecione");
-            if(d.getOfertaDisciplina().getT() > 0){
-                tp.add("Teoria");
-            }
-            if(d.getOfertaDisciplina().getP() > 0){
-                tp.add("Prática");
-            }
-            if(d.getOfertaDisciplina().getP() > 0  && d.getOfertaDisciplina().getT() > 0 ){
-                tp.add("Teoria & Prática");
-            }
-            return tp;
-        
     }
     
     public List<String> getOrdem(Long quad) {
@@ -133,98 +181,42 @@ public class DisponibilidadeController implements Serializable {
         }
 
         return ordem;
+        
     }
-
+    
     public void setOrdem(List<String> ordem) {
         this.ordem = ordem;
     }
-
-    public void onCellEdit(CellEditEvent event) {
-
-        Disponibilidade d = (Disponibilidade) dispdataModel.getRowData();
-
-        disponibilidadeFacade.merge(d);
+    
+    //Usado para o docente definir se ele quer dar teoria, prática ou ambos 
+    public List<String> getTipoDisp(Disponibilidade d){
+            
+            List<String> tp;
+            tp = new ArrayList<>();
+            tp.add("Selecione");
+            if(d.getOfertaDisciplina().getT() > 0){
+                tp.add("Teoria");
+            }
+            if(d.getOfertaDisciplina().getP() > 0){
+                tp.add("Prática");
+            }
+            if(d.getOfertaDisciplina().getP() > 0  && d.getOfertaDisciplina().getT() > 0 ){
+                tp.add("Teoria & Prática");
+            }
+            return tp;
         
     }
-
-    public void salvarDisponibilidade() {
-
-        for (OfertaDisciplina t : turmasEtapa1) {
-
-            //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
-            t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", usuario, t);
-            disponibilidadeFacade.save(disponibilidade);
-
-        }
-
-        dispdataModel = null;
-        
-    }
-
-    //------------------------------------Data Model---------------------------------------------------------
-    //Data Model das OfertaDisciplina da Etapa I------------------------------------------------------------------------
-    private OfertaDisciplinaDataModel dataModel;
-
-    public OfertaDisciplinaDataModel getDataModel() {
-
-        if (dataModel == null) {
-            List<OfertaDisciplina> turmas = turmasFacade.findAll();
-            dataModel = new OfertaDisciplinaDataModel(turmas);
-        }
-
-        return dataModel;
-    }
-
-    public void setDataModel(OfertaDisciplinaDataModel dataModel) {
-        this.dataModel = dataModel;
-    }
-
-    //Data Model das Disponibilidades---------------------------------------------------------------------------
-    private DisponibilidadeDataModel dispdataModel;
-
-    public DisponibilidadeDataModel getDispdataModel() {
-
-        if (dispdataModel == null) {
-
-            List<Disponibilidade> d = disponibilidadeFacade.findByPessoa(usuario);
-
-            dispdataModel = new DisponibilidadeDataModel(d);
-
-        }
-
-        return dispdataModel;
-    }
-
-    public DisponibilidadeDataModel getDispdataModel(int quad) {
-
-        if (dispdataModel == null) {
-
-            List<Disponibilidade> d = disponibilidadeFacade.findByPessoaQuad(usuario, quad);
-
-            dispdataModel = new DisponibilidadeDataModel(d);
-
-        }
-
-        return dispdataModel;
-    }
-
-    public void setDispdataModel(DisponibilidadeDataModel dispdataModel) {
-        this.dispdataModel = dispdataModel;
-    }
-    
-    
+ 
     public void sucessoFase1(){
         
-        turmasEtapa1 = null;
+        ofertasEtapa1 = null;
         JsfUtil.addSuccessMessage("Disponibilidades em turmas salvas com sucesso!");
       
     }
-    
 
-    //------------------------------------Prepare das paginas web-----------------------------------------------
-    //Paginas da Fase I de disponibilidade-----------------------------------------------------------------------
-    //Retorna as turmas por quadrimestre
+
+//-----------------------------------------Paginas web-----------------------------------------------
+    
     private List<OfertaDisciplina> listarTodasQuad(int quad) {
 
         return turmasFacade.findAllQuad(quad);
@@ -250,14 +242,8 @@ public class DisponibilidadeController implements Serializable {
         return "/Disponibilidade/FaseIQuad3";
     }
 
-    public String prepareLogs1() {
-
-        dispdataModel = new DisponibilidadeDataModel(disponibilidadeFacade.findAll());
-        return "/Disponibilidade/LogsDisponibilidades1";
-
-    }
-
-    //----------------------------------------Filtros----------------------------------------------------------
+    
+//-------------------------------------------Filtros----------------------------------------------------------
     //Filtros para as turmas da Etapa I------------------------------------------------------------------------
     private boolean filtrarAfinidades;
 
@@ -426,7 +412,7 @@ public class DisponibilidadeController implements Serializable {
 
         disponibilidades = new ArrayList<>();
 
-        disponibilidades = disponibilidadeFacade.findByDisciplinaTCQ(disciplina, campus, turno, quadrimestre);
+        disponibilidades = disponibilidadeFacade.findByDiscTurCamQuad(disciplina, campus, turno, quadrimestre);
 
         dispdataModel = new DisponibilidadeDataModel(disponibilidades);
 
@@ -440,7 +426,7 @@ public class DisponibilidadeController implements Serializable {
     //Filtrar as disponibilidades por docente
     public void filtrarDispDoc() {
 
-        disponibilidades = disponibilidadeFacade.findByPessoaQuad(pessoa, quadrimestre);
+        disponibilidades = disponibilidadeFacade.findByDocenteQuad(pessoa, quadrimestre);
 
         dispdataModel = new DisponibilidadeDataModel(disponibilidades);
 

@@ -1,6 +1,5 @@
 package controller;
 
-import facade.AfinidadeFacade;
 import facade.CreditoFacade;
 import facade.DocenteFacade;
 import facade.PessoaFacade;
@@ -34,6 +33,16 @@ public class DocenteController extends Filtros implements Serializable{
         quad = 1; //O primeiro quadrimestre é exibido por default
     }
     
+    @EJB
+    private DocenteFacade docenteFacade;
+    
+    @EJB
+    private PessoaFacade pessoaFacade;
+ 
+    @EJB
+    private CreditoFacade creditoFacade;
+    
+    
     //Docente atual----------------------------------------------------
     private Docente docente;
     
@@ -44,9 +53,12 @@ public class DocenteController extends Filtros implements Serializable{
     public void setDocente(Docente docente) {
         this.docente = docente;
     }
+
     
+
+//--------------------------------------------Cadastro dos docentes------------------------------------------------------
     
-    //Docente para salvar-------------------------------------------------
+//Docente para salvar
     private Docente docenteSalvar;
     
     public Docente getDocenteSalvar() {
@@ -60,121 +72,197 @@ public class DocenteController extends Filtros implements Serializable{
 
     public void setDocenteSalvar(Docente docenteSalvar) {
         this.docenteSalvar = docenteSalvar;
+    } 
+    
+    private PessoaLazyModel docenteLazyModel;
+
+    public PessoaLazyModel getDocenteLazyModel() {
+        
+        if(docenteLazyModel == null){
+            docenteLazyModel = new PessoaLazyModel(pessoaFacade.listDocentes());
+        }
+        
+        return docenteLazyModel;
     }
     
-    
-    
-    
-    @EJB
-    private DocenteFacade docenteFacade;
-    
-    @EJB
-    private PessoaFacade pessoaFacade;
-    
-    @EJB
-    private AfinidadeFacade afinidadeFacade;
-    
-    @EJB
-    private CreditoFacade creditoFacade;
-    
-    //----------------------------------------Getters e Setters----------------------------------------------------
-
-    
-
-    
-    
-    public AfinidadeDataModel getAfinidadesFiltradas() {
-        return afinidadesFiltradas;
-    }
-
-    public void setAfinidadesFiltradas(AfinidadeDataModel afinidadesFiltradas) {
-        this.afinidadesFiltradas = afinidadesFiltradas;
-    }
-
-    public boolean isMostrarAdicionadas() {
-        return mostrarAdicionadas;
-    }
-
-    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
-        this.mostrarAdicionadas = mostrarAdicionadas;
-    }
-
-    
-
-    public int getQuad() {
-        return quad;
-    }
-
-    public void setQuad(int quad) {
-        this.quad = quad;
+    @PostConstruct
+    public void init() {
+        docenteLazyModel = new PessoaLazyModel(pessoaFacade.listDocentes());
+        
     }
     
-    
-    
-    //------------------------------Fase I da alocação didática-----------------------------------------
-   
-    //Creditos por quadrimestre para o planejamento anual
-    private double creditos;
-    
-    public double getCreditos() {
-        return creditos;
-    }
+    public void cadastrarDocentes() {
 
-    public void setCreditos(double creditos) {
-        this.creditos = creditos;
-    }
-    
-    //Associa a quantidade de créditos ao quadrimestre atual e ao docente que está fazendo
-    //o planejamento
-    public void salvarCreditos(Long quad){
-  
-        Credito credito = new Credito();
-        docente = (Docente) LoginBean.getUsuario();
-        Integer quadrimestre = (int) (long) quad;
-        credito.setQuadrimestre(quadrimestre);
-        credito.setQuantidade(creditos);
-        credito.setDocente(docente);
-    
+        String[] palavras;
+
         try {
-            creditoFacade.save(credito);
-            JsfUtil.addSuccessMessage("Créditos salvos com sucesso!");
 
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível salvar os créditos " + e.getMessage());
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/docentes.csv"), "UTF-8"))) {
+
+                String linha = lerArq.readLine(); //cabeçalho
+
+                linha = lerArq.readLine();
+
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split(",");
+
+                    List<Docente> docentes = docenteFacade.findByName(trataNome(palavras[1]));
+
+                    if (docentes.isEmpty()) {
+
+                        Docente d = new Docente();
+
+                        d.setNome(trataNome(palavras[1]));
+                        d.setSiape(palavras[2]);
+                        d.setEmail(palavras[3]);
+                        d.setCentro(palavras[4]);
+                        d.setAdm(false);
+
+                        docenteFacade.save(d);
+
+                    }
+
+                    linha = lerArq.readLine();
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+        }
+
+        docenteLazyModel = null;
+        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
+
+    }
+
+    public void cadastrarDocentesCMCC() {
+
+        String[] palavras;
+
+        try {
+
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/Docentes CMCC.csv"), "UTF-8"))) {
+
+                String linha = lerArq.readLine(); //cabeçalho
+
+                linha = lerArq.readLine();
+
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split("_");
+
+                    List<Docente> docentes = docenteFacade.findByName(palavras[0]);
+
+                    if (docentes.isEmpty()) {
+
+                        Docente d = new Docente();
+
+                        d.setNome(palavras[0]);
+                        d.setSiape(palavras[1]);
+                        d.setEmail(palavras[4]);
+                        d.setCentro(palavras[2]);
+                        d.setAreaAtuacao(palavras[3]);
+                        d.setAdm(false);
+
+                        docenteFacade.save(d);
+
+                    }
+
+                    linha = lerArq.readLine();
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+        }
+
+        docenteLazyModel = null;
+        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
+
+    }
+
+    private String trataNome(String nome) {
+
+        String retorno = "";
+        String[] palavras = nome.split(" ");
+
+        for (String p : palavras) {
+
+            if (p.equals("DAS") || p.equals("DOS") || p.length() <= 2) {
+                p = p.toLowerCase();
+                retorno += p + " ";
+            } else {
+                p = p.charAt(0) + p.substring(1, p.length()).toLowerCase();
+                retorno += p + " ";
+            }
 
         }
-        
-        creditos = 0.0;      
-    }
-    
-    
-    //-----------------------------------------DataModel--------------------------------------------------
-    
-    
-    private DocenteDataModel docenteDataModel;
 
-    public DocenteDataModel getDocenteDataModel() {
-        
-        if(docenteDataModel == null){
-            docenteDataModel = new DocenteDataModel(this.listarTodas());
+        return retorno;
+
+    }
+
+    public void cadastrarArea() {
+
+        String[] palavras;
+
+        try {
+
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/professores.csv"), "UTF-8"))) {
+
+                String linha = lerArq.readLine(); //cabeçalho
+
+                linha = lerArq.readLine();
+
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split("_");
+
+                    List<Docente> docentes = docenteFacade.findByName(trataNome(palavras[0]));
+
+                    if (!docentes.isEmpty()) {
+
+                        Docente d = docentes.get(0);
+
+                        d.setAreaAtuacao(palavras[1]);
+
+                        docenteFacade.edit(d);
+
+                    }
+
+                    linha = lerArq.readLine();
+                }
+            }
+
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
         }
-        
-        return docenteDataModel;
-    }
 
-    public void setDocenteDataModel(DocenteDataModel docenteDataModel) {
-        this.docenteDataModel = docenteDataModel;
+        docenteLazyModel = null;
+        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
+
     }
     
-    //-----------------------------------Resumo Afinidades-------------------------------------------------------------------------------------------
+//-------------------------------------------Resumo Afinidades-------------------------------------------------------------------------------------------
     
     //Afinidades de acordo com o docente
     private AfinidadeDataModel afinidadesDoDocente;
-    
-    private AfinidadeDataModel afinidadesFiltradas;
-    
+  
     private boolean mostrarAdicionadas;
-    
+  
+    /**
+     * Método para a exibição da quantidade de creditos de cada docente na tabela
+     * de resumos de afinidades
+     * @param d
+     * @return 
+     */
     public int qtdAfinidades(Docente d){
         
         Set<Afinidade> afinidades = d.getAfinidades();
@@ -185,23 +273,18 @@ public class DocenteController extends Filtros implements Serializable{
                 qtd++;
             }
         }
-        
-        
+
         return qtd;
         
     }
     
-     public AfinidadeDataModel getAfinidadesDoDocente() {
-        
-        return afinidadesDoDocente;
-    }
-
-    public void setAfinidadesDoDocente(AfinidadeDataModel afinidadesDoDocente) {
-        this.afinidadesDoDocente = afinidadesDoDocente;
-    }
-    
+    /**
+     * Preenche as afinidades do docente selecionado 
+     * para a visualização dos detalhes no Resumo das Afinidades
+     */
     public void preencherAfinidadesDoDocente(){
 
+        mostrarAdicionadas = false;
         
         List<Afinidade> afinidades;
         if (docente != null) {
@@ -215,6 +298,9 @@ public class DocenteController extends Filtros implements Serializable{
      
     }
     
+    /**
+     * Filtro caso o usuario administrador não queira ver as afinidades que foram removidas
+     */
     public void verSoAdicionadas() {
 
         List<Afinidade> afinidades = new ArrayList<>(docente.getAfinidades());
@@ -234,30 +320,104 @@ public class DocenteController extends Filtros implements Serializable{
 
     }
     
-    public void falseIncluirRemovidas(){
+    public AfinidadeDataModel getAfinidadesDoDocente() {
         
-        incluirRemovidas = false;
-        
+        return afinidadesDoDocente;
+    }
+
+    public void setAfinidadesDoDocente(AfinidadeDataModel afinidadesDoDocente) {
+        this.afinidadesDoDocente = afinidadesDoDocente;
     }
     
-    //inclui all removidas
-    private boolean incluirRemovidas;
-
-    public boolean isIncluirRemovidas() {
-        return incluirRemovidas;
+    public boolean isMostrarAdicionadas() {
+        return mostrarAdicionadas;
     }
 
-    public void setIncluirRemovidas(boolean incluirRemovidas) {
-        this.incluirRemovidas = incluirRemovidas;
+    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
+        this.mostrarAdicionadas = mostrarAdicionadas;
     }
  
-    //-----------------------------------Resumo Fase I-------------------------------------------------------------------------------------------
+//------------------------------------Fase I da alocação didática-----------------------------------------
+   
+    //Creditos por quadrimestre para o planejamento anual
+    private double creditos;
+    
+    public double getCreditos() {
+        return creditos;
+    }
+
+    public void setCreditos(double creditos) {
+        this.creditos = creditos;
+    }
+    
+    
+    /**
+     * Associa a quantidade de créditos ao quadrimestre atual e ao docente que
+     * está fazendo o planejamento
+     *
+     * @param quad Long
+     */
+    public void salvarCreditos(Long quad) {
+
+        docente = (Docente) LoginBean.getUsuario();
+        Integer quadrimestre = (int) (long) quad;
+        boolean salvar = true;
+
+        //Verifica se já existe um planejamento de credito para aquele quadrimestre
+        List<Credito> listCreditos = docente.getCreditos();
+        if (listCreditos.size() > 0) {
+
+            for (Credito c : listCreditos) {
+
+                if (c.getQuadrimestre() == quadrimestre) { //substitui o planejamento anterior
+                    c.setQuantidade(creditos);
+                    try {
+                        listCreditos.add(c);
+                        docente.setCreditos(listCreditos);
+                        creditoFacade.edit(c);
+                        salvar = false;
+                        JsfUtil.addSuccessMessage("Créditos editados com sucesso!");
+                    } catch (Exception e) {
+                        JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar os créditos " + e.getMessage());
+                    }
+
+                }
+            }
+
+        }
+
+        if (salvar) {
+            Credito credito = new Credito();
+            credito.setQuadrimestre(quadrimestre);
+            credito.setQuantidade(creditos);
+            credito.setDocente(docente);
+            listCreditos.add(credito);
+            docente.setCreditos(listCreditos);
+
+            try {
+                creditoFacade.save(credito);
+
+                JsfUtil.addSuccessMessage("Créditos salvos com sucesso!");
+
+            } catch (Exception e) {
+                JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível salvar os créditos " + e.getMessage());
+
+            }
+        }
+
+        creditos = 0.0;
+
+        LoginBean.setUsuario(docente);
+        //salvar = true;
+    }
+    
+//-----------------------------------------Resumo Fase I-------------------------------------------------------------------------------------------
     
     private DisponibilidadeDataModel disponibilidadesDocente;
     
     //Quadrimestre para visualização dos docentes no resumo
     private int quad;
-    
+   
     public int qtdDisponibilidades(Docente d){
         
         Set<Disponibilidade> all = d.getDisponibilidades();
@@ -272,13 +432,21 @@ public class DocenteController extends Filtros implements Serializable{
         return byQuad.size();
         
     }
-
-    public DisponibilidadeDataModel getDisponibilidadesDocente() {
-        return disponibilidadesDocente;
-    }
-
-    public void setDisponibilidadesDocente(DisponibilidadeDataModel disponibilidadesDocente) {
-        this.disponibilidadesDocente = disponibilidadesDocente;
+    
+    public double creditosQuad(Docente d){
+        
+        double creditosQuad = 0.0;
+        List<Credito> listCreditos = d.getCreditos();
+        if(listCreditos.size() > 0){
+            
+            for(Credito c: listCreditos){
+                if(c.getQuadrimestre() == quad){
+                    creditosQuad = c.getQuantidade();
+                }
+            }
+            
+        }     
+        return creditosQuad;
     }
     
     public void preencherDisponibilidadesDoDocente() {
@@ -302,6 +470,34 @@ public class DocenteController extends Filtros implements Serializable{
         }
 
     }
+
+    public DisponibilidadeDataModel getDisponibilidadesDocente() {
+        return disponibilidadesDocente;
+    }
+
+    public void setDisponibilidadesDocente(DisponibilidadeDataModel disponibilidadesDocente) {
+        this.disponibilidadesDocente = disponibilidadesDocente;
+    }
+    
+    public int getQuad() {
+        return quad;
+    }
+
+    public void setQuad(int quad) {
+        this.quad = quad;
+    }
+//-----------------------------------------DataModel--------------------------------------------------
+//Utilizado para exibição nos Resumos de Afinidades e da Fase I da Alocação
+    private DocenteDataModel docenteDataModel;
+
+    public DocenteDataModel getDocenteDataModel() {
+        
+        if(docenteDataModel == null){
+            docenteDataModel = new DocenteDataModel(this.listarTodas());
+        }
+        
+        return docenteDataModel;
+    }
     
     
     
@@ -309,10 +505,20 @@ public class DocenteController extends Filtros implements Serializable{
     
     //------------------------------Filtros de Docente-------------------------------------------
     
-
     public void filtrar() {
+        
+        if (!getFiltrosSelecAreaAtuacao().isEmpty()) {
+            List<Docente> docentesFiltrados = docenteFacade.findByArea(getFiltrosSelecAreaAtuacao());
 
-        docenteDataModel = new DocenteDataModel(filtrarDocente(docenteDataModel, docenteFacade));
+            setFiltrosSelecAreaAtuacao(null);
+            docenteDataModel = new DocenteDataModel(docentesFiltrados);
+            
+        }
+        else{
+            docenteDataModel = new DocenteDataModel(docenteFacade.findAll());
+        }
+
+        
     }
     
     public void limparFiltro(){
@@ -324,24 +530,7 @@ public class DocenteController extends Filtros implements Serializable{
         
     }
 
-    //-----------------------------------------LazyDataModel------------------------------------------------------
-    
-    private PessoaLazyModel docenteLazyModel;
 
-    public PessoaLazyModel getDocenteLazyModel() {
-        
-        if(docenteLazyModel == null){
-            docenteLazyModel = new PessoaLazyModel(pessoaFacade.listDocentes());
-        }
-        
-        return docenteLazyModel;
-    }
-    
-    @PostConstruct
-    public void init() {
-        docenteLazyModel = new PessoaLazyModel(pessoaFacade.listDocentes());
-        
-    }
     
     
     //------------------------------------------CRUD---------------------------------------------------------------------------------------------
@@ -398,172 +587,6 @@ public class DocenteController extends Filtros implements Serializable{
         docente = (Docente) (Pessoa) docenteLazyModel.getRowData();
         return "/Cadastro/editDocente";
     }
-    
-    //------------------------------------------Cadastro-------------------------------------------------------------------------------------------
-   
-    public void cadastrarDocentes() {
-
-        String[] palavras;
-
-        try {
-
-            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/docentes.csv"), "UTF-8"))) {
-                
-                String linha = lerArq.readLine(); //cabeçalho
-                
-                linha = lerArq.readLine();
-                
-                while (linha != null) {
-                    
-                    linha = linha.replaceAll("\"", "");
-                    
-                    palavras = linha.split(",");
-                    
-                    List<Docente> docentes = docenteFacade.findByName(trataNome(palavras[1]));
-                    
-                    if (docentes.isEmpty()) {
-                        
-                        Docente d = new Docente();
-                        
-                        d.setNome(trataNome(palavras[1]));
-                        d.setSiape(palavras[2]);
-                        d.setEmail(palavras[3]);
-                        d.setCentro(palavras[4]);
-                        d.setAdm(false);
-                        
-                        docenteFacade.save(d);
-                        
-                    }
-                    
-                    linha = lerArq.readLine();
-                }
-            } 
-
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
-        }
-        
-        docenteLazyModel = null;
-        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
-
-    }
-    
-    public void cadastrarDocentesCMCC() {
-
-        String[] palavras;
-
-        try {
-
-            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/Docentes CMCC.csv"), "UTF-8"))) {
-                
-                String linha = lerArq.readLine(); //cabeçalho
-                
-                linha = lerArq.readLine();
-                
-                while (linha != null) {
-                    
-                    linha = linha.replaceAll("\"", "");
-                    
-                    palavras = linha.split("_");
-                    
-                    List<Docente> docentes = docenteFacade.findByName(palavras[0]);
-                    
-                    if (docentes.isEmpty()) {
-                        
-                        Docente d = new Docente();
-                        
-                        d.setNome(palavras[0]);
-                        d.setSiape(palavras[1]);
-                        d.setEmail(palavras[4]);
-                        d.setCentro(palavras[2]);
-                        d.setAreaAtuacao(palavras[3]);
-                        d.setAdm(false);
-                        
-                        docenteFacade.save(d);
-                        
-                    }
-                    
-                    linha = lerArq.readLine();
-                }
-            } 
-
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
-        }
-        
-        docenteLazyModel = null;
-        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
-
-    }
-  
-    private String trataNome(String nome) { 
-        
-     String retorno = "";
-     String[] palavras = nome.split(" ");
-     
-     for(String p: palavras){
-         
-         if(p.equals("DAS") || p.equals("DOS") || p.length() <= 2){
-             p = p.toLowerCase();
-             retorno += p + " ";
-         }
-        
-         
-         else{
-             p = p.charAt(0) + p.substring(1, p.length()).toLowerCase();
-             retorno += p + " ";
-         }
-         
-     }
-        
-return retorno;
-
-} 
-    
-    public void cadastrarArea(){
-        
-        String[] palavras;
-
-        try {
-
-            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/professores.csv"), "UTF-8"))) {
-                
-                String linha = lerArq.readLine(); //cabeçalho
-                
-                linha = lerArq.readLine();
-                
-                while (linha != null) {
-                    
-                    linha = linha.replaceAll("\"", "");
-                    
-                    palavras = linha.split("_");
-                    
-                    List<Docente> docentes = docenteFacade.findByName(trataNome(palavras[0]));
-                    
-                    if (!docentes.isEmpty()) {
-                        
-                        Docente d = docentes.get(0);
-                        
-                        d.setAreaAtuacao(palavras[1]);
-                        
-                        docenteFacade.edit(d);
-                        
-                    }
-                    
-                    linha = lerArq.readLine();
-                }
-            } 
-
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
-        }
-        
-        docenteLazyModel = null;
-        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
-        
-        
-    }
-    
     
    
 }

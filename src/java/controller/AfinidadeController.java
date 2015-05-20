@@ -29,72 +29,29 @@ public class AfinidadeController extends Filtros implements Serializable{
         
     }
     
-    //Guarda a afinidade atual
-    private Afinidade afinidade;
-    
-    public Afinidade getAfinidade() {
-        return afinidade;
-    }
-
-    public void setAfinidade(Afinidade afinidade) {
-        this.afinidade = afinidade;
-    }
-
-    //Disciplina 
-    private Disciplina disciplina;
-    
-    public Disciplina getDisciplina() {
-        return disciplina;
-    }
-
-    public void setDisciplina(Disciplina disciplina) {
-        this.disciplina = disciplina;
-    }
-    
-    
-    
-    private List<Afinidade> todasAfinidades;
-    
-    private Pessoa pessoa;
-    
-    public Pessoa getPessoa() {
-        return pessoa;
-    }
-
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
-    
     @EJB
     private AfinidadeFacade afinidadeFacade;
     
     @EJB
     private DisciplinaFacade disciplinaFacade;
+    
+    
+    
+//-------------------------------------------Definir afinidade-------------------------------------------------------------------------
+    //Guarda a afinidade atual
+    private Afinidade afinidade;
+    
+    //Guarda o docente que esta definindo a afinidade
+    private Pessoa pessoa;
   
-    
-//---------------------------------------Definir afinidade-------------------------------------------------------------------------
-    
     //Guarda a disciplina que o docente selecionou para adicionar como tendo afinidade
     private Disciplina paraAdicionar;
-    
-    public Disciplina getParaAdicionar() {
-        return paraAdicionar;
-    }
-
-    public void setParaAdicionar(Disciplina paraAdicionar) {
-        this.paraAdicionar = paraAdicionar;
-    }
-    
+ 
     //Guarda a disciplina que antes o docente possuía afinidade, mas não possui mais e vai remover
     private Disciplina paraRemover;
-    
-    public Disciplina getParaRemover() {
-        return paraRemover;
-    }
-
-    public void setParaRemover(Disciplina paraRemover) {
-        this.paraRemover = paraRemover;
-    }
+ 
+    //Todas afinidades do docentes, incluindo adicionadas e removidas
+    private List<Afinidade> todasAfinidades;
     
     //Disciplinas disponiveis------------------------------------------------------
     private List<Disciplina> disponiveis;
@@ -138,21 +95,13 @@ public class AfinidadeController extends Filtros implements Serializable{
         return disponiveis;
     }
     
-    public void setDisponiveis(List<Disciplina> disponiveis) {
-        this.disponiveis = disponiveis;
-    }
-
     //Disciplinas escolhidas---------------------------------------------------------
     private List<Disciplina> escolhidas;
-    
-    public List<Disciplina> getEscolhidas() {
-        return escolhidas;
-    }
-
-    public void setEscolhidas(List<Disciplina> escolhidas) {
-        this.escolhidas = escolhidas;
-    }
-    
+ 
+    /**
+     * Filtra as disciplinas da escolha de afinidades por eixos e/ou cursos
+     * E atualiza as duas listas de disponíveis e escolhidas
+     */
     public void filtrar() {
         
         disponiveis = disciplinaFacade.findByEixoCurso(super.getFiltrosSelecEixos(), super.getFiltrosSelecCursos());
@@ -163,6 +112,7 @@ public class AfinidadeController extends Filtros implements Serializable{
 
     }
       
+    
     public void limparFiltro(){
 
         super.setFiltrosSelecEixos(null);
@@ -171,6 +121,50 @@ public class AfinidadeController extends Filtros implements Serializable{
         
     }
     
+    //Getters e setters
+    public Afinidade getAfinidade() {
+        return afinidade;
+    }
+
+    public void setAfinidade(Afinidade afinidade) {
+        this.afinidade = afinidade;
+    }
+    
+    public Pessoa getPessoa() {
+        return pessoa;
+    }
+
+    public void setPessoa(Pessoa pessoa) {
+        this.pessoa = pessoa;
+    }
+    
+    public Disciplina getParaAdicionar() {
+        return paraAdicionar;
+    }
+
+    public void setParaAdicionar(Disciplina paraAdicionar) {
+        this.paraAdicionar = paraAdicionar;
+    }
+    
+    public Disciplina getParaRemover() {
+        return paraRemover;
+    }
+
+    public void setParaRemover(Disciplina paraRemover) {
+        this.paraRemover = paraRemover;
+    }
+    
+    public void setDisponiveis(List<Disciplina> disponiveis) {
+        this.disponiveis = disponiveis;
+    }
+    
+    public List<Disciplina> getEscolhidas() {
+        return escolhidas;
+    }
+
+    public void setEscolhidas(List<Disciplina> escolhidas) {
+        this.escolhidas = escolhidas;
+    }
 
 //---------------------------------------------------CRUD-------------------------------------------------------
     private List<Afinidade> listarTodas() {
@@ -240,13 +234,7 @@ public class AfinidadeController extends Filtros implements Serializable{
         escolhidas = null;
         return "/Afinidades/DefinirAfinidade";
     }
-
  
- 
-    
-    
-
-    
     //---------------------------------------------------------------------------------------------------
     
     @FacesConverter(forClass = Afinidade.class)

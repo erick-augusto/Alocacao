@@ -27,42 +27,19 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
         return HibernateUtil.getSessionFactory();
 
     }
-    
-    
-    public Disponibilidade findByIDs(Long turmaId, Long pessoaId){
+
+    /**
+     * Retorna uma lista de disponibilidades de acordo com o docente pesquisado
+     * @param docente objeto da classe pessoa
+     * @return Lista com as disponibilidades pesquisadas de acordo com o parametro informado
+     */
+    public List<Disponibilidade> findByDocente(Pessoa docente){
         
        try {
 
             Session session = getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Disponibilidade.class);
-            criteria.add(Restrictions.eq("turmaId", turmaId));
-            criteria.add(Restrictions.eq("pessoaId", pessoaId));
-            List resultado = criteria.list();
-            
-
-            if (resultado.size() <= 0) {
-                session.close();
-                return null;
-            } else {
-                Disponibilidade d = (Disponibilidade) resultado.get(0);
-                session.close();
-                return d;
-            }
-        } catch (HibernateException e) {
-            return null;
-        }
-        
-        
-        
-    }
-    
-    public List<Disponibilidade> findByPessoa(Pessoa pessoa){
-        
-       try {
-
-            Session session = getSessionFactory().openSession();
-            Criteria criteria = session.createCriteria(Disponibilidade.class);
-            criteria.add(Restrictions.eq("pessoa", pessoa));
+            criteria.add(Restrictions.eq("pessoa", docente));
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
             List resultado = criteria.list();
             
@@ -75,13 +52,19 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
      
     }
     
-    public List<Disponibilidade> findByPessoaQuad(Pessoa pessoa, int quad){
+    /**
+     * Retorna uma lista de disponibilidade de acordo com o docente e o quadrimestre buscados
+     * @param docente objeto da classe Pessoa
+     * @param quad inteiro representando o quadrimestre
+     * @return 
+     */
+    public List<Disponibilidade> findByDocenteQuad(Pessoa docente, int quad){
         
        try {
 
             Session session = getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Disponibilidade.class);
-            criteria.add(Restrictions.eq("pessoa", pessoa));
+            criteria.add(Restrictions.eq("pessoa", docente));
             if(quad != 0){
                  criteria.createAlias("ofertaDisciplina", "t").add(Restrictions.eq("t.quadrimestre", quad));
             }
@@ -97,112 +80,12 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
      
     }
     
-    //Retorna a lista de disponibilidade de acordo com a disciplina pesquisada
-    //Turno e campus são atributos opcionais
-    public List<Disponibilidade> findByDisciplinaTC(Disciplina d, String campus, String turno){
-        
-        try{
-            
-            Session session = getSessionFactory().openSession();
-            Criteria crit = session.createCriteria(Disponibilidade.class);
-            
-            if(d != null){
-                
-                crit.createAlias("turma", "t").add(Restrictions.eq("t.disciplina", d));
-                
-                if(!campus.equals("")){
-                    crit.add(Restrictions.eq("t.campus", campus));
-                }
-                
-                if(!turno.equals("")){
-                    crit.add(Restrictions.eq("t.turno", turno));
-                }
-                
-                
-            }
-            else{
-                
-                crit.createAlias("turma", "t");
-                
-                if(!campus.equals("")){
-                    crit.add(Restrictions.eq("t.campus", campus));
-                }
-                
-                if(!turno.equals("")){
-                    crit.add(Restrictions.eq("t.turno", turno));
-                }
-            }
-            
-            crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            List result = crit.list();
-            return result;
-            
-        }
-        catch(HibernateException e){
-            return null;
-        }
-
-        
-    }
-    
-    //Retorna a lista de disponibilidade de acordo com a disciplina pesquisada
-    //Turno, campus e quadrimestre são atributos opcionais
-    public List<Disponibilidade> findByDisciplinaTCQ(Disciplina d, String campus, String turno, int quadrimestre){
-        
-        try{
-            
-            Session session = getSessionFactory().openSession();
-            Criteria crit = session.createCriteria(Disponibilidade.class);
-            
-            if(d != null){
-                
-                if(quadrimestre != 0){
-                    crit.add(Restrictions.eq("quadrimestre", quadrimestre));
-                }
-                
-                crit.createAlias("turma", "t").add(Restrictions.eq("t.disciplina", d));
-                
-                if(!campus.equals("")){
-                    crit.add(Restrictions.eq("t.campus", campus));
-                }
-                
-                if(!turno.equals("")){
-                    crit.add(Restrictions.eq("t.turno", turno));
-                }
-                
-                
-                
-                
-            }
-            else{
-                
-                if(quadrimestre != 0){
-                    crit.add(Restrictions.eq("quadrimestre", quadrimestre));
-                }
-                
-                crit.createAlias("turma", "t");
-                
-                if(!campus.equals("")){
-                    crit.add(Restrictions.eq("t.campus", campus));
-                }
-                
-                if(!turno.equals("")){
-                    crit.add(Restrictions.eq("t.turno", turno));
-                }
-            }
-            
-            crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-            List result = crit.list();
-            return result;
-            
-        }
-        catch(HibernateException e){
-            return null;
-        }
-
-        
-    }
-    
+    /**
+     * Retorna uma lista de disponibilidade de acordo com  a area de atuação do docente e o quadrimestre buscados
+     * @param areasAtuacao lista de String com todos filtros escolhidos
+     * @param quad inteiro representando o quadrimestre
+     * @return 
+     */
     public List<Disponibilidade> findByAreaQuad(List<String> areasAtuacao, int quad){
         
        try {
@@ -229,7 +112,7 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
                    criteria.createAlias("ofertaDisciplina", "o").add(Restrictions.eq("o.quadrimestre", quad));
                    List resultado = criteria.list();
                    disponibilidades.addAll(resultado);
-                   criteria = session.createCriteria(Disponibilidade.class);
+//                   criteria = session.createCriteria(Disponibilidade.class);
                }
 
            }
@@ -243,8 +126,122 @@ public class DisponibilidadeFacade extends AbstractFacade<Disponibilidade>{
      
     }
     
+
+    
+    
+    /**
+     * Retorna a lista de disponibilidade de acordo com a disciplina pesquisada
+     * @param disciplina
+     * @param campus string opcional
+     * @param turno string opcional
+     * @param quadrimestre int opcional
+     * @return 
+     */
+    public List<Disponibilidade> findByDiscTurCamQuad(Disciplina disciplina, 
+            String campus, String turno, int quadrimestre){
+        
+        try{
+            
+            Session session = getSessionFactory().openSession();
+            Criteria crit = session.createCriteria(Disponibilidade.class);
+            
+            if(disciplina != null){
+                
+                if(quadrimestre != 0){
+                    crit.add(Restrictions.eq("quadrimestre", quadrimestre));
+                }
+                
+                crit.createAlias("turma", "t").add(Restrictions.eq("t.disciplina", disciplina));
+                
+                if(!campus.equals("")){
+                    crit.add(Restrictions.eq("t.campus", campus));
+                }
+                
+                if(!turno.equals("")){
+                    crit.add(Restrictions.eq("t.turno", turno));
+                }          
+            }
+            
+            else{
+                
+                if(quadrimestre != 0){
+                    crit.add(Restrictions.eq("quadrimestre", quadrimestre));
+                }
+                
+                crit.createAlias("turma", "t");
+                
+                if(!campus.equals("")){
+                    crit.add(Restrictions.eq("t.campus", campus));
+                }
+                
+                if(!turno.equals("")){
+                    crit.add(Restrictions.eq("t.turno", turno));
+                }
+            }
+            
+            crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            List result = crit.list();
+            return result;
+            
+        }
+        catch(HibernateException e){
+            return null;
+        }
+
+        
+    }
+    
+    //    /**
+//     * Retorna a lista de disponibilidade de acordo com a disciplina pesquisada
+//     * @param disciplina
+//     * @param campus string opcional
+//     * @param turno string opcional
+//     * @return lista de disponibilidades de acordo com os filtros
+//     */
+//    public List<Disponibilidade> findByDiscTurCam(Disciplina disciplina, String campus, String turno){
+//        
+//        try{
+//            
+//            Session session = getSessionFactory().openSession();
+//            Criteria crit = session.createCriteria(Disponibilidade.class);
+//            
+//            if(disciplina != null){
+//                
+//                crit.createAlias("turma", "t").add(Restrictions.eq("t.disciplina", disciplina));
+//                
+//                if(!campus.equals("")){
+//                    crit.add(Restrictions.eq("t.campus", campus));
+//                }
+//                
+//                if(!turno.equals("")){
+//                    crit.add(Restrictions.eq("t.turno", turno));
+//                }
+//                
+//                
+//            }
+//            else{
+//                
+//                crit.createAlias("turma", "t");
+//                
+//                if(!campus.equals("")){
+//                    crit.add(Restrictions.eq("t.campus", campus));
+//                }
+//                
+//                if(!turno.equals("")){
+//                    crit.add(Restrictions.eq("t.turno", turno));
+//                }
+//            }
+//            
+//            crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+//            List result = crit.list();
+//            return result;
+//            
+//        }
+//        catch(HibernateException e){
+//            return null;
+//        }
+//
+//        
+//    }
   
-    
-    
-    
 }

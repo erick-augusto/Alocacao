@@ -8,7 +8,6 @@ import model.Disciplina;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
@@ -26,7 +25,23 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         return HibernateUtil.getSessionFactory();
 
     }
+    
+    public Disciplina inicializarColecaoAfinidades(Disciplina d) {
 
+        Session session = getSessionFactory().openSession();
+        session.refresh(d);
+        Hibernate.initialize(d);
+        Hibernate.initialize(d.getAfinidades());
+        session.close();
+        return d;
+
+    }
+
+    /**
+     * Localiza uma disciplina de acordo com seu nome
+     * @param nome string com o nome da disciplina
+     * @return Objeto Disciplina
+     */
     public List<Disciplina> findByName(String nome) {
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(Disciplina.class);
@@ -38,23 +53,18 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         return results;
 
     }
+
     
-    //Localiza uma disciplina pelo código
-    public Disciplina findByCod(String codigo){
-        Session session = getSessionFactory().openSession();
-        Criteria criteria = session.createCriteria(Disciplina.class);
-        criteria.add(Restrictions.eq("codigo", codigo));
-        
-        List<Disciplina> results = criteria.list();
-        session.close();
-        
-        return results.get(0);
-    }
-    
+    /**
+     * Localiza uma disciplina pelo seu código ou pelo nome
+     * @param codigo string com o codigo da disciplina
+     * @param nome 
+     * @return Objeto Disciplina ou null
+     */
     public Disciplina findByCodOrName(String codigo, String nome){
+        
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(Disciplina.class);
-//        criteria.add(Restrictions.eq("codigo", codigo));
         criteria.add(Restrictions.or(Restrictions.eq("codigo", codigo), Restrictions.eq("nome", nome)));
         
         List<Disciplina> results = criteria.list();
@@ -68,20 +78,14 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
             return null;
         }
         
-        
     }
 
-    public Disciplina inicializarColecaoAfinidades(Disciplina d) {
-
-        Session session = getSessionFactory().openSession();
-        session.refresh(d);
-        Hibernate.initialize(d);
-        Hibernate.initialize(d.getAfinidades());
-        session.close();
-        return d;
-
-    }
-
+    /**
+     * Localiza uma lista de disciplinas de acordo com os eixos e os cursos buscados
+     * @param eixos lista de string com os eixos
+     * @param cursos lista de string com os cursos
+     * @return lista de Disciplina
+     */
     public List<Disciplina> findByEixoCurso(List<String> eixos, List<String> cursos) {
 
         List<Disciplina> disciplinas = new ArrayList<>();
@@ -93,21 +97,29 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
             if (!eixos.isEmpty()) {
 
                 for (String eixo : eixos) {
-                    Query query = session.createQuery("from Disciplina d where d.eixo = :eixo ");
-                    query.setParameter("eixo", eixo);
-                    List resultado = query.list();
-                    disciplinas.addAll(resultado);
+                    
+                    Criteria criteria = session.createCriteria(Disciplina.class);
+                    criteria.add(Restrictions.eq("eixo", eixo));
+                    List<Disciplina> resultado = criteria.list();
+                    disciplinas.addAll(resultado);             
+//                    Query query = session.createQuery("from Disciplina d where d.eixo = :eixo ");
+//                    query.setParameter("eixo", eixo);
+//                    List resultado = query.list();              
                 }
-
             }
 
             if (!cursos.isEmpty()) {
 
                 for (String curso : cursos) {
-                    Query query = session.createQuery("from Disciplina d where d.curso = :curso ");
-                    query.setParameter("curso", curso);
-                    List resultado = query.list();
+                    
+                    Criteria criteria = session.createCriteria(Disciplina.class);
+                    criteria.add(Restrictions.eq("curso", curso));
+                    List<Disciplina> resultado = criteria.list();
                     disciplinas.addAll(resultado);
+//                    Query query = session.createQuery("from Disciplina d where d.curso = :curso ");
+//                    query.setParameter("curso", curso);
+//                    List resultado = query.list();
+//                    disciplinas.addAll(resultado);
                 }
 
             }
@@ -119,33 +131,6 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         }
 
     }
-
-//    @Override
-//    public void remove(Disciplina d) {
-//        Session session = getSessionFactory().openSession();
-//
-//        Transaction transaction = session.beginTransaction();
-//
-////        session.refresh(d);
-////        Hibernate.initialize(d);
-////        Hibernate.initialize(d.getAfinidades());
-////
-////        Set<Afinidades> afs = d.getAfinidades();
-////
-////        AfinidadesFacade afinidadeFacade = new AfinidadesFacade();
-////
-////        for (Afinidade a : afs) {
-////
-////            afinidadeFacade.remove(a);
-////        }
-//
-//        session.delete(d);
-//        try {
-//            transaction.commit();
-//        } finally {
-//            session.close();
-//        }
-//    }
 
 }
 

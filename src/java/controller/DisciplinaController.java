@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.PostConstruct;
@@ -29,632 +28,54 @@ import util.DisciplinaLazyModel;
 
 @Named(value = "disciplinaController")
 @SessionScoped
-public class DisciplinaController implements Serializable {
+public class DisciplinaController extends Filtros implements Serializable {
 
     public DisciplinaController() {
-        disponivel = new Disciplina();
-        escolhida = new Disciplina();  
+
     }
-    
-    //Guarda o disciplina atual
+
+    //Guarda a disciplina atual
     private Disciplina disciplina;
 
-    @EJB
-    private DisciplinaFacade disciplinaFacade;
-
-//    @EJB
-//    private PessoaFacade pessoaFacade;
-    
-    @EJB
-    private AfinidadeFacade afinidadesFacade;
-    
-    @EJB
-    private PessoaFacade pessoaFacade;
-    
-    @EJB
-    private AfinidadeFacade afinidadeFacade;
-    
-    
-    //Lista de Afinidade, tanto com as disciplinas adicionadas, quanto removidas
-    private List<Afinidade> afinidadesAtivas;
-    
-//    private CadastroBean cadastro;
-
-    //Guarda a disciplina disponivel selecionada
-    private Disciplina disponivel;
-
-    //Guarda a disciplina escolhida selecionada
-    private Disciplina escolhida;
-
-    //Pessoa logada
-    private Pessoa pessoa;
-    
-    private Disciplina disciplinaSalvar;
-    
-    //Disciplinas disponiveis
-    private List<Disciplina> disponiveis;
-
-    //Disciplinas escolhidas
-    private List<Disciplina> escolhidas;
-    
-    
-    //----------------------------------------Getters e Setters--------------------------------------------------------------------------------------------------------------
-    
     public Disciplina getDisciplina() {
+        
         if (disciplina == null) {
             disciplina = new Disciplina();
         }
+
         return disciplina;
+
     }
-    
-    public void setDisciplina(Disciplina disciplina){
-        this.disciplina = disciplina;
-    }
-    
+
     private Disciplina getDisciplina(Long key) {
         return this.buscar(key);
 
     }
 
-    public Disciplina getDisciplinaSalvar() {
-        
-        if(disciplinaSalvar == null){
-            disciplinaSalvar = new Disciplina();
-        }
-        
-        return disciplinaSalvar;
+    public void setDisciplina(Disciplina disciplina) {
+        this.disciplina = disciplina;
     }
 
-    public void setDisciplinaSalvar(Disciplina disciplinaSalvar) {
-        this.disciplinaSalvar = disciplinaSalvar;
-    }
+    @EJB
+    private DisciplinaFacade disciplinaFacade;
+
+    @EJB
+    private AfinidadeFacade afinidadesFacade;
+
+    @EJB
+    private PessoaFacade pessoaFacade;
+
+//--------------------------------------------Cadastro de Disciplina--------------------------------------   
     
-    
-      
-    public void setDisponiveis(List<Disciplina> disponiveis) {
-        this.disponiveis = disponiveis;
-    }
+    private Disciplina disciplinaSalvar;
 
-    public List<Disciplina> getEscolhidas() {
-        return escolhidas;
-    }
-
-    public void setEscolhidas(List<Disciplina> escolhidas) {
-        this.escolhidas = escolhidas;
-    }
-    
-    public Disciplina getDisponivel() {
-        return disponivel;
-    }
-
-    public void setDisponivel(Disciplina disponivel) {
-        this.disponivel = disponivel;
-    }
-
-    public Disciplina getEscolhida() {
-        return escolhida;
-    }
-
-    public void setEscolhida(Disciplina escolhida) {
-        this.escolhida = escolhida;
-    }
-
-    public boolean isMostrarAdicionadas() {
-        return mostrarAdicionadas;
-    }
-
-    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
-        this.mostrarAdicionadas = mostrarAdicionadas;
-    }
-    
-    
-    
-    //-------------------------------------Data Model---------------------------------------------------------
-    private DisciplinaDataModel disciplinaDataModel;
-
-    public DisciplinaDataModel getDisciplinaDataModel() {
-        if(disciplinaDataModel == null){
-            disciplinaDataModel = new DisciplinaDataModel(this.listarTodas());
-        }
-        
-        return disciplinaDataModel;
-    }
-
-    public void setDisciplinaDataModel(DisciplinaDataModel disciplinaDataModel) {
-        this.disciplinaDataModel = disciplinaDataModel;
-    }
-    
-    public int qdtAfinidades(Disciplina d){
-        
-        d = disciplinaFacade.inicializarColecaoAfinidades(d);
-        
-        Set<Afinidade> afinidades = d.getAfinidades();
-        int qtd = 0;
-        for(Afinidade a: afinidades){
-            if(a.getEstado().equals("Adicionada")){
-                qtd++;
-            }
-        }
-        
-        return qtd;        
-    }
-    
-    //Lista de afinidades dos docentes com aquela disciplina
-    private AfinidadesLazyModel afinidadesDaDisciplina;
-
-    private boolean mostrarAdicionadas;
-    
-    
-    public AfinidadesLazyModel getAfinidadesDaDisciplina() {
-
-        return afinidadesDaDisciplina;
-    }
-
-    public void setAfinidadesDaDisciplina(AfinidadesLazyModel afinidadesDaDisciplina) {
-        this.afinidadesDaDisciplina = afinidadesDaDisciplina;
-    }
-    
-    public void preencherAfinidadesDisciplina() {
-
-        List<Afinidade> afinidades;
-        if (selecionada != null) {
-            afinidades = new ArrayList<>(selecionada.getAfinidades());
-
-        } else {
-            afinidades = new ArrayList<>();
-        }
-
-        mostrarAdicionadas = false;
-        afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
-
-    }
-    
-    public void limparSelecao(){
-        selecionada = null;
-        afinidadesDaDisciplina = null;
-    }
-    
-    
-    private Disciplina selecionada;
-
-    public Disciplina getSelecionada() {
-        return selecionada;
-    }
-
-    public void setSelecionada(Disciplina selecionada) {
-        this.selecionada = selecionada;
-    }
-    
-    public void verSoAdicionadas() {
-
-        List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
-        List<Afinidade> adicionadas = new ArrayList<>();
-
-        if (mostrarAdicionadas) {
-            for (Afinidade a : afinidades) {
-                if (a.getEstado().equals("Adicionada")) {
-                    adicionadas.add(a);
-                }
-            }
-
-            afinidadesDaDisciplina = new AfinidadesLazyModel(adicionadas);
-        } else {
-            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
-        }
-
-    }
-    
-    //------------------------------Filtros de Disciplina-------------------------------------------
-    
-    private List<String> filtrosEixos;
-    
-    private List<String> filtrosSelecEixos;
-    
-    private List<String> filtrosCursos;
-    
-    private List<String> filtrosSelecCursos;
-
-    public List<String> getFiltrosEixos() {
-        return filtrosEixos;
-    }
-
-    public void setFiltrosEixos(List<String> filtrosEixos) {
-        this.filtrosEixos = filtrosEixos;
-    }
-
-    public List<String> getFiltrosSelecEixos() {
-        return filtrosSelecEixos;
-    }
-
-    public void setFiltrosSelecEixos(List<String> filtrosSelecEixos) {
-        this.filtrosSelecEixos = filtrosSelecEixos;
-    }
-
-    public List<String> getFiltrosCursos() {
-        return filtrosCursos;
-    }
-
-    public void setFiltrosCursos(List<String> filtrosCursos) {
-        this.filtrosCursos = filtrosCursos;
-    }
-
-    public List<String> getFiltrosSelecCursos() {
-        return filtrosSelecCursos;
-    }
-
-    public void setFiltrosSelecCursos(List<String> filtrosSelecCursos) {
-        this.filtrosSelecCursos = filtrosSelecCursos;
-    }
-    
-    public void filtrar() {
-
-        List<Disciplina> disciplinasFiltradas = disciplinaFacade.findByEixoCurso(filtrosSelecEixos, filtrosSelecCursos);
-        
-        disciplinaDataModel = new DisciplinaDataModel(disciplinasFiltradas);
-
-    }
-    
-    public void limparFiltro(){
-        
-        filtrosSelecCursos = null;
-        filtrosSelecEixos = null;
-        disciplinaDataModel = null;
-        
-    }
-    
-    
-    
-
-    //--------------------------------------Lazy Data Model--------------------------------------------------------------
-    
     private DisciplinaLazyModel disciplinaLazyModel;
-    
+
     @PostConstruct
     public void init() {
         disciplinaLazyModel = new DisciplinaLazyModel(this.listarTodas());
-        
-        filtrosEixos = new ArrayList<>();
-        filtrosEixos.add("Ciencia, Tecnologia e Inovacao");
-        filtrosEixos.add("Comunicacao e Informacao");
-        filtrosEixos.add("Energia");
-        filtrosEixos.add("Espaco, Cultura e Temporalidade");
-        filtrosEixos.add("Estado, Sociedade e Mercado");
-        filtrosEixos.add("Estrutura da Materia");
-        filtrosEixos.add("Humanidades");
-        filtrosEixos.add("Pensamento, Expressao e Significado");
-        filtrosEixos.add("Processos de Transformacao");
-        filtrosEixos.add("Mais de um eixo");
-        filtrosEixos.add("Representacao e Simulacao");
-        
-
-        filtrosCursos = new ArrayList<>();
-        filtrosCursos.add("Bacharelado em Ciencia da Computacao");
-        filtrosCursos.add("Bacharelado em Economia");
-        filtrosCursos.add("Bacharelado em Planejamento Territorial");
-        filtrosCursos.add("Bacharelado em Politicas Publicas");
-        filtrosCursos.add("Bacharelado em Relacoes Internacionais");
-        filtrosCursos.add("Ciencias Biologicas");
-        filtrosCursos.add("Engenharia Aeroespacial");
-        filtrosCursos.add("Engenharia Ambiental e Urbana");
-        filtrosCursos.add("Engenharia Biomedica");
-        filtrosCursos.add("Engenharia de Automacao e Robotica");
-        filtrosCursos.add("Engenharia de Energia");
-        filtrosCursos.add("Engenharia de Gestao");
-        filtrosCursos.add("Engenharia de Informacao");
-        filtrosCursos.add("Engenharia de Materiais");
-        filtrosCursos.add("Filosofia");
-        filtrosCursos.add("Fisica");
-        filtrosCursos.add("Licenciaturas");
-        filtrosCursos.add("Quimica");
-        
-    }
-    
-    public DisciplinaLazyModel getDisciplinaLazyModel() {
-        
-        if(disciplinaLazyModel == null){
-            disciplinaLazyModel = new DisciplinaLazyModel(this.listarTodas());
-        }
-        
-        
-        return this.disciplinaLazyModel;
-    }
-    
-    public void recriarModelo() {
-    
-        disciplinaLazyModel = null;
-
-    }
-  
-    //----------------------------Preenchimento das listas Disponiveis c Escolhidas-----------------------------------------------------
-
-    //Esse método vê quais disciplinas a pessoa já escolheu,
-    //para exibir só as que ela ainda não selecionou 
-    //(não estão salvas na afinidade, ou estão salvas como "Removida", porque ela pode escolher de novo nesse caso)
-    public List<Disciplina> getDisponiveis() {
-
-        if (disponiveis == null) {
-            
-            //Usuário que fez o logon
-            pessoa = LoginBean.getUsuario();
-            
-
-            //Todas as afinidades do usuario
-            afinidadesAtivas = new ArrayList(pessoa.getAfinidades());
-            
-            escolhidas = new ArrayList<>();
-            
-            //Adiciona ao array escolhidas as disciplinas que estao como "Adicionada" em afinidades
-            for(Afinidade a: afinidadesAtivas){
-                
-                if(a.getEstado().equals("Adicionada")){
-                    escolhidas.add(a.getDisciplina());
-                }        
-            }
-
-            //Seleciona todas disciplinas do banco
-            disponiveis = disciplinaFacade.findAll();
-
-            //Remove de todas as disciplinas as que já foram escolhidas
-            for (Disciplina e : escolhidas) {
-                disponiveis.remove(e);
-            }
-
-        }
-
-        return disponiveis;
-    }
-   
-    //----------------------------------Metodos de CRUD--------------------------------------------------------------------------------
-    
-    public void salvar(){
-        try {
-            disciplinaFacade.save(disciplinaSalvar);
-            JsfUtil.addSuccessMessage("Disciplina " + disciplinaSalvar.getNome() + " cadastrada com sucesso!");
-            disciplinaSalvar = null;
-            disciplinaLazyModel = null;
-            
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage("Não foi possível cadastrar a disciplina");
-        }
-    }
-    
-    public void editar(){
-        try {
-            disciplinaFacade.merge(disciplina);
-            JsfUtil.addSuccessMessage("Disciplina " + disciplina.getNome() + " editada com sucesso!");
-            disciplina = new Disciplina();
-            disciplinaLazyModel = null;
-            
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage("Não foi possível editar a disciplina");
-        }
     }
 
-    public void salvarAfinidade() {
-        
-        //Data da inclusao/remocao
-        Calendar cal = Calendar.getInstance();
-        
-        //Regarrega o objeto disciplina, inicializando a Colecao de Afinidade(Lazy)
-        disponivel = disciplinaFacade.inicializarColecaoAfinidades(disponivel);
-        
-        Afinidade afinidade = new Afinidade("Adicionada", cal.getTime(), pessoa, disponivel);
-        
-        afinidadesFacade.merge(afinidade);
-        
-        disponiveis = null;
-        disponivel = null;
-    }
-    
-    public void removerAfinidade(){
-        
-        //Percorre a lista de afinidades da pessoa c muda o status de Adicionada para removida
-        for(Afinidade a: afinidadesAtivas){
-            
-            if(a.getDisciplina() == escolhida){
-
-                Calendar cal = Calendar.getInstance();
-                a.setDataAcao(cal.getTime());
-                a.setEstado("Removida");
-                afinidadesFacade.edit(a);
-            }
-            
-        }
-        
-        disponiveis = null;
-        escolhida = null;
-        disponivel = null;
-                 
-    }
-    
-    public void delete() {
-        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
-        
-        
-        try {
-            
-           disciplina = disciplinaFacade.inicializarColecaoAfinidades(disciplina);
-           Set<Afinidade> afinidades = disciplina.getAfinidades();
-           Pessoa atual;
-           
-           
-           for(Afinidade a: afinidades){
-               disciplina.getAfinidades().remove(a);
-               atual = a.getPessoa();
-               atual.getAfinidades().remove(a);
-//               disciplinaFacade.edit(disciplina);
-               pessoaFacade.edit(atual);
-               
-               if(atual.getNome().equals(LoginBean.getUsuario().getNome())){
-                   LoginBean.setUsuario(atual);
-               }
-               afinidadesFacade.remove(a);
-               
-           }
-           
-//           OfertaController tpc = new OfertaController();
-        
-            disciplinaFacade.remove(disciplina);
-            disciplina = null;
-            JsfUtil.addSuccessMessage("Disciplina Deletada");
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
-        }
-
-        recriarModelo();
-    }
-    
-    public Disciplina buscar(Long id) {
-        return disciplinaFacade.find(id);
-    }
-
-    private List<Disciplina> listarTodas() {
-        return disciplinaFacade.findAll();
-    }
- 
-    //---------------------------------------Páginas web------------------------------------------------------------
-    public String prepareCreate(int i) {
-        disciplina = new Disciplina();
-        if (i == 1) {
-            return "/view/disciplina/Create";
-        } else {
-            return "Create";
-        }
-    }
-
-    public String index() {
-        disciplina = null;
-        disciplinaLazyModel = null;
-        return "/index";
-    }
-
-    public String prepareEdit() {
-        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
-        return "/Cadastro/editDisciplina";
-    }
-
-    public String prepareView() {
-        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
-        //disciplina = disciplinaFacade.find(disciplina.getID());
-        //disciplinaFacade.edit(disciplinaFacade.find(disciplina.getID()));
-        //disciplinaFacade.edit(disciplina);
-        return "View";
-    }
-    
-    
-    
-//----------------------------------------AutoComplete----------------------------------------------------------------------------------------
-    
-    
-//Disciplina----------------------------------------------------------------------------------------------------------    
-    public List<Disciplina> completeDisciplina(String query) {
-        
-        query = query.toLowerCase();
-        
-        List<Disciplina> allDisciplinas = this.listarTodas();
-        List<Disciplina> filteredDisciplinas = new ArrayList<>();
-
-        for (Disciplina d : allDisciplinas) {
-            if (d.getNome().toLowerCase().startsWith(query)) {
-                filteredDisciplinas.add(d);
-            }
-        }
-        return filteredDisciplinas;
-    }
-    
- //Eixo----------------------------------------------------------------------------------------------------------
-    public List<String> completeEixo(String query){
-        
-        query = query.toLowerCase();
-        
-        List<String> eixos = new ArrayList<>();
-        eixos.add("Estrutura da Materia");
-        eixos.add("Processos de Transformacao");
-        eixos.add("Comunicacao e Informacao");
-        eixos.add("Representacao e Simulacao");
-        eixos.add("Estado, Sociedade e Mercado");
-        eixos.add("Pensamento, Expressao e Significado");
-        eixos.add("Espaco, Cultura e Temporalidade");
-        eixos.add("Ciencia, Tecnologia e Inovacao");
-        eixos.add("Mais de um eixo");
-        
-        List<String> filteredEixos = new ArrayList<>();
-
-        for (String e : eixos ) {
-            if (e.toLowerCase().startsWith(query)) {
-                filteredEixos.add(e);
-            }
-        }
-        return filteredEixos;
-        
-    }
-    
-    //Curso-----------------------------------------------------------------------------------------------
-    public List<String> completeCurso(String query){
-        
-        query = query.toLowerCase();
-        
-        List<String> cursos = new ArrayList<>();
-        cursos.add("Bacharelado em Matemática");
-        cursos.add("Bacharelado em Neurociência");
-        cursos.add("Licenciatura em Matemática");
-        cursos.add("Bacharelado em Políticas Públicas");
-        cursos.add("Engenharia Aeroespacial");
-        cursos.add("Engenharia Ambiental e Urbana");
-        cursos.add("Engenharia de Automação e Robótica");
-        cursos.add("Engenharia Biomédica");
-        cursos.add("Engenharia de Energia");
-        cursos.add("Engenharia de Gestão");
-        cursos.add("Engenharia de Informação");
-        cursos.add("Engenharia de Materiais");
-        cursos.add("Bacharelado em Economia");
-        cursos.add("Bacharelado em Relações Internacionais");
-        cursos.add("Bacharelado em Planejamento Territorial");
-        cursos.add("Ciências Biológicas");
-        cursos.add("Filosofia");
-        cursos.add("Física");
-        cursos.add("Química");
-        cursos.add("Licenciaturas");
-        
-        List<String> filteredCursos = new ArrayList<>();
-
-        for (String c : cursos ) {
-            if (c.toLowerCase().startsWith(query)) {
-                filteredCursos.add(c);
-            }
-        }
-        return filteredCursos;
-        
-    }
-
-    //----------------------------------------------------------------------------------------------------
-
-//    private boolean incluirRemovidas;
-//
-//    public boolean isIncluirRemovidas() {
-//        return incluirRemovidas;
-//    }
-//
-//    public void setIncluirRemovidas(boolean incluirRemovidas) {
-//        this.incluirRemovidas = incluirRemovidas;
-//    }
-//    
-//    
-//    
-//    private List<Afinidades> afinidadesPorDisciplina;
-//
-//    public List<Afinidades> getAfinidadesPorDisciplina() {
-//        return afinidadesPorDisciplina;
-//    }
-//
-//    public void setAfinidadesPorDisciplina(List<Afinidades> afinidadesPorDisciplina) {
-//        this.afinidadesPorDisciplina = afinidadesPorDisciplina;
-//    }
-    
-
-    
-//--------------------------------------------Cadastro-------------------------------------------------------------------------------------------
-    
     private String converteEixo(String sigla) {
 
         char letra = sigla.charAt(2);
@@ -750,7 +171,6 @@ public class DisciplinaController implements Serializable {
 
                 switch (sigla.charAt(3)) {
 
-                    
                     case '1':
                         return "Ciências Biológicas";
                     case '2':
@@ -771,7 +191,7 @@ public class DisciplinaController implements Serializable {
         return null;
 
     }
-    
+
     public void cadastrarDisciplinas() {
 
         String[] palavras;
@@ -830,12 +250,270 @@ public class DisciplinaController implements Serializable {
 
         Disciplina d = new Disciplina();
         recriarModelo();
-        
+
         JsfUtil.addSuccessMessage("Cadastro de disciplinas realizado com sucesso", "");
-   
+
+    }
+
+    public DisciplinaLazyModel getDisciplinaLazyModel() {
+
+        if (disciplinaLazyModel == null) {
+            disciplinaLazyModel = new DisciplinaLazyModel(this.listarTodas());
+        }
+
+        return this.disciplinaLazyModel;
+    }
+
+    public void recriarModelo() {
+
+        disciplinaLazyModel = null;
+
+    }
+
+    public Disciplina getDisciplinaSalvar() {
+
+        if (disciplinaSalvar == null) {
+            disciplinaSalvar = new Disciplina();
+        }
+
+        return disciplinaSalvar;
+    }
+
+    public void setDisciplinaSalvar(Disciplina disciplinaSalvar) {
+        this.disciplinaSalvar = disciplinaSalvar;
     }
     
-    @FacesConverter(forClass = Disciplina.class)
+    
+//------------------------------------------Resumo de Afinidades----------------------------------------------------
+    
+    private DisciplinaDataModel disciplinaDataModel;
+
+    /**
+     * Quantos docentes escolheram aquela disciplina como tendo afinidade
+     * Para mostrar na tabela de resumo
+     * @param d 
+     * @return  
+     */
+    public int qdtAfinidades(Disciplina d) {
+
+        d = disciplinaFacade.inicializarColecaoAfinidades(d);
+
+        Set<Afinidade> afinidades = d.getAfinidades();
+        int qtd = 0;
+        for (Afinidade a : afinidades) {
+            if (a.getEstado().equals("Adicionada")) {
+                qtd++;
+            }
+        }
+
+        return qtd;
+    }
+
+    //Lista de afinidades dos docentes com aquela disciplina
+    private AfinidadesLazyModel afinidadesDaDisciplina;
+    
+    //Caso na visualização dos detalhes das afinidades seja desejado ver apenas as diciplinas que 
+    //foram adicionadas como afinidades
+    private boolean mostrarAdicionadas;
+    
+    private Disciplina selecionada;
+
+    //Preenche o data model com os docentes que escolheram aquela disciplina como afinidade
+    //para visualização dos detalhes
+    public void preencherAfinidadesDisciplina() {
+
+        List<Afinidade> afinidades;
+        if (selecionada != null) {
+            afinidades = new ArrayList<>(selecionada.getAfinidades());
+
+        } else {
+            afinidades = new ArrayList<>();
+        }
+
+        mostrarAdicionadas = false;
+        afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
+
+    }
+
+    public void verSoAdicionadas() {
+
+        List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
+        List<Afinidade> adicionadas = new ArrayList<>();
+
+        if (mostrarAdicionadas) {
+            for (Afinidade a : afinidades) {
+                if (a.getEstado().equals("Adicionada")) {
+                    adicionadas.add(a);
+                }
+            }
+
+            afinidadesDaDisciplina = new AfinidadesLazyModel(adicionadas);
+        } else {
+            afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
+        }
+
+    }
+    
+    public void limparSelecao() {
+        selecionada = null;
+        afinidadesDaDisciplina = null;
+    }
+
+    public DisciplinaDataModel getDisciplinaDataModel() {
+        if (disciplinaDataModel == null) {
+            disciplinaDataModel = new DisciplinaDataModel(this.listarTodas());
+        }
+
+        return disciplinaDataModel;
+    }
+
+    public void setDisciplinaDataModel(DisciplinaDataModel disciplinaDataModel) {
+        this.disciplinaDataModel = disciplinaDataModel;
+    }
+
+    public AfinidadesLazyModel getAfinidadesDaDisciplina() {
+
+        return afinidadesDaDisciplina;
+    }
+
+    public void setAfinidadesDaDisciplina(AfinidadesLazyModel afinidadesDaDisciplina) {
+        this.afinidadesDaDisciplina = afinidadesDaDisciplina;
+    }
+    
+    public boolean isMostrarAdicionadas() {
+        return mostrarAdicionadas;
+    }
+
+    public void setMostrarAdicionadas(boolean mostrarAdicionadas) {
+        this.mostrarAdicionadas = mostrarAdicionadas;
+    }
+    
+    public Disciplina getSelecionada() {
+        return selecionada;
+    }
+
+    public void setSelecionada(Disciplina selecionada) {
+        this.selecionada = selecionada;
+    }
+
+    
+//------------------------------------------Filtros de Disciplina-------------------------------------------
+    
+    public void filtrar() {
+
+        List<Disciplina> disciplinasFiltradas = disciplinaFacade.findByEixoCurso(super.getFiltrosSelecEixos(), super.getFiltrosSelecCursos());
+
+        disciplinaDataModel = new DisciplinaDataModel(disciplinasFiltradas);
+
+    }
+
+    public void limparFiltro() {
+
+        super.setFiltrosSelecEixos(null);
+        super.setFiltrosSelecCursos(null);
+
+        disciplinaDataModel = null;
+
+    }
+
+//-------------------------------------------Metodos de CRUD--------------------------------------------------------------------------------
+    
+    public void salvar() {
+        try {
+            disciplinaFacade.save(disciplinaSalvar);
+            JsfUtil.addSuccessMessage("Disciplina " + disciplinaSalvar.getNome() + " cadastrada com sucesso!");
+            disciplinaSalvar = null;
+            disciplinaLazyModel = null;
+
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("Não foi possível cadastrar a disciplina");
+        }
+    }
+
+    public void editar() {
+        try {
+            disciplinaFacade.merge(disciplina);
+            JsfUtil.addSuccessMessage("Disciplina " + disciplina.getNome() + " editada com sucesso!");
+            disciplina = new Disciplina();
+            disciplinaLazyModel = null;
+
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("Não foi possível editar a disciplina");
+        }
+    }
+
+    public void delete() {
+        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
+
+        try {
+
+            disciplina = disciplinaFacade.inicializarColecaoAfinidades(disciplina);
+            Set<Afinidade> afinidades = disciplina.getAfinidades();
+            Pessoa atual;
+
+            for (Afinidade a : afinidades) {
+                disciplina.getAfinidades().remove(a);
+                atual = a.getPessoa();
+                atual.getAfinidades().remove(a);
+//               disciplinaFacade.edit(disciplina);
+                pessoaFacade.edit(atual);
+
+                if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
+                    LoginBean.setUsuario(atual);
+                }
+                afinidadesFacade.remove(a);
+
+            }
+
+//           OfertaController tpc = new OfertaController();
+            disciplinaFacade.remove(disciplina);
+            disciplina = null;
+            JsfUtil.addSuccessMessage("Disciplina Deletada");
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
+        }
+
+        recriarModelo();
+    }
+
+    public Disciplina buscar(Long id) {
+        return disciplinaFacade.find(id);
+    }
+
+    private List<Disciplina> listarTodas() {
+        return disciplinaFacade.findAll();
+    }
+
+//---------------------------------------------Páginas web------------------------------------------------------------
+    
+    public String prepareCreate(int i) {
+        disciplina = new Disciplina();
+        if (i == 1) {
+            return "/view/disciplina/Create";
+        } else {
+            return "Create";
+        }
+    }
+
+    public String index() {
+        disciplina = null;
+        disciplinaLazyModel = null;
+        return "/index";
+    }
+
+    public String prepareEdit() {
+        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
+        return "/Cadastro/editDisciplina";
+    }
+
+    public String prepareView() {
+        disciplina = (Disciplina) disciplinaLazyModel.getRowData();
+        return "View";
+    }
+
+//-----------------------------------------------------------------------------------------------------------------------------
+    
+@FacesConverter(forClass = Disciplina.class)
     public static class DisciplinaControllerConverter implements Converter {
 
         @Override
@@ -866,7 +544,7 @@ public class DisciplinaController implements Serializable {
                 return null;
             }
             if (object instanceof Disciplina) {
-                Disciplina d = (Disciplina) object;               
+                Disciplina d = (Disciplina) object;
                 return getStringKey(new BigDecimal(d.getID().toString()).setScale(0, BigDecimal.ROUND_HALF_UP).longValue());
 
             } else {
@@ -874,5 +552,5 @@ public class DisciplinaController implements Serializable {
             }
         }
     }
-    
+
 }
