@@ -109,14 +109,16 @@ public class AfinidadeController extends Filtros implements Serializable{
         for (Disciplina t : escolhidas) {
             disponiveis.remove(t);
         }
+        
+        super.setFiltrosSelecEixos(null);
+        super.setFiltrosSelecCursos(null);
 
     }
       
     
     public void limparFiltro(){
 
-        super.setFiltrosSelecEixos(null);
-        super.setFiltrosSelecCursos(null);
+        
         disponiveis = null;
         
     }

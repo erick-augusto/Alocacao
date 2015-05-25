@@ -30,16 +30,14 @@ public class DisponibilidadeController implements Serializable {
     }
  
     private Disponibilidade disponibilidade;
- 
-
+    
     @EJB
     private OfertaDisciplinaFacade turmasFacade;
     
     @EJB
     private DisponibilidadeFacade disponibilidadeFacade;
     
-    
-    
+      
 //-----------------------------------Fase I Alocacao-----------------------------------------------------    
 
     private List<OfertaDisciplina> ofertasEtapa1;
@@ -303,25 +301,7 @@ public class DisponibilidadeController implements Serializable {
         this.quadrimestre = quadrimestre;
     }
 
-    public void filtrarTurmas() {
-        dataModel = null;
-        discAfinidades = new ArrayList<>();
-
-        //Caso o usuário queira filtrarTurmas por afinidades
-        if (filtrarAfinidades) {
-            afinidades = usuario.getAfinidades();
-
-            //Quais disciplinas ele tem afinidade
-            for (Afinidade a : afinidades) {
-                if (a.getEstado().equals("Adicionada")) {
-                    discAfinidades.add(a.getDisciplina());
-                }
-
-            }
-        }
-
-        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarDTC(discAfinidades, turno, campus));
-    }
+    
 
     public void filtrarTurmasQuad(Long quad) {
         dataModel = null;
@@ -342,32 +322,11 @@ public class DisponibilidadeController implements Serializable {
 
         Integer q = (int) (long) quad;
 
-        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarDTCQ(discAfinidades, turno, campus, q));
+        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, q));
 
         filtrarAfinidades = false;
         turno = "";
         campus = "";
-    }
-
-    public void filtrarTurmas2() {
-        dataModel = null;
-        discEtapa1 = new ArrayList<>();
-
-        if (filtrarDisponibilidades) {
-            setDisponibilidades = usuario.getDisponibilidades();
-
-            for (Disponibilidade d : setDisponibilidades) {
-                discEtapa1.add(d.getOfertaDisciplina().getDisciplina());
-            }
-        }
-
-        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarDTC(discEtapa1, turno, campus));
-    }
-
-    public void limparFiltroTurmas() {
-        dataModel = null;
-        dispdataModel = null;
-
     }
 
     public void limparFiltroQuad(Long quad) {

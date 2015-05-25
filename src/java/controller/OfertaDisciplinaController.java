@@ -140,76 +140,10 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     public void setDispDataModel(DisponibilidadeDataModel dispDataModel) {
         this.dispDataModel = dispDataModel;
     }
+ 
+//------------------------------------------Fase I---------------------------------------------------------------
     
-//---------------------------------------Resumo Fase I-----------------------------------------------------------    
-    
-    //------------------------------------------------------------------------------------------------------------
-    
-    //Filtrar as disponibilidades por disciplina
-    public void filtrarDisp() {
-
-        List<OfertaDisciplina> ofertas;
-
-        List<Disciplina> d = new ArrayList<>();
-        
-        ofertas = ofertaDisciplinaFacade.filtrarDTCQ(d, turno, campus, quadrimestre);
-
-        dataModel = new OfertaDisciplinaDataModel(ofertas);
-
-    }
-
-    public void limparFiltroDisp() {
-
-        dataModel = null;
-    }
-    
-    //Resumo Fase I-------------------------------------------------------------------------------------------
-    DisponibilidadeDataModel dispDataModel;
-    
-    public void preencherDisponibilidadesOferta() {
-
-        List<Disponibilidade> disponibilidades;
-        if (oferta != null) {
-            disponibilidades = new ArrayList<>(oferta.getDisponibilidades());
-
-        } else {
-            disponibilidades = new ArrayList<>();
-        }
-
-        
-        dispDataModel = new DisponibilidadeDataModel(disponibilidades);
-
-    }
-    
-
-    //---------------------------------------Páginas web------------------------------------------------------------
-//    public String prepareCreate(int i) {
-//        pessoa= new Pessoa();
-//        if (i == 1) {
-//            return "/view/pessoa/Create";
-//        } else {
-//            return "Create";
-//        }
-//    }
-//
-//    public String index() {
-//        pessoa= null;
-//        pessoaDataModel = null;
-//        return "/index";
-//    }
-//
-//    public String prepareEdit() {
-//        pessoa= (Pessoa) pessoaDataModel.getRowData();
-//        return "Edit";
-//    }
-//
-//    public String prepareView() {
-//        pessoa= (Pessoa) pessoaDataModel.getRowData();
-//        //pessoa= ofertaDisciplinaFacade.find(pessoa.getID());
-//        //pessoaFacade.edit(ofertaDisciplinaFacade.find(pessoa.getID()));
-//        //pessoaFacade.edit(pessoa);
-//        return "View";
-//    }
+    //Prepara as páginas de escolha de Oferta de Disciplina de acordo com o quadrimestre-------------------------
     
     public String prepareQuad1(){
         
@@ -231,7 +165,6 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         return "/Disponibilidade/FaseIQuad3";
     }
     
-    //---------------------------LazyData Model--------------------------------------------------------------------
     
     private OfertaDisciplinaLazyModel ofertas1LazyModel;
     private OfertaDisciplinaLazyModel ofertas2LazyModel;
@@ -242,7 +175,6 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         ofertas1LazyModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(1));
         ofertas2LazyModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(2));
         ofertas3LazyModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(3));
-//        pessoaDataModel = new PessoaLazyModel(this.listarTodas());
     }
 
     public OfertaDisciplinaLazyModel getOfertas1LazyModel() {
@@ -279,6 +211,61 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     public void setOfertas3LazyModel(OfertaDisciplinaLazyModel ofertas3LazyModel) {
         this.ofertas3LazyModel = ofertas3LazyModel;
     }
+    
+    
+//---------------------------------------Resumo Fase I-----------------------------------------------------------    
+
+    /**
+     * Filtra as disponibilidades do docente de acordo com os parametros escolhidos
+     */
+    public void filtrarOfertas() {
+
+        List<OfertaDisciplina> ofertas;
+        
+        ofertas = ofertaDisciplinaFacade.filtrarEixoCursoTurnoCampusQuad(getFiltrosSelecEixos(), getFiltrosSelecCursos(), turno, campus, quadrimestre);
+
+        dataModel = new OfertaDisciplinaDataModel(ofertas);
+        
+        //Após filtrar volta os parametros para os valores default
+        setFiltrosSelecEixos(null);
+        setFiltrosSelecCursos(null);
+        turno = "";
+        quadrimestre = 0;
+        campus = "";
+
+    }
+
+    /**
+     * Limpa os filtros e carrega todas as disponibilidades escolhidas
+     */
+    public void limparFiltroOfertas() {
+     
+        dataModel = null;
+    }
+    
+    //Disponibilidades de acordo com a Oferta de Disciplina escolhida, para mostrar no resumo
+    DisponibilidadeDataModel dispDataModel;
+    
+    public void preencherDisponibilidadesOferta() {
+
+        List<Disponibilidade> disponibilidades;
+        
+        if (oferta != null) {
+            disponibilidades = new ArrayList<>(oferta.getDisponibilidades());
+
+        } else {
+            disponibilidades = new ArrayList<>();
+        }
+ 
+        dispDataModel = new DisponibilidadeDataModel(disponibilidades);
+
+    }
+
+    
+    
+    //---------------------------LazyData Model--------------------------------------------------------------------
+    
+    
 
     
     //---------------------------------------------------CRUD-------------------------------------------------------
@@ -324,17 +311,17 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         }
     }
     
-    public void deletarPorDisciplina(Disciplina d){
-        
-        List<Disciplina> ds = new ArrayList<>();
-        ds.add(d);
-        List<OfertaDisciplina> ofertas = ofertaDisciplinaFacade.filtrarDTC(ds, "", "");
-        
-        for(OfertaDisciplina oferta:ofertas){
-            ofertaDisciplinaFacade.remove(oferta);
-        }
-        
-    }
+//    public void deletarPorDisciplina(Disciplina d){
+//        
+//        List<Disciplina> ds = new ArrayList<>();
+//        ds.add(d);
+//        List<OfertaDisciplina> ofertas = ofertaDisciplinaFacade.filtrarDiscTurnoCampus(ds, "", "");
+//        
+//        for(OfertaDisciplina oferta:ofertas){
+//            ofertaDisciplinaFacade.remove(oferta);
+//        }
+//        
+//    }
 
 
         public void deleteAll(Long quad) {

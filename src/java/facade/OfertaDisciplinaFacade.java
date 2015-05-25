@@ -1,7 +1,6 @@
 package facade;
 
 import controller.HibernateUtil;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import model.Disciplina;
@@ -39,144 +38,112 @@ public class OfertaDisciplinaFacade extends AbstractFacade<OfertaDisciplina>{
         
     }
     
-    //Filtro por disciplina e/ou turno e/ou campus
-    public List<OfertaDisciplina> filtrarDTC(List<Disciplina> disciplinas, String turno, String campus) {
+    
+    /**
+     * Filtra as Ofertas de disciplina por disciplina(s) com afinidades
+     * e/ou turno e/ou campus e quadrimestre
+     * @param disciplinas List  de Disciplina
+     * @param turno string D ou N
+     * @param campus string SA ou SB
+     * @param quadrimestre int 1, 2 ou 3
+     * @return Lista de ofertas de disciplinas filtradas de acordo com os parametros
+     */
+    public List<OfertaDisciplina> filtrarAfinidTurnCampQuad(List<Disciplina> disciplinas, String turno, String campus, int quadrimestre) {
 
         try {
-            List<OfertaDisciplina> turmas = new ArrayList<>();
 
             Session session = getSessionFactory().openSession();
-            
 
-            if(!disciplinas.isEmpty()){
-                
-                for (Disciplina d : disciplinas) {
+            Criteria criteria = session.createCriteria(OfertaDisciplina.class);
 
-                    Criteria criteria = session.createCriteria(OfertaDisciplina.class);
-                    
-                if (!campus.equals("")) {
-                    criteria.add(Restrictions.eq("campus", campus));
-                }
-
-                if (!turno.equals("")) {
-                    criteria.add(Restrictions.eq("turno", turno));
-                }
-                
-//                    Query query = session.createQuery("from OfertaDisciplina t where t.disciplina_disciplina_id = :id ");
-//                    query.setParameter("id", d.getID());
-                criteria.add(Restrictions.eq("disciplina", d));
-                List resultado = criteria.list();
-                
-//                    List resultado = query.list();
-                    turmas.addAll(resultado);
+            if (!campus.equals("")) {
+                criteria.add(Restrictions.eq("campus", campus));
             }
+
+            if (!turno.equals("")) {
+                criteria.add(Restrictions.eq("turno", turno));
             }
-            
-            else{
-                
-                Criteria criteria = session.createCriteria(OfertaDisciplina.class);
-                
-                if (!campus.equals("")) {
-                    criteria.add(Restrictions.eq("campus", campus));
-                }
 
-                if (!turno.equals("")) {
-                    criteria.add(Restrictions.eq("turno", turno));
-                }
-                
-                List resultado = criteria.list();
-                turmas.addAll(resultado);
-                
+            if (quadrimestre != 0) {
+                criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
             }
-            
-            
 
-            if (turmas.size() <= 0) {
+            if (!disciplinas.isEmpty()) { //Caso tenha sido escolhido para filtrar por disciplinas com afinidades
 
-                session.close();
-                return null;
-
-            } else {
-
-                session.close();
-                return turmas;
+                criteria.add(Restrictions.in("disciplina", disciplinas));
 
             }
+
+            List resultado = criteria.list();
+
+            session.close();
+            return resultado;
+
         } catch (HibernateException e) {
             return null;
         }
 
     }
     
-    
-     //Filtro por disciplina e/ou turno e/ou campus e quadrimestre
-    public List<OfertaDisciplina> filtrarDTCQ(List<Disciplina> disciplinas, String turno, String campus, int quadrimestre) {
+    /**
+     * Filtro completo de ofertas de disciplinas
+     *
+     * @param eixos
+     * @param cursos
+     * @param turno
+     * @param campus
+     * @param quadrimestre
+     * @return Lista de ofertas de disciplinas filtradas
+     */
+    public List<OfertaDisciplina> filtrarEixoCursoTurnoCampusQuad(List<String> eixos, List<String> cursos, String turno, String campus, int quadrimestre) {
 
         try {
-            List<OfertaDisciplina> turmas = new ArrayList<>();
 
             Session session = getSessionFactory().openSession();
 
-            if (!disciplinas.isEmpty()) {
+            Criteria criteria = session.createCriteria(OfertaDisciplina.class);
 
-                for (Disciplina d : disciplinas) {
+            if (!campus.equals("")) {//Se o usuario escolheu filtrar pelo campus
+                criteria.add(Restrictions.eq("campus", campus));
+            }
 
-                    Criteria criteria = session.createCriteria(OfertaDisciplina.class);
+            if (!turno.equals("")) {//Se o usuario escolheu filtrar pelo turno
+                criteria.add(Restrictions.eq("turno", turno));
+            }
 
-                    if (!campus.equals("")) {
-                        criteria.add(Restrictions.eq("campus", campus));
-                    }
+            if (quadrimestre != 0) {//Se o usuario escolheu filtrar pelo quadrimestre
+                criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
+            }
 
-                    if (!turno.equals("")) {
-                        criteria.add(Restrictions.eq("turno", turno));
-                    }
+            if (eixos.size() > 0) {//Caso algum filtro de eixo tenha sido selecionado
 
-                    criteria.add(Restrictions.eq("disciplina", d));
-                    criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
-                    List resultado = criteria.list();
-                    turmas.addAll(resultado);
+                criteria.createAlias("disciplina", "d");
+
+                if (cursos.size() > 0) {//Caso algum filtro de curso tenha sido selecionado
+                    criteria.add(Restrictions.or(Restrictions.in("d.eixo", eixos), Restrictions.in("d.curso", cursos)));
+                } else {
+                    criteria.add(Restrictions.in("d.eixo", eixos));
+                }
+
+            } else {//Caso nenhum filtro de eixo tenha sido selecionado
+
+                if (cursos.size() > 0) {//Caso algum filtro de curso tenha sido selecionado
+                    criteria.createAlias("disciplina", "d").add(Restrictions.or(Restrictions.in("d.curso", cursos)));
                 }
             }
-            
-            else{
-                
-                Criteria criteria = session.createCriteria(OfertaDisciplina.class);
-                
-                if (!campus.equals("")) {
-                    criteria.add(Restrictions.eq("campus", campus));
-                }
 
-                if (!turno.equals("")) {
-                    criteria.add(Restrictions.eq("turno", turno));
-                }
-                
-                if(quadrimestre != 0){
-                    criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
-                }
-                
-                List resultado = criteria.list();
-                turmas.addAll(resultado);
-                
-            }
-            
-            
+            List resultado = criteria.list();
 
-            if (turmas.size() <= 0) {
+            session.close();
+            return resultado;
 
-                session.close();
-                return null;
-
-            } else {
-
-                session.close();
-                return turmas;
-
-            }
         } catch (HibernateException e) {
             return null;
         }
-
     }
+    
+    
+    
     
     /**
      * Lista as ofertas de disciplina por quadrimestre
@@ -195,6 +162,76 @@ public class OfertaDisciplinaFacade extends AbstractFacade<OfertaDisciplina>{
         session.close();
         return results;
     }
+    
+    
+    //Filtro por disciplina e/ou turno e/ou campus
+//    public List<OfertaDisciplina> filtrarDiscTurnoCampus(List<Disciplina> disciplinas, String turno, String campus) {
+//
+//        try {
+//            List<OfertaDisciplina> turmas = new ArrayList<>();
+//
+//            Session session = getSessionFactory().openSession();
+//            
+//
+//            if(!disciplinas.isEmpty()){
+//                
+//                for (Disciplina d : disciplinas) {
+//
+//                    Criteria criteria = session.createCriteria(OfertaDisciplina.class);
+//                    
+//                if (!campus.equals("")) {
+//                    criteria.add(Restrictions.eq("campus", campus));
+//                }
+//
+//                if (!turno.equals("")) {
+//                    criteria.add(Restrictions.eq("turno", turno));
+//                }
+//                
+////                    Query query = session.createQuery("from OfertaDisciplina t where t.disciplina_disciplina_id = :id ");
+////                    query.setParameter("id", d.getID());
+//                criteria.add(Restrictions.eq("disciplina", d));
+//                List resultado = criteria.list();
+//                
+////                    List resultado = query.list();
+//                    turmas.addAll(resultado);
+//            }
+//            }
+//            
+//            else{
+//                
+//                Criteria criteria = session.createCriteria(OfertaDisciplina.class);
+//                
+//                if (!campus.equals("")) {
+//                    criteria.add(Restrictions.eq("campus", campus));
+//                }
+//
+//                if (!turno.equals("")) {
+//                    criteria.add(Restrictions.eq("turno", turno));
+//                }
+//                
+//                List resultado = criteria.list();
+//                turmas.addAll(resultado);
+//                
+//            }
+//            
+//            
+//
+//            if (turmas.size() <= 0) {
+//
+//                session.close();
+//                return null;
+//
+//            } else {
+//
+//                session.close();
+//                return turmas;
+//
+//            }
+//        } catch (HibernateException e) {
+//            return null;
+//        }
+//
+//    }
 
 }
 

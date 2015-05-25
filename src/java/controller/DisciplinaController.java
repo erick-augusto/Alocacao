@@ -404,13 +404,15 @@ public class DisciplinaController extends Filtros implements Serializable {
         List<Disciplina> disciplinasFiltradas = disciplinaFacade.findByEixoCurso(super.getFiltrosSelecEixos(), super.getFiltrosSelecCursos());
 
         disciplinaDataModel = new DisciplinaDataModel(disciplinasFiltradas);
+        
+        super.setFiltrosSelecEixos(null);
+        super.setFiltrosSelecCursos(null);
 
     }
 
     public void limparFiltro() {
 
-        super.setFiltrosSelecEixos(null);
-        super.setFiltrosSelecCursos(null);
+        
 
         disciplinaDataModel = null;
 
