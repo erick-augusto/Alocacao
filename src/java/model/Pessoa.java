@@ -31,23 +31,7 @@ public class Pessoa implements Serializable, Comparable<Pessoa> {
     @Column(name = "pessoa_id")
     private Long ID;
 
-    public Long getID() {
-        return ID;
-    }
-
-    public void setID(Long ID) {
-        this.ID = ID;
-    }
-
     private String nome;
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     private String siape;
 
@@ -57,7 +41,28 @@ public class Pessoa implements Serializable, Comparable<Pessoa> {
 
     private boolean adm;
     
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
+    private Set<Afinidade> afinidades;
+    
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
+    private Set<Disponibilidade> disponibilidades;  
 
+    public Long getID() {
+        return ID;
+    }
+
+    public void setID(Long ID) {
+        this.ID = ID;
+    }
+    
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    
     public String getSiape() {
         return siape;
     }
@@ -90,11 +95,6 @@ public class Pessoa implements Serializable, Comparable<Pessoa> {
         this.adm = adm;
     }
     
-    
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
-    private Set<Afinidade> afinidades;
-
     public Set<Afinidade> getAfinidades() {
         return afinidades;
     }
@@ -102,11 +102,6 @@ public class Pessoa implements Serializable, Comparable<Pessoa> {
     public void setAfinidades(Set<Afinidade> afinidades) {
         this.afinidades = afinidades;
     }
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
-    private Set<Disponibilidade> disponibilidades;
-    
-    
 
     public Set<Disponibilidade> getDisponibilidades() {
         return disponibilidades;

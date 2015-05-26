@@ -25,23 +25,28 @@ public class Disciplina implements Serializable {
     @Column(name="disciplina_id")
     private Long ID;
     
+    private String nome;
+    
+    private String eixo;
+    
+    private String codigo;
+    
+    private String curso;
     
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
     private Set<Afinidade> afinidades;
     
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
-    private Set<OfertaDisciplina> turmas;
+    private Set<OfertaDisciplina> ofertasDisciplinas;
 
-    public Set<OfertaDisciplina> getTurmas() {
-        return turmas;
+    public Set<OfertaDisciplina> getOfertasDisciplinas() {
+        return ofertasDisciplinas;
     }
 
-    public void setTurmas(Set<OfertaDisciplina> turmas) {
-        this.turmas = turmas;
+    public void setOfertasDisciplinas(Set<OfertaDisciplina> ofertasDisciplinas) {
+        this.ofertasDisciplinas = ofertasDisciplinas;
     }
     
-    
-
     Disciplina(Long disciplinaId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -63,8 +68,6 @@ public class Disciplina implements Serializable {
         this.ID = ID;
     }
 
-    private String nome;
-
     public String getNome() {
         return nome;
     }
@@ -72,8 +75,6 @@ public class Disciplina implements Serializable {
     public void setNome(String nome) {
         this.nome = nome;
     }
-    
-    private String codigo;
     
     public String getCodigo(){
         return codigo;
@@ -83,8 +84,6 @@ public class Disciplina implements Serializable {
         this.codigo = codigo;
     }
     
-    private String eixo;
-
     public String getEixo() {
         return eixo;
     }
@@ -101,8 +100,7 @@ public class Disciplina implements Serializable {
     
     }
     
-    private String curso;
-
+    
     public String getCurso() {
         return curso;
     }
@@ -118,7 +116,6 @@ public class Disciplina implements Serializable {
         
         
     }
-    
     
     
     @Override

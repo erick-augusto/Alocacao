@@ -22,7 +22,7 @@ public class OfertaDisciplina implements Serializable {
     private Long ID;
 
     private String curso;
-
+  
     @ManyToOne
     private Disciplina disciplina;
 
@@ -55,8 +55,7 @@ public class OfertaDisciplina implements Serializable {
     public void setDisponibilidades(Set<Disponibilidade> disponibilidades) {
         this.disponibilidades = disponibilidades;
     }
-
-    //private Horario horarios;
+    
     public String getCurso() {
         return curso;
     }

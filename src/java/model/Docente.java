@@ -19,6 +19,9 @@ public class Docente extends Pessoa{
     
     private String areaAtuacao;
    
+    @OneToMany(fetch = FetchType.EAGER,  mappedBy = "docente",cascade = CascadeType.ALL)
+    private List<Credito> creditos;
+    
     public String getAreaAtuacao() {
         return areaAtuacao;
     }
@@ -26,9 +29,6 @@ public class Docente extends Pessoa{
     public void setAreaAtuacao(String areaAtuacao) {
         this.areaAtuacao = areaAtuacao;
     }
-    
-    @OneToMany(fetch = FetchType.EAGER,  mappedBy = "docente",cascade = CascadeType.ALL)
-    private List<Credito> creditos;
 
     public List<Credito> getCreditos() {
         return creditos;

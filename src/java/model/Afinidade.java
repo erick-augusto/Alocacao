@@ -53,6 +53,7 @@ public class Afinidade implements Serializable{
  
     private String estado;
     
+    //Quando o docente adicionou ou removeu uma afinidade
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dataAcao;
     

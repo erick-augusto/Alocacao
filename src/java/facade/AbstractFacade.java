@@ -59,12 +59,10 @@ public abstract class AbstractFacade<T> {
     public T merge(T entity) {
         Session session = getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        //session.merge(entity);
         T entidade = (T) session.merge(entity);
         transaction.commit();
         session.close();
         return entidade;
-        //return entity;
 
     }
 
@@ -102,19 +100,6 @@ public abstract class AbstractFacade<T> {
      *
      * @return Lista com todas as entidades do banco de dados
      */
-//    public Set<T> findAll() {
-//        Session session = getSessionFactory().openSession();
-//        Criteria crit = session.createCriteria(entityClass);
-//        crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);//faz um select distinct
-//
-//        //crit.setMaxResults(50);
-//        List results = crit.list();
-//        Set<T> resultados = new HashSet(results);
-//        session.close();
-//        return resultados;
-//    }
-    
-    
     public List<T> findAll() {
         Session session = getSessionFactory().openSession();
         Criteria crit = session.createCriteria(entityClass);

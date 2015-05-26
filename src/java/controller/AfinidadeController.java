@@ -42,7 +42,7 @@ public class AfinidadeController extends Filtros implements Serializable{
     private Afinidade afinidade;
     
     //Guarda o docente que esta definindo a afinidade
-    private Pessoa pessoa;
+    private Pessoa docente;
   
     //Guarda a disciplina que o docente selecionou para adicionar como tendo afinidade
     private Disciplina paraAdicionar;
@@ -56,21 +56,22 @@ public class AfinidadeController extends Filtros implements Serializable{
     //Disciplinas disponiveis------------------------------------------------------
     private List<Disciplina> disponiveis;
     
-    /*
-    Esse método vê quais disciplinas o docente já escolheu,
-    para exibir só as que ele ainda não selecionou 
-    (não estão salvas na afinidade, ou estão salvas como "Removida", 
-    porque ele pode escolher de novo nesse caso)
-    */
+    
+    /**
+     * Vê quais disciplinas o docente já escolheu,
+     * para exibir só as que ele ainda não selecionou(não estão salvas na afinidade, 
+     * ou estão salvas como "Removida", porque ele pode escolher de novo nesse caso)
+     * @return 
+     */
     public List<Disciplina> getDisponiveis() {
 
         if (disponiveis == null) {
             
             //Usuário que fez o logon
-            pessoa = LoginBean.getUsuario();
+            docente = LoginBean.getUsuario();
 
             //Todas as afinidades do usuario
-            todasAfinidades = new ArrayList(pessoa.getAfinidades());
+            todasAfinidades = new ArrayList(docente.getAfinidades());
             
             escolhidas = new ArrayList<>();
             
@@ -115,13 +116,58 @@ public class AfinidadeController extends Filtros implements Serializable{
 
     }
       
-    
+    /**
+     * Carrega todas as disciplinas disponiveis novamente
+     */
     public void limparFiltro(){
-
+    
+        disponiveis = null;        
+    }
+    
+    /**
+     * Faz a relação entre a disciplina escolhida e o docente que a escolheu,
+     * salvando a afinidade
+     */
+    public void salvarAfinidade() {
+        
+        //Data da inclusao/remocao
+        Calendar cal = Calendar.getInstance();
+        
+        //Regarrega o objeto disciplina, inicializando a Colecao de Afinidade(Lazy)
+        paraAdicionar = disciplinaFacade.inicializarColecaoAfinidades(paraAdicionar);
+        
+        afinidade = new Afinidade("Adicionada", cal.getTime(), docente, paraAdicionar);
+        
+        afinidadeFacade.merge(afinidade);
         
         disponiveis = null;
-        
+        paraAdicionar = null;
     }
+    
+    /**
+     * "Remove" uma afinidade, marcando seu status como Removida
+     */
+    public void removerAfinidade(){
+        
+        //Percorre a lista de afinidades da docente e muda o status de Adicionada para removida
+        for(Afinidade a: todasAfinidades){
+            
+            if(a.getDisciplina() == paraRemover){
+
+                Calendar cal = Calendar.getInstance();
+                a.setDataAcao(cal.getTime());
+                a.setEstado("Removida");
+                afinidadeFacade.edit(a);
+            }
+            
+        }
+        
+        disponiveis = null;
+        paraRemover = null;
+        paraAdicionar = null;
+                 
+    }
+    
     
     //Getters e setters
     public Afinidade getAfinidade() {
@@ -133,11 +179,11 @@ public class AfinidadeController extends Filtros implements Serializable{
     }
     
     public Pessoa getPessoa() {
-        return pessoa;
+        return docente;
     }
 
     public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
+        this.docente = pessoa;
     }
     
     public Disciplina getParaAdicionar() {
@@ -179,42 +225,7 @@ public class AfinidadeController extends Filtros implements Serializable{
         return afinidadeFacade.find(id);
     }
     
-    public void salvarAfinidade() {
-        
-        //Data da inclusao/remocao
-        Calendar cal = Calendar.getInstance();
-        
-        //Regarrega o objeto disciplina, inicializando a Colecao de Afinidade(Lazy)
-        paraAdicionar = disciplinaFacade.inicializarColecaoAfinidades(paraAdicionar);
-        
-        afinidade = new Afinidade("Adicionada", cal.getTime(), pessoa, paraAdicionar);
-        
-        afinidadeFacade.merge(afinidade);
-        
-        disponiveis = null;
-        paraAdicionar = null;
-    }
     
-    public void removerAfinidade(){
-        
-        //Percorre a lista de afinidades da pessoa e muda o status de Adicionada para removida
-        for(Afinidade a: todasAfinidades){
-            
-            if(a.getDisciplina() == paraRemover){
-
-                Calendar cal = Calendar.getInstance();
-                a.setDataAcao(cal.getTime());
-                a.setEstado("Removida");
-                afinidadeFacade.edit(a);
-            }
-            
-        }
-        
-        disponiveis = null;
-        paraRemover = null;
-        paraAdicionar = null;
-                 
-    }
 
     public SelectItem[] getItemsAvaiableSelectOne() {
         return JsfUtil.getSelectItems(listarTodas(), true);

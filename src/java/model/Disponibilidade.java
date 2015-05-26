@@ -46,12 +46,8 @@ public class Disponibilidade implements Serializable {
     private Id id = new Id();
 
     private String ordemPreferencia;
-    
-    //Docente de teoria ou pratica ou ambos
-    //T-P
-    //T
-    //P
-   
+  
+    //Se o docente quer dar teoria, pratica ou ambos
     private String tp;
 
     @ManyToOne
