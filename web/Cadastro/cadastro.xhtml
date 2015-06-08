@@ -94,10 +94,18 @@
                                 </p:dataTable>
 
 
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController.cadastrarDisciplinas()}" 
-                                                 style="width: 250px; height: 25px; font-size: small" title="Cadastrar disciplinas"
-                                                 value="Cadastrar disciplinas por .csv" update="disciplinaTable, @(form:msgs)" immediate="true">
-                                </p:commandButton>
+                                <h:panelGrid columns="2">
+                                    <p:commandButton icon="ui-icon-disk"  actionListener="#{disciplinaController.cadastrarDisciplinas()}" 
+                                                     style="width: 250px; height: 25px; font-size: small" title="Cadastrar disciplinas"
+                                                     value="Cadastrar disciplinas por .csv" update="disciplinaTable, @(form:msgs)" immediate="true">
+                                    </p:commandButton>
+
+                                    <p:commandButton icon="ui-icon-trash"  actionListener="#{disciplinaController.deleteAll()}" 
+                                                     style="width: 250px; height: 25px; font-size: small" title="Deletar disciplinas"
+                                                     value="Deletar disciplinas" update="disciplinaTable, @(form:msgs)" immediate="true">
+                                    </p:commandButton>
+                                </h:panelGrid>
+                                
 
                             </h:panelGrid>
 
@@ -189,12 +197,6 @@
                                                  value="Cadastrar docentes por .csv"  update="@all" immediate="true">
                                 </p:commandButton>
                                 
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{docenteController.cadastrarArea()}"
-                                                 style="width: 250px; height: 25px; font-size: small" 
-                                                 value="Cadastrar areas conhecimento"  update="@all" immediate="true">
-                                </p:commandButton>
-
-
                             </h:panelGrid>
 
                             <p:panel header="Cadastrar Novo Docente"  >

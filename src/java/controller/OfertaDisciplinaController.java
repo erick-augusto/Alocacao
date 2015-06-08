@@ -420,7 +420,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         //Primeiro quadrimestre
             try {
 
-                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad1.csv");
+                FileReader arq = new FileReader("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad1.csv");
 
                 BufferedReader lerArq = new BufferedReader(arq);
 
@@ -490,7 +490,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         //Segundo quadrimestre
             try {
 
-                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad2.csv");
+                FileReader arq = new FileReader("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad2.csv");
 
                 BufferedReader lerArq = new BufferedReader(arq);
 
@@ -560,7 +560,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         //Terceiro quadrimestre
             try {
 
-                FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/quad3.csv");
+                FileReader arq = new FileReader("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad3.csv");
 
                 BufferedReader lerArq = new BufferedReader(arq);
 

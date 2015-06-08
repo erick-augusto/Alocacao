@@ -4,8 +4,10 @@ import facade.AfinidadeFacade;
 import facade.DisciplinaFacade;
 import facade.PessoaFacade;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -200,49 +202,42 @@ public class DisciplinaController extends Filtros implements Serializable {
 
         try {
 
-            FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/catalogoDisciplinas.csv");
-
-            BufferedReader lerArq = new BufferedReader(arq);
-
-            String linha = lerArq.readLine(); //cabeçalho
-            // lê a primeira linha 
-            // a variável "linha" recebe o valor "null" quando o processo 
-            // de repetição atingir o final do arquivo texto 
-
-            linha = lerArq.readLine();
-
-            while (linha != null) {
-//                linha = linha.replace("\"", "");
-
-                palavras = linha.split(";");
-
-                List<Disciplina> disciplinaExist = disciplinaFacade.findByName(palavras[2]);
-
-                if (disciplinaExist.isEmpty()) {
-                    Disciplina d = new Disciplina();
-                    d.setNome(palavras[2]);
-                    d.setCodigo(palavras[1]);
-
-                    if (palavras[0].substring(0, 2).equals("BC") || palavras[0].substring(0, 2).equals("BH")
-                            || palavras[0].substring(0, 2).equals("BI")) {
-
-                        eixo = converteEixo(palavras[0]);
-                        d.setEixo(eixo);
-
-                    } else {
-
-                        curso = converteCurso(palavras[0]);
-                        d.setCurso(curso);
-
-                    }
-
-                    disciplinaFacade.save(d);
-                }
-
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\catalogoDisciplinas.csv"), "UTF-8"))) {
+                String linha = lerArq.readLine(); //cabeçalho
+                
                 linha = lerArq.readLine();
-            }
-
-            arq.close();
+                
+                while (linha != null) {
+//                linha = linha.replace("\"", "");
+                    
+                    palavras = linha.split(";");
+                    
+                    List<Disciplina> disciplinaExist = disciplinaFacade.findByName(palavras[2]);
+                    
+                    if (disciplinaExist.isEmpty()) {
+                        Disciplina d = new Disciplina();
+                        d.setNome(palavras[2]);
+                        d.setCodigo(palavras[1]);
+                        
+                        if (palavras[0].substring(0, 2).equals("BC") || palavras[0].substring(0, 2).equals("BH")
+                                || palavras[0].substring(0, 2).equals("BI")) {
+                            
+                            eixo = converteEixo(palavras[0]);
+                            d.setEixo(eixo);
+                            
+                        } else {
+                            
+                            curso = converteCurso(palavras[0]);
+                            d.setCurso(curso);
+                            
+                        }
+                        
+                        disciplinaFacade.save(d);
+                    }
+                    
+                    linha = lerArq.readLine();
+                }
+            } //cabeçalho
 
         } catch (IOException e) {
             System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
@@ -253,6 +248,50 @@ public class DisciplinaController extends Filtros implements Serializable {
 
         JsfUtil.addSuccessMessage("Cadastro de disciplinas realizado com sucesso", "");
 
+    }
+    
+     public void deleteAll() {
+
+        try {
+
+            //Todas as disciplinas existentes
+            List<Disciplina> disciplinas = disciplinaFacade.findAll();
+
+            //Itera sobre cada disciplina para apagar as afinidades, caso existam
+            for (Disciplina d : disciplinas) {
+                d = disciplinaFacade.inicializarColecaoAfinidades(d);
+                Set<Afinidade> afinidades = d.getAfinidades();
+                Pessoa docente;
+
+                for (Afinidade a : afinidades) {
+                    d.getAfinidades().remove(a);
+                    docente = a.getPessoa();
+                    docente.getAfinidades().remove(a);
+                    pessoaFacade.edit(docente);
+
+                    //Atualizar o usuário atual caso a disciplina apagada tivesse
+                    //alguma relação com ele
+                    //Mudar depois
+                    if (docente.getNome().equals(LoginBean.getUsuario().getNome())) {
+                        LoginBean.setUsuario(docente);
+                    }
+                    
+                    afinidadesFacade.remove(a);
+
+                }
+
+                disciplinaFacade.remove(d);
+                
+                
+            }
+            
+            JsfUtil.addSuccessMessage("Disciplinas Deletadas");
+
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
+        }
+
+        recriarModelo();
     }
 
     public DisciplinaLazyModel getDisciplinaLazyModel() {

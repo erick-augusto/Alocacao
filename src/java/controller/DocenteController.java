@@ -144,7 +144,7 @@ public class DocenteController extends Filtros implements Serializable{
 
         try {
 
-            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/Docentes CMCC.csv"), "UTF-8"))) {
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\Docentes CMCC.csv"), "UTF-8"))) {
 
                 String linha = lerArq.readLine(); //cabeçalho
 
@@ -207,48 +207,48 @@ public class DocenteController extends Filtros implements Serializable{
 
     }
 
-    public void cadastrarArea() {
-
-        String[] palavras;
-
-        try {
-
-            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/professores.csv"), "UTF-8"))) {
-
-                String linha = lerArq.readLine(); //cabeçalho
-
-                linha = lerArq.readLine();
-
-                while (linha != null) {
-
-                    linha = linha.replaceAll("\"", "");
-
-                    palavras = linha.split("_");
-
-                    List<Docente> docentes = docenteFacade.findByName(trataNome(palavras[0]));
-
-                    if (!docentes.isEmpty()) {
-
-                        Docente d = docentes.get(0);
-
-                        d.setAreaAtuacao(palavras[1]);
-
-                        docenteFacade.edit(d);
-
-                    }
-
-                    linha = lerArq.readLine();
-                }
-            }
-
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
-        }
-
-        docenteLazyModel = null;
-        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
-
-    }
+//    public void cadastrarArea() {
+//
+//        String[] palavras;
+//
+//        try {
+//
+//            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("/home/charles/NetBeansProjects/Arquivos CSV/professores.csv"), "UTF-8"))) {
+//
+//                String linha = lerArq.readLine(); //cabeçalho
+//
+//                linha = lerArq.readLine();
+//
+//                while (linha != null) {
+//
+//                    linha = linha.replaceAll("\"", "");
+//
+//                    palavras = linha.split("_");
+//
+//                    List<Docente> docentes = docenteFacade.findByName(trataNome(palavras[0]));
+//
+//                    if (!docentes.isEmpty()) {
+//
+//                        Docente d = docentes.get(0);
+//
+//                        d.setAreaAtuacao(palavras[1]);
+//
+//                        docenteFacade.edit(d);
+//
+//                    }
+//
+//                    linha = lerArq.readLine();
+//                }
+//            }
+//
+//        } catch (IOException e) {
+//            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+//        }
+//
+//        docenteLazyModel = null;
+//        JsfUtil.addSuccessMessage("Cadastro de docentes realizado com sucesso", "");
+//
+//    }
     
 //-------------------------------------------Resumo Afinidades-------------------------------------------------------------------------------------------
     

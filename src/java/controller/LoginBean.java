@@ -138,6 +138,30 @@ public class LoginBean implements Serializable {
         context.addCallbackParam("loggedIn", loggedIn);
 
     }
+    
+    public void doLogin2() {
+
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage msg;
+        loggedIn = false;
+
+        this.username = this.username.trim();
+        this.password = this.password.trim();
+
+        usuario = pessoaFacade.findByUsername(username);
+
+        if (usuario != null) {
+            loggedIn = true;
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem-vindo(a)!", usuario.getNome());
+        } else {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Credenciais inválidas");
+        }
+
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        context.addCallbackParam("loggedIn", loggedIn);
+
+    }
 
     public String page() {
         if (loggedIn) {
