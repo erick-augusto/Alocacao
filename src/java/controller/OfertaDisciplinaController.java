@@ -5,8 +5,10 @@ import facade.DisponibilidadeFacade;
 import facade.PessoaFacade;
 import facade.OfertaDisciplinaFacade;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -413,23 +415,18 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
 
     
     //Cadastrar oferta primeiro quadrimestre
-    public void turmaQuad1(){
+    public void cadastrarOfertasQuad1(){
         
         String[] palavras;
         
         //Primeiro quadrimestre
             try {
-
-                FileReader arq = new FileReader("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad1.csv");
-
-                BufferedReader lerArq = new BufferedReader(arq);
-
+          
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad1.csv"), "UTF-8"))) {
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê d primeira linha 
-                // d variável "linha" recebe o valor "null" quando o processo 
-                // de repetição atingir o final do arquivo texto 
-
+                
                 linha = lerArq.readLine();
+                
 
 //            linha = linha.replaceAll("\"", "");
                 while (linha != null) {
@@ -472,8 +469,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
                     linha = lerArq.readLine();
 //                linha = linha.replaceAll("\"", "");
                 }
-
-                arq.close();
+            } //cabeçalho
                 ofertas1LazyModel = null;
 
             } catch (IOException e) {
@@ -483,23 +479,18 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     }
     
     //Cadastrar oferta 2 quadrimestre
-    public void turmaQuad2(){
+    public void cadastrarOfertasQuad2(){
         
-        String[] palavras;
+       String[] palavras;
         
-        //Segundo quadrimestre
+        //Primeiro quadrimestre
             try {
-
-                FileReader arq = new FileReader("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad2.csv");
-
-                BufferedReader lerArq = new BufferedReader(arq);
-
+          
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad2.csv"), "UTF-8"))) {
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê d primeira linha 
-                // d variável "linha" recebe o valor "null" quando o processo 
-                // de repetição atingir o final do arquivo texto 
-
+                
                 linha = lerArq.readLine();
+                
 
 //            linha = linha.replaceAll("\"", "");
                 while (linha != null) {
@@ -522,7 +513,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
 //                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
                         oferta.setDisciplina(d);
                     }
-
+  
                     oferta.setT(Integer.parseInt(palavras[5]));
                     oferta.setP(Integer.parseInt(palavras[6]));
                     oferta.setTurno(palavras[11]);
@@ -542,34 +533,27 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
                     linha = lerArq.readLine();
 //                linha = linha.replaceAll("\"", "");
                 }
-
-                arq.close();
+            } //cabeçalho
                 ofertas2LazyModel = null;
 
             } catch (IOException e) {
                 System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
             }
         
-        
     }
     
     //Cadastrar oferta 3 quadrimestre
-    public void turmaQuad3(){
+    public void cadastrarOfertasQuad3(){
         String[] palavras;
         
-        //Terceiro quadrimestre
+        //Primeiro quadrimestre
             try {
-
-                FileReader arq = new FileReader("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad3.csv");
-
-                BufferedReader lerArq = new BufferedReader(arq);
-
+          
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad3.csv"), "UTF-8"))) {
                 String linha = lerArq.readLine(); //cabeçalho
-                // lê d primeira linha 
-                // d variável "linha" recebe o valor "null" quando o processo 
-                // de repetição atingir o final do arquivo texto 
-
+                
                 linha = lerArq.readLine();
+                
 
 //            linha = linha.replaceAll("\"", "");
                 while (linha != null) {
@@ -592,7 +576,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
 //                        Disciplina d = disciplinaFacade.findByName(nome).get(0);
                         oferta.setDisciplina(d);
                     }
-
+  
                     oferta.setT(Integer.parseInt(palavras[5]));
                     oferta.setP(Integer.parseInt(palavras[6]));
                     oferta.setTurno(palavras[11]);
@@ -612,8 +596,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
                     linha = lerArq.readLine();
 //                linha = linha.replaceAll("\"", "");
                 }
-
-                arq.close();
+            } //cabeçalho
                 ofertas3LazyModel = null;
 
             } catch (IOException e) {
