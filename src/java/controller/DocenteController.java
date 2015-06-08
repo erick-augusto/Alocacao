@@ -411,6 +411,22 @@ public class DocenteController extends Filtros implements Serializable{
         //salvar = true;
     }
     
+//    public double creditosQuad(Long quad){
+//        
+//        docente = (Docente) LoginBean.getUsuario();
+//        Integer quadrimestre = (int) (long) quad;
+//        double credito = 0;
+//        List<Credito> all = docente.getCreditos();
+//        for(Credito c : all){
+//            if(c.getQuadrimestre() == quadrimestre){
+//                credito = c.getQuantidade();
+//            }
+//        }
+//        
+//        return credito;
+//        
+//    }
+    
 //-----------------------------------------Resumo Fase I-------------------------------------------------------------------------------------------
     
     private DisponibilidadeDataModel disponibilidadesDocente;

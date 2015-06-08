@@ -6,6 +6,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue("Docente")
@@ -38,6 +39,11 @@ public class Docente extends Pessoa{
         this.creditos = creditos;
     }
     
+    
+    
+    
+    
+
     
 
     @Override

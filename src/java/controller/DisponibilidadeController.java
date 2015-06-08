@@ -15,6 +15,7 @@ import model.Disponibilidade;
 import model.Pessoa;
 import model.OfertaDisciplina;
 import org.primefaces.event.CellEditEvent;
+import org.primefaces.event.SelectEvent;
 import util.DisponibilidadeDataModel;
 import util.OfertaDisciplinaDataModel;
 
@@ -80,6 +81,28 @@ public class DisponibilidadeController implements Serializable {
 
     public void setDataModel(OfertaDisciplinaDataModel dataModel) {
         this.dataModel = dataModel;
+    }
+    
+    private double quantidadeCreditos;
+
+    public double getQuantidadeCreditos() {
+        return quantidadeCreditos;
+    }
+
+    public void setQuantidadeCreditos(double quantidadeCreditos) {
+        this.quantidadeCreditos = quantidadeCreditos;
+    }
+    
+    
+    
+    public void onRowSelect(SelectEvent event) {
+        
+        if(ofertasEtapa1 != null){
+            for(OfertaDisciplina o:ofertasEtapa1){
+                quantidadeCreditos += o.getT();
+            }
+        }
+        
     }
     
     //guarda as disponibilidades escolhidas pelo docente em cada quadrimestre
