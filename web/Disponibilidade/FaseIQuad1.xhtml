@@ -131,6 +131,8 @@
 
                                 <p:ajax event="rowSelectCheckbox" listener="#{creditoController.adicionaCredito}" />  
                                 <p:ajax event="rowUnselectCheckbox" /> 
+                                
+                                
 
                                 <p:column selectionMode="multiple" style="width:5%;text-align:center"/>
 
@@ -142,12 +144,24 @@
                                 <p:column headerText="Disciplina" style="width: 33%">
                                     <h:outputText value="#{turma.disciplina.nome}" style="width: 33%"/>
                                 </p:column>
-                                <p:column headerText="Teoria" style="width: 6%">
-                                    <h:outputText value="#{turma.t}" style="width: 6%"/>
+                                <p:column headerText="Horas Teoria" style="width: 9%">
+                                    <h:outputText value="#{turma.t}" style="width: 9%"/>
                                 </p:column>
-                                <p:column headerText="Prática" style="width: 6%">
-                                    <h:outputText value="#{turma.p}" style="width: 6%"/>
+                                <p:column headerText="Horas Prática" style="width: 9%">
+                                    <h:outputText value="#{turma.p}" style="width: 9%"/>
                                 </p:column>
+                                <p:column headerText="Escolha" style="width: 20%">
+                                    <p:selectManyButton value="#{disponibilidadeController.selectedOptions}" >
+
+                                        <p:ajax listener="#{disponibilidadeController.setFuncaoOferta(turma)}" event="change" 
+                                                process="@this" />
+                                        <f:selectItem itemLabel="T" itemValue="T"  />
+                                        <f:selectItem itemLabel="P" itemValue="P" />
+                                    </p:selectManyButton>
+
+                                </p:column>
+
+
                                 <p:column headerText="Periodicidade" style="width: 10%">
                                     <h:outputText value="#{turma.periodicidade}" style="width: 10%"/>
                                 </p:column>

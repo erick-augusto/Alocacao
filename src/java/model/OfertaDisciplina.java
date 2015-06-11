@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 //Vai ter as informações gerais das turmas planejadas para aquele ano
 //Corresponde à primeira etapa da alocação
@@ -44,6 +45,9 @@ public class OfertaDisciplina implements Serializable {
     private String periodicidade;
 
     private int quadrimestre;
+    
+    @Transient //armazena temporariamente se o docente vai dar teoria e/ou pratica
+    private String funcao;
 
     @OneToMany(mappedBy = "ofertaDisciplina", cascade = CascadeType.ALL)
     private Set<Disponibilidade> disponibilidades;
@@ -134,6 +138,15 @@ public class OfertaDisciplina implements Serializable {
 
     public void setID(Long ID) {
         this.ID = ID;
+    }
+
+    public String getFuncao() {
+        
+        return funcao;
+    }
+
+    public void setFuncao(String funcao) {
+        this.funcao = funcao;
     }
 
     @Override

@@ -66,8 +66,23 @@ public class CreditoController extends Filtros implements Serializable{
        public void adicionaCredito(SelectEvent event) {
         OfertaDisciplina oferta = (OfertaDisciplina) event.getObject();
 
-        quantidade += oferta.getT();
+        switch(oferta.getFuncao()){
+            case "Teoria":
+                quantidade += oferta.getT();
+                break;
+            case "Pratica":
+                quantidade += oferta.getP();
+                break;
+            default:
+                quantidade += oferta.getT() + oferta.getP();
+        }
 
     }
+       
+       public void diminuiCredito(SelectEvent event){
+           OfertaDisciplina oferta = (OfertaDisciplina) event.getObject();
+           
+           quantidade -= oferta.getT();
+       }
 }
 

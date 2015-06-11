@@ -105,6 +105,37 @@ public class DisponibilidadeController implements Serializable {
         
     }
     
+    private List<String> selectedOptions;
+
+    public List<String> getSelectedOptions() {
+        return selectedOptions;
+    }
+
+    public void setSelectedOptions(List<String> selectedOptions) {
+        this.selectedOptions = selectedOptions;
+    }
+    
+    public void setFuncaoOferta(OfertaDisciplina oferta) {
+
+        if (selectedOptions == null) {
+            oferta.setFuncao("T e P");
+        } else {
+            if (selectedOptions.size() > 1) {
+                oferta.setFuncao("T e P");
+            } else {
+                if (selectedOptions.get(0).equals("T")) {
+                    oferta.setFuncao("Teoria");
+                } else {
+                    if (selectedOptions.get(0).equals("P")) {
+                        oferta.setFuncao("Pratica");
+                    }
+
+                }
+            }
+        }
+
+    }
+    
     //guarda as disponibilidades escolhidas pelo docente em cada quadrimestre
     private DisponibilidadeDataModel dispdataModel;
 
@@ -207,6 +238,26 @@ public class DisponibilidadeController implements Serializable {
     
     public void setOrdem(List<String> ordem) {
         this.ordem = ordem;
+    }
+    
+    
+    //Usado para o docente definir se ele quer dar teoria, prática ou ambos 
+    public List<String> getTipoOferta(OfertaDisciplina o){
+            
+            List<String> tp;
+            tp = new ArrayList<>();
+            tp.add("Selecione");
+            if(o.getT() > 0){
+                tp.add("Teoria");
+            }
+            if(o.getP() > 0){
+                tp.add("Prática");
+            }
+            if(o.getP() > 0  && o.getT() > 0 ){
+                tp.add("Teoria & Prática");
+            }
+            return tp;
+        
     }
     
     //Usado para o docente definir se ele quer dar teoria, prática ou ambos 
