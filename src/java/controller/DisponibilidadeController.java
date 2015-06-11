@@ -20,6 +20,7 @@ import model.Pessoa;
 import model.OfertaDisciplina;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 import util.DisponibilidadeDataModel;
 import util.OfertaDisciplinaDataModel;
 
@@ -244,7 +245,7 @@ public class DisponibilidadeController implements Serializable {
 
     }
      
-     public void removeCredito(SelectEvent event){
+     public void removeCredito(UnselectEvent event){
          OfertaDisciplina oferta = (OfertaDisciplina) event.getObject();
 
         switch(oferta.getFuncao()){

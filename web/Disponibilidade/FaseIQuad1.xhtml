@@ -18,7 +18,7 @@
 
             <h:outputStylesheet library="css" name="style.css"  />
 
-            <h:form id="form" prependId="false">  
+            <h:form id="form" >  
 
                 <p:layout fullPage="true">
 
@@ -112,20 +112,23 @@
 
                         </p:panel>
                         
-                        <h:panelGrid columns="2" id="painelVisualizacaoCreditos">
-                            <h:outputLabel value="Créditos planejados: "/>
-                            <h:outputText value="#{disponibilidadeController.docente.getCreditoQuad(1)}" id="qtdCreditos"/>
-                       
-                            <h:outputLabel value="Créditos escolhidos: "/>
-                            <h:outputText value="#{creditoController.quantidade}" id="creditosEscolhidos" />
-                        </h:panelGrid>
                         
-                        <br/>
+                            
                             
 
                         
 
                         <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
+                            
+                            <h:outputLabel value="Créditos planejados: "/>
+                            <h:outputText value="#{disponibilidadeController.docente.getCreditoQuad(1)}" id="qtdCreditos"/>
+                       
+                            <h:outputLabel value="Créditos escolhidos: "/>
+                            <h:outputText value="#{disponibilidadeController.creditosEscolhidos}" id="creditosEscolhidos" />
+                        
+                        
+                        <br/>
+                            
                             <p:dataTable var="turma" value="#{disponibilidadeController.dataModel}" 
                                          scrollRows="20" scrollable="true"
                                          scrollHeight="430" 
@@ -133,14 +136,10 @@
                                          rowKey="#{turma.ID}"
                                          style="width: 1250px" >
 
-                                <p:ajax event="rowSelectCheckbox" listener="#{creditoController.adicionaCredito}" />  
-                                <p:ajax event="rowUnselectCheckbox" /> 
-                                
-                                
-
+                                <p:ajax event="rowSelectCheckbox" listener="#{disponibilidadeController.adicionaCredito}" update=":form:creditosEscolhidos" />  
+                                <p:ajax event="rowUnselectCheckbox" listener="#{disponibilidadeController.removeCredito}" update=":form:creditosEscolhidos" /> 
+               
                                 <p:column selectionMode="multiple" style="width:5%;text-align:center"/>
-
-
 
                                 <p:column headerText="Curso" style="width: 33%">
                                     <h:outputText value="#{turma.curso}" style="width: 33%"/>
