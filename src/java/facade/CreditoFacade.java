@@ -1,9 +1,16 @@
 package facade;
 
 import controller.HibernateUtil;
+import java.util.List;
 import javax.ejb.Stateless;
 import model.Credito;
+import model.Disponibilidade;
+import model.Docente;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 
 
 @Stateless
@@ -18,6 +25,30 @@ public class CreditoFacade extends AbstractFacade<Credito>{
 
         return HibernateUtil.getSessionFactory();
 
+    }
+    
+    public Credito creditoQuadrimestre(Docente docente, int quadrimestre){
+            
+        try {
+
+            Session session = getSessionFactory().openSession();
+            Criteria criteria = session.createCriteria(Credito.class);
+            criteria.add(Restrictions.eq("docente", docente));
+            criteria.add(Restrictions.eq("quadrimestre", quadrimestre));
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+            List resultado = criteria.list();
+            session.close();
+            
+            if(resultado != null){
+                return (Credito) resultado.get(0);
+            }
+            else{
+                return null;
+            }
+        } catch (HibernateException e) {
+            return null;
+        }
+        
     }
 
     

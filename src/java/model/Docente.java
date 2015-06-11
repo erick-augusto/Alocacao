@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Iterator;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
@@ -39,8 +40,45 @@ public class Docente extends Pessoa{
         this.creditos = creditos;
     }
     
-    
-    
+    @Transient
+    private double creditoQuad;
+
+    public double getCreditoQuad(Long quad) {
+
+        Integer quadrimestre = (int) (long) quad;
+        creditoQuad = 0;
+
+//        for (Iterator<Credito> iterator = creditos.iterator(); iterator.hasNext();) {
+//            if (iterator.next().getQuadrimestre() == quadrimestre) {
+//                creditoQuad = iterator.next().getQuantidade();
+//
+//            }
+//            break;
+//        }
+        synchronized (creditos) {
+            for (Credito c : creditos) {
+                if (c.getQuadrimestre() == quadrimestre) {
+                    creditoQuad = c.getQuantidade();
+
+                }
+                break;
+            }
+        }
+
+//        List<Credito> copia = creditos;
+//        for(Credito c: copia){
+//            if(c.getQuadrimestre() == quadrimestre){
+//                creditoQuad =  c.getQuantidade();
+//                
+//            }
+//            break;
+//        }
+        return creditoQuad;
+    }
+
+    public void setCreditoQuad(double creditoQuad) {
+        this.creditoQuad = creditoQuad;
+    }
     
     
 

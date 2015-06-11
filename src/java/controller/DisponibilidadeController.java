@@ -1,17 +1,21 @@
 package controller;
 
+import facade.CreditoFacade;
 import facade.DisponibilidadeFacade;
 import facade.OfertaDisciplinaFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import model.Afinidade;
+import model.Credito;
 import model.Disciplina;
 import model.Disponibilidade;
+import model.Docente;
 import model.Pessoa;
 import model.OfertaDisciplina;
 import org.primefaces.event.CellEditEvent;
@@ -26,7 +30,7 @@ public class DisponibilidadeController implements Serializable {
     //Construtor (pega o usuario Logado)
     public DisponibilidadeController() {
 
-        usuario = LoginBean.getUsuario();
+        docente = (Docente) LoginBean.getUsuario();
 
     }
  
@@ -38,9 +42,89 @@ public class DisponibilidadeController implements Serializable {
     @EJB
     private DisponibilidadeFacade disponibilidadeFacade;
     
+    @EJB
+    private CreditoFacade creditoFacade;
       
 //-----------------------------------Fase I Alocacao-----------------------------------------------------    
 
+    //Quantidade de creditos por quadrimestre para o planejamento anual
+    private double creditosPlanejados;
+    
+    public double getCreditosPlanejados() {
+        return creditosPlanejados;
+    }
+
+    public void setCreditosPlanejados(double creditosPlanejados) {
+        this.creditosPlanejados = creditosPlanejados;
+    }
+    
+    //Vai mudando de acordo com a oferta de disciplina escolhida ou retirada pelo docente
+    private double creditosEscolhidos;
+
+    public double getCreditosEscolhidos() {
+        return creditosEscolhidos;
+    }
+
+    public void setCreditosEscolhidos(double creditosEscolhidos) {
+        this.creditosEscolhidos = creditosEscolhidos;
+    }
+    
+    
+    
+    /**
+     * Associa a quantidade de créditos ao quadrimestre atual e ao docente que
+     * está fazendo o planejamento
+     *
+     * @param q Long
+     */
+    public void salvarCreditos(Long q) {
+
+//        docente = (Docente) LoginBean.getUsuario();
+        Integer quad = (int) (long) q;
+        boolean salvar = true;
+
+        //Verifica se já existe um planejamento de credito para aquele quadrimestre
+        List<Credito> listCreditos = docente.getCreditos();
+        
+        Credito credito = creditoFacade.creditoQuadrimestre(docente, quad);
+        if (credito != null) { //Já existe um planejamento para o quadrimestre
+            try {
+                int posicao = listCreditos.indexOf(credito);
+                credito.setQuantidade(creditosPlanejados);
+                listCreditos.add(posicao, credito);
+                docente.setCreditos(listCreditos);
+                creditoFacade.edit(credito);
+                JsfUtil.addSuccessMessage("Créditos editados com sucesso!");
+            } catch (Exception e) {
+                JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar os créditos " + e.getMessage());
+            }
+
+        }
+        else{
+            credito = new Credito();
+            credito.setQuadrimestre(quad);
+            credito.setQuantidade(creditosPlanejados);
+            credito.setDocente(docente);
+            listCreditos.add(credito);
+            docente.setCreditos(listCreditos);
+
+            try {
+                creditoFacade.save(credito);
+
+                JsfUtil.addSuccessMessage("Créditos salvos com sucesso!");
+
+            } catch (Exception e) {
+                JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível salvar os créditos " + e.getMessage());
+
+            }
+        }
+
+        creditosPlanejados = 0.0;
+
+        LoginBean.setUsuario(docente);
+        //salvar = true;
+    }
+    
     private List<OfertaDisciplina> ofertasEtapa1;
     
     public List<OfertaDisciplina> getOfertasEtapa1() {
@@ -56,15 +140,17 @@ public class DisponibilidadeController implements Serializable {
         this.ofertasEtapa1 = ofertasEtapa1;
     }
     
-    private Pessoa usuario;
-    
-    public Pessoa getUsuario() {
-        return usuario;
+    private Docente docente;
+
+    public Docente getDocente() {
+        return docente;
     }
 
-    public void setUsuario(Pessoa usuario) {
-        this.usuario = usuario;
+    public void setDocente(Docente docente) {
+        this.docente = docente;
     }
+    
+    
     
     //Data Model das OfertaDisciplina da Etapa I
     private OfertaDisciplinaDataModel dataModel;
@@ -83,6 +169,7 @@ public class DisponibilidadeController implements Serializable {
         this.dataModel = dataModel;
     }
     
+    
     private double quantidadeCreditos;
 
     public double getQuantidadeCreditos() {
@@ -95,15 +182,15 @@ public class DisponibilidadeController implements Serializable {
     
     
     
-    public void onRowSelect(SelectEvent event) {
-        
-        if(ofertasEtapa1 != null){
-            for(OfertaDisciplina o:ofertasEtapa1){
-                quantidadeCreditos += o.getT();
-            }
-        }
-        
-    }
+//    public void onRowSelect(SelectEvent event) {
+//        
+//        if(ofertasEtapa1 != null){
+//            for(OfertaDisciplina o:ofertasEtapa1){
+//                quantidadeCreditos += o.getT();
+//            }
+//        }
+//        
+//    }
     
     private List<String> selectedOptions;
 
@@ -115,6 +202,11 @@ public class DisponibilidadeController implements Serializable {
         this.selectedOptions = selectedOptions;
     }
     
+    /**
+     * Preenche o atributo temporario "funcao" de uma oferta de disciplina
+     * que indica se o docente vai dar Teoria, Pratica ou Ambas
+     * @param oferta 
+     */
     public void setFuncaoOferta(OfertaDisciplina oferta) {
 
         if (selectedOptions == null) {
@@ -136,6 +228,37 @@ public class DisponibilidadeController implements Serializable {
 
     }
     
+     public void adicionaCredito(SelectEvent event) {
+        OfertaDisciplina oferta = (OfertaDisciplina) event.getObject();
+
+        switch(oferta.getFuncao()){
+            case "Teoria":
+                creditosEscolhidos += oferta.getT();
+                break;
+            case "Pratica":
+                creditosEscolhidos += oferta.getP();
+                break;
+            default:
+                creditosEscolhidos += oferta.getT() + oferta.getP();
+        }
+
+    }
+     
+     public void removeCredito(SelectEvent event){
+         OfertaDisciplina oferta = (OfertaDisciplina) event.getObject();
+
+        switch(oferta.getFuncao()){
+            case "Teoria":
+                creditosEscolhidos -= oferta.getT();
+                break;
+            case "Pratica":
+                creditosEscolhidos -= oferta.getP();
+                break;
+            default:
+                creditosEscolhidos -= oferta.getT() + oferta.getP();
+        }
+     }
+    
     //guarda as disponibilidades escolhidas pelo docente em cada quadrimestre
     private DisponibilidadeDataModel dispdataModel;
 
@@ -143,7 +266,7 @@ public class DisponibilidadeController implements Serializable {
 
         if (dispdataModel == null) {
 
-            List<Disponibilidade> d = disponibilidadeFacade.findByDocente(usuario);
+            List<Disponibilidade> d = disponibilidadeFacade.findByDocente(docente);
 
             dispdataModel = new DisponibilidadeDataModel(d);
 
@@ -156,7 +279,7 @@ public class DisponibilidadeController implements Serializable {
 
         if (dispdataModel == null) {
 
-            List<Disponibilidade> d = disponibilidadeFacade.findByDocenteQuad(usuario, quad);
+            List<Disponibilidade> d = disponibilidadeFacade.findByDocenteQuad(docente, quad);
 
             dispdataModel = new DisponibilidadeDataModel(d);
 
@@ -175,7 +298,7 @@ public class DisponibilidadeController implements Serializable {
 
             //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
             t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", usuario, t);
+            disponibilidade = new Disponibilidade("", docente, t);
             disponibilidadeFacade.save(disponibilidade);
 
         }
@@ -200,7 +323,7 @@ public class DisponibilidadeController implements Serializable {
     
     public List<String> getOrdem() {
 
-        int tamanho = usuario.getDisponibilidades().size();
+        int tamanho = docente.getDisponibilidades().size();
 
         ordem = new ArrayList<>();
 
@@ -217,7 +340,7 @@ public class DisponibilidadeController implements Serializable {
 
         int tamanho = 0;
 
-        for (Disponibilidade d : usuario.getDisponibilidades()) {
+        for (Disponibilidade d : docente.getDisponibilidades()) {
 
             if (d.getOfertaDisciplina().getQuadrimestre() == (int) (long) quad) {
                 tamanho++;
@@ -383,7 +506,7 @@ public class DisponibilidadeController implements Serializable {
 
         //Caso o usuário queira filtrarTurmas por afinidades
         if (filtrarAfinidades) {
-            afinidades = usuario.getAfinidades();
+            afinidades = docente.getAfinidades();
 
             //Quais disciplinas ele tem afinidade
             for (Afinidade a : afinidades) {
