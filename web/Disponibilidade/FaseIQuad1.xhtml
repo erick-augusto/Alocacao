@@ -124,7 +124,9 @@
                             <h:outputText value="#{disponibilidadeController.docente.getCreditoQuad(1)}" id="qtdCreditos"/>
                        
                             <h:outputLabel value="Créditos escolhidos: "/>
-                            <h:outputText value="#{disponibilidadeController.creditosEscolhidos}" id="creditosEscolhidos" />
+                            <h:outputText value="#{disponibilidadeController.creditosEscolhidos}" 
+                                          style="#{disponibilidadeController.changeColor() eq true ? 'color:Red;' : 'color:Green;'}"
+                                          id="creditosEscolhidos" />
                         
                         
                         <br/>

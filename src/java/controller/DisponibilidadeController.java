@@ -70,6 +70,11 @@ public class DisponibilidadeController implements Serializable {
         this.creditosEscolhidos = creditosEscolhidos;
     }
     
+    public boolean changeColor(){
+        
+        return creditosEscolhidos > docente.getCreditoQuad(1L);
+        
+    }
     
     
     /**
