@@ -5,7 +5,6 @@ import facade.DisponibilidadeFacade;
 import facade.OfertaDisciplinaFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -52,8 +51,20 @@ public class DisponibilidadeController implements Serializable {
     private double creditosPlanejados;
     
     public double getCreditosPlanejados() {
-        return creditosPlanejados;
+        return docente.getCreditoQuad(quadrimestre);
     }
+    
+    private double creditosPlanejados2;
+
+    public double getCreditosPlanejados2() {
+       return docente.getCreditoQuad(quadrimestre);
+    }
+
+    public void setCreditosPlanejados2(double creditosPlanejados2) {
+        this.creditosPlanejados2 = creditosPlanejados2;
+    }
+    
+    
 
     public void setCreditosPlanejados(double creditosPlanejados) {
         this.creditosPlanejados = creditosPlanejados;
@@ -85,9 +96,7 @@ public class DisponibilidadeController implements Serializable {
      */
     public void salvarCreditos(Long q) {
 
-//        docente = (Docente) LoginBean.getUsuario();
         Integer quad = (int) (long) q;
-        boolean salvar = true;
 
         //Verifica se já existe um planejamento de credito para aquele quadrimestre
         List<Credito> listCreditos = docente.getCreditos();
@@ -127,8 +136,59 @@ public class DisponibilidadeController implements Serializable {
 
         creditosPlanejados = 0.0;
 
+        //Atualiza o usuário logado
         LoginBean.setUsuario(docente);
-        //salvar = true;
+        
+    }
+    
+    /**
+     * Associa a quantidade de créditos ao quadrimestre atual e ao docente que
+     * está fazendo o planejamento
+     */
+    public void salvarCreditos() {
+
+       
+        //Verifica se já existe um planejamento de credito para aquele quadrimestre
+        List<Credito> listCreditos = docente.getCreditos();
+        
+        Credito credito = creditoFacade.creditoQuadrimestre(docente, quadrimestre);
+        if (credito != null) { //Já existe um planejamento para o quadrimestre
+            try {
+                int posicao = listCreditos.indexOf(credito);
+                credito.setQuantidade(creditosPlanejados);
+                listCreditos.add(posicao, credito);
+                docente.setCreditos(listCreditos);
+                creditoFacade.edit(credito);
+                JsfUtil.addSuccessMessage("Créditos editados com sucesso!");
+            } catch (Exception e) {
+                JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar os créditos " + e.getMessage());
+            }
+
+        }
+        else{
+            credito = new Credito();
+            credito.setQuadrimestre(quadrimestre);
+            credito.setQuantidade(creditosPlanejados);
+            credito.setDocente(docente);
+            listCreditos.add(credito);
+            docente.setCreditos(listCreditos);
+
+            try {
+                creditoFacade.save(credito);
+
+                JsfUtil.addSuccessMessage("Créditos salvos com sucesso!");
+
+            } catch (Exception e) {
+                JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível salvar os créditos " + e.getMessage());
+
+            }
+        }
+
+        creditosPlanejados = 0.0;
+
+        //Atualiza o usuário logado
+        LoginBean.setUsuario(docente);
+        
     }
     
     private List<OfertaDisciplina> ofertasEtapa1;
@@ -156,8 +216,7 @@ public class DisponibilidadeController implements Serializable {
         this.docente = docente;
     }
     
-    
-    
+
     //Data Model das OfertaDisciplina da Etapa I
     private OfertaDisciplinaDataModel dataModel;
 
@@ -186,18 +245,8 @@ public class DisponibilidadeController implements Serializable {
         this.quantidadeCreditos = quantidadeCreditos;
     }
     
-    
-    
-//    public void onRowSelect(SelectEvent event) {
-//        
-//        if(ofertasEtapa1 != null){
-//            for(OfertaDisciplina o:ofertasEtapa1){
-//                quantidadeCreditos += o.getT();
-//            }
-//        }
-//        
-//    }
-    
+    //Guarda se o docente escolheu teoria, pratica ou ambas para determinada
+    //oferta de disciplina
     private List<String> selectedOptions;
 
     public List<String> getSelectedOptions() {
@@ -227,13 +276,17 @@ public class DisponibilidadeController implements Serializable {
                     if (selectedOptions.get(0).equals("P")) {
                         oferta.setFuncao("Pratica");
                     }
-
                 }
             }
         }
 
     }
     
+    /**
+     * Quando o docente escolhe uma oferta de disciplina, adiciona os creditos da
+     * teoria e/ou pratica a variavel creditosEscolhidos
+     * @param event 
+     */
      public void adicionaCredito(SelectEvent event) {
         OfertaDisciplina oferta = (OfertaDisciplina) event.getObject();
 
@@ -250,6 +303,11 @@ public class DisponibilidadeController implements Serializable {
 
     }
      
+     /**
+     * Quando o docente retira uma oferta de disciplina, remove os creditos da
+     * teoria e/ou pratica da variavel creditosEscolhidos
+     * @param event 
+     */
      public void removeCredito(UnselectEvent event){
          OfertaDisciplina oferta = (OfertaDisciplina) event.getObject();
 
@@ -298,18 +356,41 @@ public class DisponibilidadeController implements Serializable {
         this.dispdataModel = dispdataModel;
     }
     
+    private DisponibilidadeDataModel dispdataModel2;
+
+    public DisponibilidadeDataModel getDispdataModel2() {
+        if (dispdataModel2 == null) {
+
+            List<Disponibilidade> d = disponibilidadeFacade.findByDocenteQuad(docente, quadrimestre);
+
+            dispdataModel2 = new DisponibilidadeDataModel(d);
+
+        }
+
+        return dispdataModel2;
+    }
+
+    public void setDispdataModel2(DisponibilidadeDataModel dispdataModel2) {
+        this.dispdataModel2 = dispdataModel2;
+    }
+    
+    
+    
+    
     public void salvarDisponibilidade() {
 
-        for (OfertaDisciplina t : ofertasEtapa1) {
+        for (OfertaDisciplina oferta : ofertasEtapa1) {
 
             //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
-            t = turmasFacade.inicializarColecaoDisponibilidades(t);
-            disponibilidade = new Disponibilidade("", docente, t);
+            oferta = turmasFacade.inicializarColecaoDisponibilidades(oferta);
+//            disponibilidade = new Disponibilidade("", docente, t);
+            disponibilidade = new Disponibilidade("",oferta.getFuncao() ,docente, oferta);
             disponibilidadeFacade.save(disponibilidade);
 
         }
 
         dispdataModel = null;
+        dispdataModel2 = null;
         
     }
 
@@ -318,7 +399,7 @@ public class DisponibilidadeController implements Serializable {
     //se prefere dar teoria ou prática ou ambos
     public void onCellEdit(CellEditEvent event) {
 
-        Disponibilidade d = (Disponibilidade) dispdataModel.getRowData();
+        Disponibilidade d = (Disponibilidade) dispdataModel2.getRowData();
 
         disponibilidadeFacade.merge(d);
         
@@ -329,7 +410,14 @@ public class DisponibilidadeController implements Serializable {
     
     public List<String> getOrdem() {
 
-        int tamanho = docente.getDisponibilidades().size();
+        int tamanho = 0;
+
+        for (Disponibilidade d : docente.getDisponibilidades()) {
+
+            if (d.getOfertaDisciplina().getQuadrimestre() == quadrimestre) {
+                tamanho++;
+            }
+        }
 
         ordem = new ArrayList<>();
 
@@ -426,21 +514,24 @@ public class DisponibilidadeController implements Serializable {
     public String prepareQuad1() {
 
         dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(1));
-        return "/Disponibilidade/FaseIQuad1";
+        quadrimestre = 1;
+        return "/Disponibilidade/FaseIQuad";
 
     }
 
     public String prepareQuad2() {
 
         dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(2));
-        return "/Disponibilidade/FaseIQuad2";
+        quadrimestre = 2;
+        return "/Disponibilidade/FaseIQuad";
 
     }
 
     public String prepareQuad3() {
 
         dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(3));
-        return "/Disponibilidade/FaseIQuad3";
+        quadrimestre = 3;
+        return "/Disponibilidade/FaseIQuad";
     }
 
     
@@ -531,11 +622,43 @@ public class DisponibilidadeController implements Serializable {
         turno = "";
         campus = "";
     }
+    
+    public void filtrarTurmasQuad() {
+        dataModel = null;
+        discAfinidades = new ArrayList<>();
+
+        //Caso o usuário queira filtrarTurmas por afinidades
+        if (filtrarAfinidades) {
+            afinidades = docente.getAfinidades();
+
+            //Quais disciplinas ele tem afinidade
+            for (Afinidade a : afinidades) {
+                if (a.getEstado().equals("Adicionada")) {
+                    discAfinidades.add(a.getDisciplina());
+                }
+
+            }
+        }
+
+        
+
+        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, quadrimestre));
+
+        filtrarAfinidades = false;
+        turno = "";
+        campus = "";
+    }
 
     public void limparFiltroQuad(Long quad) {
 
         dispdataModel = null;
         dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad((int) (long) quad));
+    }
+    
+    public void limparFiltroQuad() {
+
+        dispdataModel = null;
+        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(quadrimestre));
     }
 
     //Filtros para o Log das Disponibilidades da Etapa I-------------------------------------------------------
@@ -569,30 +692,14 @@ public class DisponibilidadeController implements Serializable {
         this.disponibilidades = disponibilidades;
     }
 
-    //Filtrar as disponibilidades por disciplina
-    public void filtrarDisp() {
-
-        disponibilidades = new ArrayList<>();
-
-        disponibilidades = disponibilidadeFacade.findByDiscTurCamQuad(disciplina, campus, turno, quadrimestre);
-
-        dispdataModel = new DisponibilidadeDataModel(disponibilidades);
-
-    }
+   
 
     public void limparFiltroDisp() {
 
         dispdataModel = null;
     }
 
-    //Filtrar as disponibilidades por docente
-    public void filtrarDispDoc() {
-
-        disponibilidades = disponibilidadeFacade.findByDocenteQuad(pessoa, quadrimestre);
-
-        dispdataModel = new DisponibilidadeDataModel(disponibilidades);
-
-    }
+   
     
     
     

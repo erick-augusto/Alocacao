@@ -74,6 +74,24 @@ public class Disponibilidade implements Serializable {
         pessoa.getDisponibilidades().add(Disponibilidade.this);
         ofertaDisciplina.getDisponibilidades().add(Disponibilidade.this);
     }
+    
+    public Disponibilidade(String ordem, String tp, Pessoa p, OfertaDisciplina oD) {
+
+        this.pessoa = p;
+
+        this.ofertaDisciplina = oD;
+        
+        this.tp = tp;
+
+        this.ordemPreferencia = ordem;
+
+        this.id.pessoaId = p.getID();
+        this.id.turmaId = oD.getID();
+
+        //Integridade Referencial
+        pessoa.getDisponibilidades().add(Disponibilidade.this);
+        ofertaDisciplina.getDisponibilidades().add(Disponibilidade.this);
+    }
 
     public Id getId() {
         return id;

@@ -39,7 +39,7 @@ public class CreditoFacade extends AbstractFacade<Credito>{
             List resultado = criteria.list();
             session.close();
             
-            if(resultado != null){
+            if(!resultado.isEmpty()){
                 return (Credito) resultado.get(0);
             }
             else{

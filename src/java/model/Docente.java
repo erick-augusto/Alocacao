@@ -108,5 +108,23 @@ public class Docente extends Pessoa{
     public String toString() {
         return getNome();
     }
+
+    public double getCreditoQuad(int quadrimestre) {
+       
+        
+        creditoQuad = 0;
+        
+        
+            for (Credito c : creditos) {
+                if (c.getQuadrimestre() == quadrimestre) {
+                    creditoQuad = c.getQuantidade();
+                    break;
+
+                }
+                
+            }
+        
+        return creditoQuad;
+    }
  
 }
