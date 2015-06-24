@@ -19,6 +19,7 @@
         <mapping class="model.Disciplina"/>
         <mapping class="model.OfertaDisciplina"/>
         <mapping class="model.Disponibilidade"/>
+        <mapping class="model.Turma"/>
 
     </session-factory>
 </hibernate-configuration>

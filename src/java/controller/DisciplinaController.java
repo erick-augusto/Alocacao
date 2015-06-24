@@ -246,7 +246,7 @@ public class DisciplinaController extends Filtros implements Serializable {
         Disciplina d = new Disciplina();
         recriarModelo();
 
-        JsfUtil.addSuccessMessage("Cadastro de disciplinas realizado com sucesso", "");
+        JsfUtil.addSuccessMessage("Cadastro de disciplinas realizado com sucesso");
 
     }
     
