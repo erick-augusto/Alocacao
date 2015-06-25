@@ -2,16 +2,12 @@ package model;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
-import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
 
 //Vai ter as informações gerais das turmas planejadas para aquele ano
 //Corresponde à primeira etapa da alocação
