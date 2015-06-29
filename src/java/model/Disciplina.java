@@ -39,6 +39,7 @@ public class Disciplina implements Serializable {
     @OneToMany(mappedBy = "disciplina", cascade = CascadeType.ALL)
     private Set<OfertaDisciplina> ofertasDisciplinas;
 
+
     public Set<OfertaDisciplina> getOfertasDisciplinas() {
         return ofertasDisciplinas;
     }
@@ -50,6 +51,7 @@ public class Disciplina implements Serializable {
     Disciplina(Long disciplinaId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
     
 
     public Set<Afinidade> getAfinidades() {

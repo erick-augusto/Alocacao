@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +26,7 @@ public class Turma implements Serializable {
     @ManyToOne
     private Disciplina disciplina;
     
-    @ElementCollection
+    @ElementCollection (fetch = FetchType.EAGER)
     private List<Horario> horarios;
 
     public Long getID() {
@@ -88,7 +89,7 @@ public class Turma implements Serializable {
 
     @Override
     public String toString() {
-        return this.disciplina.getNome();
+        return this.ID + "";
     }
 
 }

@@ -1,4 +1,3 @@
-<?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
@@ -10,7 +9,7 @@
     </h:head>
     <h:body>
         <h:outputStylesheet library="css" name="style.css" />
-        <h:form >
+        <h:form id="form" >
             <p:layout fullPage="true"> 
 
                 <p:layoutUnit style="text-align:center" position="north" size="65"  resizable="true" 
@@ -32,23 +31,37 @@
                     <br/>
                 </p:layoutUnit> 
 
-                <p:layoutUnit id="layoutCentro" position="center" >  
+                <p:layoutUnit position="center" >  
 
-                    <h:panelGrid columns="2">
-                        <h:outputText value="Lista">                            
-                        </h:outputText>
-                        
-                       
-                        
-                        <p:panel>
+                    <h:panelGrid columns="2" id="painelEscolha">
+                        <p:dataTable id="turmasDataTable" 
+                                     var="turma" value="#{turmaController.turmaDataModel}" 
+                                     selectionMode="single" 
+                                     selection="#{turmaController.selectedTurma}" 
+                                     rowKey="#{turma.ID}">
+                            
+                            <p:ajax event="rowSelect" listener="#{turmaController.onRowSelect}" 
+                                    update=":form:scheduleTurmas"/>
+                            <p:ajax event="rowUnselect" listener="#{turmaController.onRowUnselect}"/>
+                            
+                            <p:column headerText="Disciplina">
+                                <h:outputText value="#{turma.disciplina.nome}" />
+                            </p:column>
                           
-                                <p:schedule id="scheduleTurmas" value="#{scheduleView.eventModel}" 
+                        </p:dataTable>
+
+
+                        
+                        <p:panel id="painelSchedule">
+                          
+                            <p:schedule id="scheduleTurmas" value="#{turmaController.turmasSchedule}" 
                                             widgetVar="myscheduleT" timeZone="GMT-3"  minTime="8am"
-                                            slotMinutes="120"  centerHeaderTemplate="none"  
+                                            slotMinutes="60"  centerHeaderTemplate="none"  
                                             rightHeaderTemplate="none" leftHeaderTemplate="none" allDaySlot="false" 
                                             view="agendaWeek" columnFormat="week: 'ddd'" style="width: 700px"
                                             styleClass="custom"
-                                            >
+                                            ignoreTimezone="false"
+                                             >
 
                                 </p:schedule>
                             
@@ -57,7 +70,7 @@
                             
                                 <p:schedule id="scheduleDocente" value="#{scheduleView.eventModel}" 
                                             widgetVar="myscheduleD" timeZone="GMT-3"  minTime="8am"
-                                            slotMinutes="120"  centerHeaderTemplate="none"
+                                            slotMinutes="60"  centerHeaderTemplate="none"
                                             rightHeaderTemplate="none" leftHeaderTemplate="none" allDaySlot="false" 
                                             view="agendaWeek" columnFormat="week: 'ddd'" style="width: 700px">
 
@@ -68,6 +81,10 @@
 
                 </p:layoutUnit>  
             </p:layout>
+            
+            
+            
+            
         </h:form>
 
 

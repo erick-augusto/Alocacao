@@ -6,6 +6,7 @@
 package facade;
 
 import controller.HibernateUtil;
+import javax.ejb.Stateless;
 import model.Turma;
 import org.hibernate.SessionFactory;
 
@@ -13,6 +14,7 @@ import org.hibernate.SessionFactory;
  *
  * @author Juliana
  */
+@Stateless
 public class TurmaFacade extends AbstractFacade<Turma>{
     
     public TurmaFacade() {
