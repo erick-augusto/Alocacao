@@ -25,10 +25,16 @@ public class PessoaFacade extends AbstractFacade<Pessoa>{
 
     }
     
+    /**
+     * Lozaliza uma pessoa de acordo com o nome
+     * @param nome
+     * @return objeto Pessoa 
+     */
     public List<Pessoa> findByName(String nome){
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(Pessoa.class);
         criteria.add(Restrictions.eq("nome", nome));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         
         List results = criteria.list();
         session.close();
@@ -37,46 +43,20 @@ public class PessoaFacade extends AbstractFacade<Pessoa>{
         
     }
     
-    
-    
-    public Pessoa findByLogin(String login) {
 
-//        String email = login + "@aluno.ufabc.edu.br";
-//        email.substring(0, email.lastIndexOf("@"))
-        try {
-//                Session session = getSessionFactory().openSession();
-//                Query query = session.createQuery("from Pessoa p where p.email = :email ");
-//                query.setParameter("email", email);
-//                List resultado = query.list();
-
-            login = login + "%";
-            Session session = getSessionFactory().openSession();
-            Criteria criteria = session.createCriteria(Pessoa.class);
-            criteria.add(Restrictions.like("email", login));
-            List resultado = criteria.list();
-
-            if (resultado.size() <= 0) {
-                session.close();
-                return null;
-            } else {
-                Pessoa userFound = (Pessoa) resultado.get(0);
-                session.close();
-                return userFound;
-            }
-        } catch (HibernateException e) {
-            return null;
-        }
-
-    }
-    
-    public Pessoa findByLogin2(String email) {
+    /**
+     * Localiza uma pessoa de acordo com o seu nome de usuário
+     * @param username
+     * @return Um objeto Pessoa
+     */
+    public Pessoa findByUsername(String username) {
 
 
             try {
-                email = email + "%";
+                username = username + "%";
                 Session session = getSessionFactory().openSession();
                 Query query = session.createQuery("from Pessoa p where p.email like :email ");
-                query.setParameter("email", email);
+                query.setParameter("email", username);
                 List resultado = query.list();
 
                 if (resultado.size() == 1) {
@@ -89,6 +69,43 @@ public class PessoaFacade extends AbstractFacade<Pessoa>{
                 return null;
             }
 
+    }
+    
+
+    /**
+     * Busca os usuarios administradores do sistema
+     * @return Lista de usuarios administradores
+     */
+    public List<Pessoa> listAdms() {
+
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Pessoa.class);
+        criteria.add(Restrictions.eq("adm", true));
+
+        List results = criteria.list();
+        session.close();
+
+        return results;
+
+    }
+    
+    /**
+     * Busca todas as pessoas que são docentes
+     * @return Lista de docentes
+     */
+    public List<Pessoa> listDocentes(){
+        
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Pessoa.class);
+        criteria.add(Restrictions.eq("class", "Docente"));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        List results = criteria.list();
+        session.close();
+
+        return results;
+        
+        
     }
 
 }

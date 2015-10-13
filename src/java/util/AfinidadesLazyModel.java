@@ -5,22 +5,22 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import model.Afinidades;
+import model.Afinidade;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SelectableDataModel;
 import org.primefaces.model.SortOrder;
 
-public class AfinidadesLazyModel extends LazyDataModel<Afinidades> implements SelectableDataModel<Afinidades>{
+public class AfinidadesLazyModel extends LazyDataModel<Afinidade> implements SelectableDataModel<Afinidade>{
 
-    private List<Afinidades> datasource;
+    private final List<Afinidade> datasource;
 
-    public AfinidadesLazyModel(List<Afinidades> datasource) {
+    public AfinidadesLazyModel(List<Afinidade> datasource) {
         this.datasource = datasource;
     }
 
     @Override
-    public Afinidades getRowData(String rowKey) {
-        for (Afinidades afinidade : datasource) {
+    public Afinidade getRowData(String rowKey) {
+        for (Afinidade afinidade : datasource) {
             if (afinidade.getId().equals(rowKey)) {
                 return afinidade;
             }
@@ -30,16 +30,16 @@ public class AfinidadesLazyModel extends LazyDataModel<Afinidades> implements Se
     }
 
     @Override
-    public Object getRowKey(Afinidades afinidade) {
+    public Object getRowKey(Afinidade afinidade) {
         return afinidade.getId();
     }
 
     @Override
-    public List<Afinidades> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
-        List<Afinidades> data = new ArrayList<>();
+    public List<Afinidade> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, Object> filters) {
+        List<Afinidade> data = new ArrayList<>();
 
         //filter
-        for (Afinidades afinidade : datasource) {
+        for (Afinidade afinidade : datasource) {
             boolean match = true;
 
             if (filters != null) {

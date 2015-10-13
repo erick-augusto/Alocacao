@@ -2,7 +2,9 @@ package model;
 
 import java.io.Serializable;
 import java.util.List;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,39 +14,29 @@ import javax.persistence.ManyToOne;
 //Corresponde à primeira etapa da alocação
 @Entity
 public class Turma implements Serializable {
-    
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long ID;
 
     private String curso;
-    
+  
     @ManyToOne
     private Disciplina disciplina;
     
-    //Horas de teoria
-    private int t;
-    
-    //Horas pratica
-    private int p;
-    
-    //Turno: D/N
-    private String turno;
-    
-    //Campus: SA/SB
-    private String campus;
-    
-    //Esse número é usado em um primeiro momento, quando as turmas ainda não estão definidas
-    private int numTurmas;
-    
-    //Semanal ou quinzenal
-    private String periodicidade;
-    
-    private int quadrimestre;
+    @ElementCollection (fetch = FetchType.EAGER)
+    private List<Horario> horarios;
 
-    
-    //private Horario horarios;
-    
+    public Long getID() {
+        return ID;
+    }
+
+    public void setID(Long ID) {
+        this.ID = ID;
+    }
+
     public String getCurso() {
         return curso;
     }
@@ -61,69 +53,43 @@ public class Turma implements Serializable {
         this.disciplina = disciplina;
     }
 
-    public int getT() {
-        return t;
+    public List<Horario> getHorarios() {
+        return horarios;
     }
 
-    public void setT(int t) {
-        this.t = t;
+    public void setHorarios(List<Horario> horarios) {
+        this.horarios = horarios;
     }
 
-    public int getP() {
-        return p;
-    }
 
-    public void setP(int p) {
-        this.p = p;
-    }
-
-    public String getTurno() {
-        return turno;
-    }
-
-    public void setTurno(String turno) {
-        this.turno = turno;
-    }
-
-    public String getCampus() {
-        return campus;
-    }
-
-    public void setCampus(String campus) {
-        this.campus = campus;
-    }
-
-    public int getNumTurmas() {
-        return numTurmas;
-    }
-
-    public void setNumTurmas(int numTurmas) {
-        this.numTurmas = numTurmas;
-    }
-
-    public String getPeriodicidade() {
-        return periodicidade;
-    }
-
-    public void setPeriodicidade(String periodicidade) {
-        this.periodicidade = periodicidade;
-    }
-
-    public int getQuadrimestre() {
-        return quadrimestre;
-    }
-
-    public void setQuadrimestre(int quadrimestre) {
-        this.quadrimestre = quadrimestre;
-    }
     
-    
-    public Long getID() {
-        return ID;
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (ID != null ? ID.hashCode() : 0);
+        return hash;
+
     }
 
-    public void setID(Long ID) {
-        this.ID = ID;
+    @Override
+    public boolean equals(Object object) {
+
+        if (!(object instanceof Turma)) {
+            return false;
+        }
+
+        Turma other = (Turma) object;
+        if ((this.ID == null && other.ID != null) || (this.ID != null && !(this.ID.equals(other.ID)))) {
+            return false;
+        }
+
+        return true;
+
     }
-    
+
+    @Override
+    public String toString() {
+        return this.ID + "";
+    }
+
 }

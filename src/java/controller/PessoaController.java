@@ -28,19 +28,20 @@ public class PessoaController implements Serializable{
     
     public PessoaController() {
         pessoa = new Pessoa();
-        cadastro = new CadastroBean();
+        
     }
 
-    //Guarda o pessoaatual
+    //Guarda a  pessoa atual
     private Pessoa pessoa;
     
-    private CadastroBean cadastro;
+    private Pessoa adm;
+    
+    private Pessoa pessoaSalvar;
 
     @EJB
     private PessoaFacade pessoaFacade;
-    private PessoaLazyModel pessoaDataModel;
-    
-
+   
+    //-----------------------------------Getters e Setters---------------------------------------------
     public void setPessoa(Pessoa pessoa) {
         this.pessoa = pessoa;
     }
@@ -57,7 +58,27 @@ public class PessoaController implements Serializable{
         return pessoa;
     }
 
+    public Pessoa getAdm() {
+        return adm;
+    }
 
+    public void setAdm(Pessoa adm) {
+        this.adm = adm;
+    }
+    
+    public Pessoa getPessoaSalvar() {
+        
+        if(pessoaSalvar == null){
+            pessoaSalvar = new Pessoa();
+        }
+        
+        return pessoaSalvar;
+    }
+
+    public void setPessoaSalvar(Pessoa pessoaSalvar) {
+        this.pessoaSalvar = pessoaSalvar;
+    }
+ 
     //---------------------------------------Páginas web------------------------------------------------------------
     public String prepareCreate(int i) {
         pessoa= new Pessoa();
@@ -76,7 +97,7 @@ public class PessoaController implements Serializable{
 
     public String prepareEdit() {
         pessoa= (Pessoa) pessoaDataModel.getRowData();
-        return "Edit";
+        return "/Cadastro/editDocente";
     }
 
     public String prepareView() {
@@ -88,10 +109,8 @@ public class PessoaController implements Serializable{
     }
     
     //---------------------------LazyData Model--------------------------------------------------------------------
-    @PostConstruct
-    public void init() {
-        pessoaDataModel = new PessoaLazyModel(this.listarTodas());
-    }
+    
+    private PessoaLazyModel pessoaDataModel;
     
     public PessoaLazyModel getPessoaLazyModel() {
         
@@ -103,13 +122,22 @@ public class PessoaController implements Serializable{
         return this.pessoaDataModel;
     }
     
-    
-//    public void preencherDataModel(){
-//        
-//        cadastro.cadastrarPessoas();
-//        pessoaDataModel = null;
-//        
-//    }
+    //Data model com os administradores do sistema
+    private PessoaLazyModel admLazyModel;
+
+    public PessoaLazyModel getAdmLazyModel() {
+        
+        if(admLazyModel == null){
+            admLazyModel = new PessoaLazyModel(pessoaFacade.listAdms());
+        }
+        return admLazyModel;
+    }
+
+    @PostConstruct
+    public void init() {
+        pessoaDataModel = new PessoaLazyModel(this.listarTodas());
+        admLazyModel = new PessoaLazyModel(pessoaFacade.listAdms());
+    }
     
     //---------------------------------------------------CRUD-------------------------------------------------------
     private List<Pessoa> listarTodas() {
@@ -136,14 +164,27 @@ public class PessoaController implements Serializable{
 
         return pessoaFacade.find(id);
     }
+    
+    public void salvar(){
+        try {
+            pessoaFacade.save(pessoaSalvar);
+            JsfUtil.addSuccessMessage("Docente " + pessoaSalvar.getNome() + " cadastrado com sucesso!");
+            pessoaSalvar = null;
+            pessoaDataModel = null;
+            
+        } catch (Exception e) {
+            JsfUtil.addErrorMessage("Não foi possível cadastrar o docente");
+        }
+    }
 
     public void editar() {
         try {
             pessoaFacade.edit(pessoa);
-            JsfUtil.addSuccessMessage("Pessoa Editado com sucesso!");
+            JsfUtil.addSuccessMessage("Docente editado com sucesso!");
             pessoa= null;
+            pessoaDataModel = null;
         } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar o pessoa: " + e.getMessage());
+            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar o docente: " + e.getMessage());
 
         }
     }
@@ -159,6 +200,36 @@ public class PessoaController implements Serializable{
         }
 
         recriarModelo();
+    }
+    
+    public void salvarAdm(){
+        
+        try{
+            adm.setAdm(true);
+            pessoaFacade.edit(adm);
+            adm = null;
+            admLazyModel = null;
+            JsfUtil.addSuccessMessage("Administrador Salvo!");
+        }
+        catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
+        }
+    }
+    
+    public void removerAdm(){
+        
+        pessoa = (Pessoa) admLazyModel.getRowData();
+        try{
+            pessoa.setAdm(false);
+            pessoaFacade.edit(pessoa);
+            pessoa = null;
+            admLazyModel = null;
+            JsfUtil.addSuccessMessage("Administrador removido");
+        }
+        catch(Exception e){
+            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
+        }
+        
     }
     
     public SelectItem[] getItemsAvaiableSelectOne() {
@@ -218,7 +289,6 @@ public class PessoaController implements Serializable{
                 }
 
                 linha = lerArq.readLine();
-//                linha = linha.replaceAll("\"", "");
             }
 
             arq.close();
@@ -274,20 +344,28 @@ return retorno;
         return filteredPessoas;
     }
 
-//    public List<Disciplina> completeDisciplina(String query) {
-//        List<Disciplina> allDisciplinas = this.listarTodas();
-//        List<Disciplina> filteredDisciplinas = new ArrayList<>();
-//
-//        for (int i = 0; i < allDisciplinas.size(); i++) {
-//            Disciplina d = allDisciplinas.get(i);
-//            if (d.getNome().toLowerCase().contains(query)) {
-//                filteredDisciplinas.add(d);
-//            }
-//        }
-//
-//        return filteredDisciplinas;
-//    }
 
+    //Centro--------------------------------------------------------------------------------------------
+    public List<String> completeCentro(String query){
+        
+        query = query.toLowerCase();
+        
+        List<String> centros = new ArrayList<>();
+        centros.add("CCNH");
+        centros.add("CECS");
+        centros.add("CMCC");
+        
+        List<String> filteredCentros = new ArrayList<>();
+
+        for (String c : centros ) {
+            if (c.toLowerCase().startsWith(query)) {
+                filteredCentros.add(c);
+            }
+        }
+        return filteredCentros;
+        
+    }
+    
     //----------------------------------------------------------------------------------------------------
 
     

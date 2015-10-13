@@ -59,12 +59,10 @@ public abstract class AbstractFacade<T> {
     public T merge(T entity) {
         Session session = getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        //session.merge(entity);
         T entidade = (T) session.merge(entity);
         transaction.commit();
         session.close();
         return entidade;
-        //return entity;
 
     }
 
@@ -109,9 +107,11 @@ public abstract class AbstractFacade<T> {
 
         //crit.setMaxResults(50);
         List results = crit.list();
+        
         session.close();
         return results;
     }
+    
 
     /**
      * Busca todas as entidades do banco de dados dentro de um range específico.

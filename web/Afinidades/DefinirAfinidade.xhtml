@@ -22,22 +22,26 @@
 
                 <p:layout fullPage="true">
 
-                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
+                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" 
+                                  closable="true" collapsible="true" >  
+                        <h:commandLink value="Logout" style="position: relative; left: 650px; top: 10px; color: #2E8B57" 
+                                       action="#{loginBean.doLogout()}" immediate="true"/>
                         <style type="text/css">
-                            /*                                                                .ui-widget{font-size:90% !important;}*/
-                            .ui-layout-unit-content{background-image:url('resources/images/grey-back.jpg');}
+                            .ui-widget{font-size:95% !important;}
                         </style>
                         <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Escolha de disciplinas com afinidade</div>
 
                     </p:layoutUnit> 
 
-                    <p:layoutUnit position="south" size="100" closable="true" collapsible="true">
+                    <p:layoutUnit position="south" size="80" closable="true" collapsible="true" style="text-align:center">
 
                     </p:layoutUnit>
 
-                    <p:layoutUnit position="west" size="160" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
+                    <p:layoutUnit position="west" size="160" header="Links Rápidos" 
+                                  style="text-align: center; font-size: small" 
+                                  resizable="true"  >  
 
-                        <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
+                        <p:commandButton  value="Início" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/index" immediate="true"/>
                         <br/>
                     </p:layoutUnit> 
 
@@ -45,6 +49,47 @@
 
 
                     <p:layoutUnit position="center">
+
+                        <p:panel id="toggleable" header="Filtros" toggleable="true" toggleSpeed="550" closeSpeed="500" 
+                                 widgetVar="panel" style="margin-bottom:20px; width: 350px; font-size: medium; " collapsed="true" closeTitle="Painel">
+
+                            <h:panelGrid columns="2"  cellspacing="10">
+
+
+                                <p:selectCheckboxMenu value="#{afinidadesController.filtrosSelecEixos}" label="Eixos"
+                                                      filter="true" filterMatchMode="startsWith" panelStyle="width:350px" >
+                                    <f:selectItems value="#{afinidadesController.filtrosEixos}" />
+                                </p:selectCheckboxMenu>
+
+                                <p:selectCheckboxMenu value="#{afinidadesController.filtrosSelecCursos}" label="Cursos"
+                                                      filter="true" filterMatchMode="startsWith" panelStyle="width:350px">
+                                    <f:selectItems value="#{afinidadesController.filtrosCursos}" />
+                                </p:selectCheckboxMenu>
+
+                            </h:panelGrid>
+
+                            <p:separator/>
+
+                            <h:panelGrid columns="2">
+                                <p:commandButton    icon="ui-icon-search"  actionListener="#{afinidadesController.filtrar()}"
+                                                    update="@(form:disponiveis)"  style="width: 30px; height: 25px" title="Filtrar disciplinas"
+                                                    >
+                                </p:commandButton>
+
+                                <p:commandButton    ajax="false"  actionListener="#{afinidadesController.limparFiltro()}"
+                                                    update="@(form:disponiveis)" icon="ui-icon-closethick" 
+                                                    style="width: 30px; height: 25px" title="Limpar filtros">
+                                </p:commandButton>
+
+
+
+                            </h:panelGrid>
+
+
+
+                        </p:panel>
+
+
                         <h:panelGrid id="painel" columns="2" columnClasses="a,b"  style=" alignment-adjust: central" styleClass="panelGridCenter">
 
 

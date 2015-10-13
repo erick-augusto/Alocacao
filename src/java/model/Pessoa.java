@@ -1,21 +1,26 @@
 package model;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
-
 @Entity
-public class Pessoa implements Serializable {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "PESSOA_DETAILS_TYPE",discriminatorType = DiscriminatorType.STRING)
+public class Pessoa implements Serializable, Comparable<Pessoa> {
 
-    private static final long SerialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     public Pessoa() {
 
@@ -23,12 +28,24 @@ public class Pessoa implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name="pessoa_id")
+    @Column(name = "pessoa_id")
     private Long ID;
 
-    Pessoa(Long pessoaId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    private String nome;
+
+    private String siape;
+
+    private String email;
+
+    private String centro;
+
+    private boolean adm;
+    
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
+    private Set<Afinidade> afinidades;
+    
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
+    private Set<Disponibilidade> disponibilidades;  
 
     public Long getID() {
         return ID;
@@ -37,9 +54,7 @@ public class Pessoa implements Serializable {
     public void setID(Long ID) {
         this.ID = ID;
     }
-
-    private String nome;
-
+    
     public String getNome() {
         return nome;
     }
@@ -48,12 +63,6 @@ public class Pessoa implements Serializable {
         this.nome = nome;
     }
     
-    private String siape;
-    
-    private String email;
-    
-    private String centro;
-
     public String getSiape() {
         return siape;
     }
@@ -77,26 +86,30 @@ public class Pessoa implements Serializable {
     public void setCentro(String centro) {
         this.centro = centro;
     }
-    
-    
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "pessoa", cascade = CascadeType.ALL)
-//            ,cascade = CascadeType.ALL)
-//    @Cascade(value = { org.hibernate.annotations.CascadeType.ALL })  
-//    @LazyCollection(value = LazyCollectionOption.EXTRA)  
-//    @Fetch(value = FetchMode.SUBSELECT) 
-    private List<Afinidades> afinidades;
-    
 
-    public List<Afinidades> getAfinidades() {
+    public boolean isAdm() {
+        return adm;
+    }
+
+    public void setAdm(boolean adm) {
+        this.adm = adm;
+    }
+    
+    public Set<Afinidade> getAfinidades() {
         return afinidades;
     }
 
-    public void setAfinidades(List<Afinidades> afinidades) {
+    public void setAfinidades(Set<Afinidade> afinidades) {
         this.afinidades = afinidades;
     }
-    
-    
-    
+
+    public Set<Disponibilidade> getDisponibilidades() {
+        return disponibilidades;
+    }
+
+    public void setDisponibilidades(Set<Disponibilidade> disponibilidades) {
+        this.disponibilidades = disponibilidades;
+    }
 
     @Override
     public int hashCode() {
@@ -125,6 +138,12 @@ public class Pessoa implements Serializable {
     @Override
     public String toString() {
         return this.nome;
+    }
+    
+    @Override
+    public int compareTo(Pessoa o) {
+    
+        return this.getNome().compareTo(o.getNome());
     }
 
 }

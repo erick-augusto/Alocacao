@@ -11,34 +11,65 @@
 
         <f:view>
 
-            <h:form style="background-color: transparent">
+            <h:form>
 
-                <p:panel rendered="true" style="width:500px;height:250px; border-color: transparent; position: relative; left: 400px; background-color: transparent">
-                    <br/>
-                    <p:graphicImage library="images" cache="true" name="cmccLogo.png"/>
-                </p:panel>
+                <p:layout fullPage="true">
 
-                <p:panel id="conpnl" style="width:300px;height:300px; border-color: transparent; position: relative; left: 500px; text-align: center; background-color: transparent">
-                    <br/>
+                    <p:dialog header="Sobre" draggable="false"  modal="true"   widgetVar="dlg2" height="220" resizable="false">
+                        <h:outputText escape="false" value="Sistema de Alocação Didática do CMCC" /> <br/>
+                        <h:outputText escape="false" value="Desenvolvido no CMCC-UFABC" /> <br/>
+                        <h:outputText escape="false" value="Coordenação: " /> <br/>
+                        <h:outputText escape="false" value="Prof. André G. R Balan" /> <br/>
+                        <h:outputText escape="false" value="Prof. Edson Pinheiro Pimentel" /> <br/>
+                        <h:outputText escape="false" value="Prof. Marcelo Bussotti Reyes" /> <br/><br/>
+                        <h:outputText escape="false" value="Desenvolvimento:" /> <br/>
+                        <h:outputText escape="false" value="André G. R Balan (andre.balan@ufabc.edu.br)" /> <br/>
+                        <h:outputText escape="false" value="Juliana Calió (juliana.calio@aluno.ufabc.edu.br)" /> <br/>
+                        <h:outputText escape="false" value="Vinicius Pavia (vcpavia@aluno.ufabc.edu.br)" /> <br/><br/>
+                        <h:outputText escape="false" value="Colaboradores:" /> <br/>
+                        <h:outputText escape="false" value="Elaine Konno Rocha" /> <br/>
 
-                    <p:panelMenu style="width:300px; height: 300px; text-align: justify; position: relative; ">
-                        <p:submenu label="Afinidades">
-                            <p:menuitem value="Definir afinidades" action="Afinidades/DefinirAfinidade" icon="ui-icon-disk"/>
-                            <p:menuitem value="Ver histórico de afinidades" action="Afinidades/LogsAfinidades" icon="ui-icon-document"/>
-                        </p:submenu>
-                        <p:submenu  label="Disponibilidade">
-                            <p:menuitem value="Definir disponibilidades" action="Disponibilidade/Disponibilidade.xhtml" icon="ui-icon-disk" />
-                            <p:menuitem value="Ver histórico de disponibilidade" icon="ui-icon-document" />
-                        </p:submenu>
-                        <p:submenu  label="Cadastros de Dados">
-                            <p:menuitem value="Fazer cadastros" icon="ui-icon-disk" action="Cadastro/cadastro"/>
-                        </p:submenu>
+                    </p:dialog>
 
-                    </p:panelMenu>
-                    
-                    
+                    <p:layoutUnit style="text-align:center" position="north" size="100"  resizable="true" closable="true" collapsible="true" >  
+                        <h:commandLink   onclick="PF('dlg2').show();
+                                return false;" value="Sobre" 
+                                         style="position: relative; right: 650px ;color: #2E8B57; top: 10px"></h:commandLink>
 
-                </p:panel>
+                        <h:commandLink value="Logout" style="position: relative; left: 650px; top: 10px; color: #2E8B57" 
+                                       action="#{loginBean.doLogout()}" immediate="true"/>
+                        <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Sistema de Alocação Didática do CMCC</div>
+
+                    </p:layoutUnit> 
+
+
+                    <p:layoutUnit position="center">
+
+                        <p:panelMenu style="width:360px; height: 300px; text-align: justify; 
+                                     position: relative; left: 500px;top: 100px">
+                            <p:submenu label="Afinidades">
+                                <p:menuitem value="Definir afinidades" action="#{afinidadesController.prepareAfinidades()}" icon="ui-icon-pencil"/>
+                                <p:menuitem value="Resumo das afinidades" action="Afinidades/ResumoAfinidades" icon="ui-icon-clock"/>
+                            </p:submenu>
+                            <p:submenu  label="Disponibilidade">
+                                <p:menuitem value="Fase I" action="Disponibilidade/EscolhaQuad.xhtml" icon="ui-icon-pencil" />
+                                <p:menuitem value="Fase II" action="Disponibilidade/FaseII.xhtml" icon="ui-icon-pencil" />
+                                <p:menuitem value="Resumo Fase I" action="Disponibilidade/ResumoFaseI" icon="ui-icon-clock" />
+                                <p:menuitem value="Histórico de disponibilidade Fase I" action="Disponibilidade/LogsDisponibilidades1" icon="ui-icon-clock" />
+                                <p:menuitem value="Histórico de disponibilidade Fase II" action="Disponibilidade/LogsDisponibilidades2" icon="ui-icon-clock" />
+
+                            </p:submenu>
+                            <p:submenu  label="Cadastros de Dados">
+                                <p:menuitem value="Fazer cadastros" icon="ui-icon-disk" action="Cadastro/cadastro"/>
+                            </p:submenu>
+
+                        </p:panelMenu>
+
+
+                    </p:layoutUnit>
+
+                </p:layout>
+
             </h:form>
         </f:view>
 

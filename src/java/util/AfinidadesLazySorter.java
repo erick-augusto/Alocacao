@@ -2,10 +2,10 @@ package util;
 
 import java.lang.reflect.Field;
 import java.util.Comparator;
-import model.Afinidades;
+import model.Afinidade;
 import org.primefaces.model.SortOrder;
 
-public class AfinidadesLazySorter implements Comparator<Afinidades> {
+public class AfinidadesLazySorter implements Comparator<Afinidade> {
 
     private String sortField;
 
@@ -28,7 +28,7 @@ public class AfinidadesLazySorter implements Comparator<Afinidades> {
      * @return
      */
     @Override
-    public int compare(Afinidades afinidade1, Afinidades afinidade2) {
+    public int compare(Afinidade afinidade1, Afinidade afinidade2) {
         try {
             Field field1 = afinidade1.getClass().getDeclaredField(this.sortField);
             Field field2 = afinidade2.getClass().getDeclaredField(this.sortField);

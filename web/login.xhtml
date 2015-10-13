@@ -10,8 +10,10 @@
     </h:head>
     <h:body>
 
-        <h:form>            
-            <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="login">
+        <h:form>  
+
+            <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="login" 
+                          style="position: relative; left: 450px; top: 150px">
                 <p:graphicImage name="images/login.jpg" />
             </h:outputLink>
 
@@ -26,7 +28,7 @@
                     <p:password id="password" value="#{loginBean.password}" required="true" label="password" />
 
                     <f:facet name="footer">
-                        <p:commandButton value="Login" update="growl" actionListener="#{loginBean.doLogin()}"
+                        <p:commandButton value="Login" update="growl" actionListener="#{loginBean.doLogin2()}"
                                          oncomplete="handleLoginRequest(xhr, status, args)" action="#{loginBean.page()}" />
                     </f:facet>  
                 </h:panelGrid>

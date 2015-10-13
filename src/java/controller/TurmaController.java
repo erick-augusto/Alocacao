@@ -3,331 +3,268 @@ package controller;
 import facade.DisciplinaFacade;
 import facade.TurmaFacade;
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import model.Disciplina;
+import model.Horario;
 import model.Turma;
-import util.TurmasPlanejamentoLazyModel;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
+import org.primefaces.model.DefaultScheduleEvent;
+import org.primefaces.model.DefaultScheduleModel;
+import org.primefaces.model.ScheduleModel;
+import util.TurmaDataModel;
 
 
-@Named(value = "turmasPlanejamentoController")
+@Named(value = "turmaController")
 @SessionScoped
-public class TurmaController implements Serializable{
+public class TurmaController implements Serializable {
     
     public TurmaController() {
         
     }
 
     @EJB
-    private TurmaFacade turmasPlanejamentoFacade;
-    
-    @EJB
     private DisciplinaFacade disciplinaFacade;
     
-    private Turma turma;
+    @EJB
+    private TurmaFacade turmaFacade;
+    
+    //Cadastro-------------------------------------------------------------------------------------------
 
-    public Turma getTurma() {
-        return turma;
+    
+    public void cadastrarTurmas(){
+        
+        String[] palavras;
+        
+        
+            try {
+          
+            try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\turmas.csv"), "UTF-8"))) {
+                String linha = lerArq.readLine(); 
+                
+                while (linha != null) {
+
+                    linha = linha.replaceAll("\"", "");
+
+                    palavras = linha.split(";", -1);
+                    
+                    Turma t = new Turma();
+                    
+                    String codigo = palavras[2];
+                    String nome = palavras[4];
+                    
+                    Disciplina d = disciplinaFacade.findByCodOrName(codigo, nome);
+                    
+                    t.setDisciplina(d);
+                    
+                    palavras[18] = palavras[18].replaceAll(" ,", ",");
+                    palavras[18] = palavras[18].replaceAll("\"", "");
+                    String[] horariosCompletos = palavras[18]
+                            .trim().split("(?<=semanal,)|(?<=quinzenal I)|(?<=quinzenal II)");
+                    
+                    List<Horario> horarios = new ArrayList<Horario>();
+                    
+                    for(String horarioCompleto: horariosCompletos){
+                        
+                        horarioCompleto = horarioCompleto.trim();
+                        String[] partes = horarioCompleto.split("das|,");
+                        Horario h = new Horario();
+                        h.setDia(partes[0]);
+                        h.setHora(partes[1]);
+                        h.setSala(partes[2]);
+                        h.setPeriodicidade(partes[3]);
+                        
+                        horarios.add(h);
+                 
+                    }
+                    
+                    t.setHorarios(horarios);
+                    turmaFacade.save(t);
+                    
+                    linha = lerArq.readLine();
+                  
+//                linha = linha.replaceAll("\"", "");
+                }
+            } //cabeçalho
+                
+
+            } catch (IOException e) {
+                System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+            }
+        
+    }
+    
+    //Fase II Disponibilidade -------------------------------------------------------------------------------
+    
+    private TurmaDataModel turmaDataModel;
+
+    public TurmaDataModel getTurmaDataModel() {
+        
+        if(turmaDataModel == null){
+            
+            List<Turma> turmas = turmaFacade.findAll();
+            turmaDataModel = new TurmaDataModel(turmas);
+            
+        }
+        
+        return turmaDataModel;
     }
 
-    public void setTurma(Turma turma) {
-        this.turma = turma;
+    public void setTurmaDataModel(TurmaDataModel turmaDataModel) {
+        this.turmaDataModel = turmaDataModel;
     }
     
-    
+    //Turma que sera selecionada para visualizacao
+    private Turma selectedTurma;
 
-    //---------------------------------------Páginas web------------------------------------------------------------
-//    public String prepareCreate(int i) {
-//        pessoa= new Pessoa();
-//        if (i == 1) {
-//            return "/view/pessoa/Create";
-//        } else {
-//            return "Create";
-//        }
-//    }
-//
-//    public String index() {
-//        pessoa= null;
-//        pessoaDataModel = null;
-//        return "/index";
-//    }
-//
-//    public String prepareEdit() {
-//        pessoa= (Pessoa) pessoaDataModel.getRowData();
-//        return "Edit";
-//    }
-//
-//    public String prepareView() {
-//        pessoa= (Pessoa) pessoaDataModel.getRowData();
-//        //pessoa= turmasPlanejamentoFacade.find(pessoa.getID());
-//        //pessoaFacade.edit(turmasPlanejamentoFacade.find(pessoa.getID()));
-//        //pessoaFacade.edit(pessoa);
-//        return "View";
-//    }
+    public Turma getSelectedTurma() {
+        return selectedTurma;
+    }
+
+    public void setSelectedTurma(Turma selectedTurma) {
+        this.selectedTurma = selectedTurma;
+    }
     
-    //---------------------------LazyData Model--------------------------------------------------------------------
+    public void onRowSelect(SelectEvent event) {
+       
+        turmasSchedule.clear();
+        Turma t = (Turma) event.getObject();
+        preencherTurma(t);
+    }
+ 
+    public void onRowUnselect(UnselectEvent event) {
+        
+        
+                
+        
+    }
     
-    private TurmasPlanejamentoLazyModel turmasLazyModel;
+    //Mostrara as turmas da disciplina selecionada
+    private ScheduleModel turmasSchedule;
+    
+    //Mostrara as turmas já selecionadas pelo docente
+    private ScheduleModel docenteSchedule;
+
+    public ScheduleModel getTurmasSchedule() {
+        return turmasSchedule;
+    }
+
+    public void setTurmasSchedule(ScheduleModel turmasSchedule) {
+        this.turmasSchedule = turmasSchedule;
+    }
+
+    public ScheduleModel getDocenteSchedule() {
+        return docenteSchedule;
+    }
+
+    public void setDocenteSchedule(ScheduleModel docenteSchedule) {
+        this.docenteSchedule = docenteSchedule;
+    }
     
     @PostConstruct
     public void init() {
-        turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
-    }
-
-    public TurmasPlanejamentoLazyModel getTurmasLazyModel() {
-        if(turmasLazyModel == null){
-            turmasLazyModel = new TurmasPlanejamentoLazyModel(this.listarTodas());
-        }
- 
-        return this.turmasLazyModel;
-    }
-
-    public void setTurmasLazyModel(TurmasPlanejamentoLazyModel turmasLazyModel) {
-        this.turmasLazyModel = turmasLazyModel;
-    }
-
-    
-//    @PostConstruct
-//    public void init() {
-//        pessoaDataModel = new PessoaLazyModel(this.listarTodas());
-//    }
-//    
-//    public PessoaLazyModel getPessoaLazyModel() {
+        turmasSchedule = new DefaultScheduleModel();
+        
+        
+//        Calendar i = Calendar.getInstance();
+//        i.set(Calendar.AM_PM, Calendar.PM);
+//        i.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+//        i.set(Calendar.HOUR, 5);
+//        i.set(Calendar.MINUTE, 0);
 //        
-//        if(pessoaDataModel == null){
-//            pessoaDataModel = new PessoaLazyModel(this.listarTodas());
-//        }
-//        
-//        
-//        return this.pessoaDataModel;
-//    }
-//    
-//    
-////    public void preencherDataModel(){
-////        
-////        cadastro.cadastrarPessoas();
-////        pessoaDataModel = null;
-////        
-////    }
-    
-    //---------------------------------------------------CRUD-------------------------------------------------------
-    private List<Turma> listarTodas() {
-        return turmasPlanejamentoFacade.findAll();
-
+//        Calendar e = Calendar.getInstance();
+//        i.set(Calendar.AM_PM, Calendar.PM);
+//        i.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+//        i.set(Calendar.HOUR, 7);
+//        i.set(Calendar.MINUTE, 0);
+//        turmasSchedule.addEvent(new DefaultScheduleEvent("Turma A", i.getTime(), e.getTime()));
+       
     }
-
     
-    public void salvarNoBanco() {
-
-        try {
-            turmasPlanejamentoFacade.save(turma);
-//            JsfUtil.addSuccessMessage("Pessoa " + pessoa.getNome() + " criado com sucesso!");
-            turma= null;
-//            recriarModelo();
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
-
-        }
-
-    }
-
-    public Turma buscar(Long id) {
-
-        return turmasPlanejamentoFacade.find(id);
-    }
-
-    public void editar() {
-        try {
-            turmasPlanejamentoFacade.edit(turma);
-//            JsfUtil.addSuccessMessage("Pessoa Editado com sucesso!");
-            turma= null;
-        } catch (Exception e) {
-            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar a turma: " + e.getMessage());
-
-        }
-    }
-
-//    public void delete() {
-//        
-//        turma= (Turma) pessoaDataModel.getRowData();
-//        try {
-//            turmasPlanejamentoFacade.remove(pessoa);
-//            pessoa= null;
-//            JsfUtil.addSuccessMessage("Pessoa Deletado");
-//        } catch (Exception e) {
-//            JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
-//        }
-//
-//        recriarModelo();
-//    }
-    
-    public SelectItem[] getItemsAvaiableSelectOne() {
-        return JsfUtil.getSelectItems(turmasPlanejamentoFacade.findAll(), true);
-    }
-
-    //--------------------------------------------------------------------------------------------------------------
-
-//    public void recriarModelo() {
-//    
-//        pessoaDataModel = null;
-//
-//    }
-    
-    
-    //Cadastro-------------------------------------------------------------------------------------------
-    
-    
-    public void cadastrarTurmasPlanejamento() {
-
-        String[] palavras;
-
-        try {
-
-            FileReader arq = new FileReader("/home/charles/NetBeansProjects/Arquivos CSV/PLANEJAMENTO 2014 quad 1.csv");
-
-            BufferedReader lerArq = new BufferedReader(arq);
-
-            String linha = lerArq.readLine(); //cabeçalho
-            // lê a primeira linha 
-            // a variável "linha" recebe o valor "null" quando o processo 
-            // de repetição atingir o final do arquivo texto 
-
-            linha = lerArq.readLine();
+    public void preencherTurma(Turma turma){
+        
+        List<Horario> horarios = turma.getHorarios();
+        
+        for(Horario h: horarios){
             
-//            linha = linha.replaceAll("\"", "");
-
-            while (linha != null) {
+            int dia = conversorDia(h.getDia());
+            
+            String hora = h.getHora().trim();
+            int horaInicio = Integer.parseInt(hora.substring(0, 2));
+            int minutoInicio = Integer.parseInt(hora.substring(3,5));
+            
+            int horaFim = Integer.parseInt(hora.substring(9, 11));
+            int minutoFim = Integer.parseInt(hora.substring(12,14));        
+            
+            //Inicio do horario
+            Calendar inicio = Calendar.getInstance();
+            inicio.set(Calendar.DAY_OF_WEEK, dia);
+            if(horaInicio > 12){
+                inicio.set(Calendar.AM_PM, Calendar.PM);
+                inicio.set(Calendar.HOUR, horaInicio - 12);
                 
-                linha = linha.replaceAll("\"", "");
-
-                palavras = linha.split("_", -1);
-                
-                turma = new Turma();
-                
-                turma.setCurso(palavras[2]);
-                
-                String nome = palavras[4];
-                List<Disciplina> ds = disciplinaFacade.findByName(nome);
-                
-                if(!ds.isEmpty()){
-                    Disciplina d = disciplinaFacade.findByName(nome).get(0);
-                    turma.setDisciplina(d);
-                }
-                
-                turma.setT(Integer.parseInt(palavras[5]));
-                turma.setP(Integer.parseInt(palavras[6]));
-                turma.setTurno(palavras[11]);
-                turma.setCampus(palavras[12]);
-                turma.setNumTurmas(Integer.parseInt(palavras[13]));
-                
-                
-                if(!palavras[19].equals("")){
-                   turma.setPeriodicidade(palavras[19]); 
-                }
-
-                turma.setQuadrimestre(1);
-
-                salvarNoBanco();
-
-                linha = lerArq.readLine();
-//                linha = linha.replaceAll("\"", "");
             }
-
-            arq.close();
-
-        } catch (IOException e) {
-            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+            else{
+                inicio.set(Calendar.AM_PM, Calendar.AM);
+                inicio.set(Calendar.HOUR, horaInicio);
+            }
+            inicio.set(Calendar.MINUTE, minutoInicio);
+            
+            //Fim do horario
+            Calendar fim = Calendar.getInstance();
+            fim.set(Calendar.DAY_OF_WEEK, dia);
+            if(horaFim > 12){
+                fim.set(Calendar.AM_PM, Calendar.PM);
+                fim.set(Calendar.HOUR, horaFim - 12);
+                
+            }
+            else{
+                fim.set(Calendar.AM_PM, Calendar.AM);
+                fim.set(Calendar.HOUR, horaFim);
+            }
+            fim.set(Calendar.MINUTE, minutoFim);
+            
+            turmasSchedule.addEvent(new DefaultScheduleEvent("Turma x", inicio.getTime(), fim.getTime()));
+            
+            
+            
         }
-
-     
-
+             
+    }
+    
+    private int conversorDia(String dia){
+        
+        dia = dia.trim();
+        
+        switch(dia){
+            case "segunda":
+                return Calendar.MONDAY;
+            case "terca":
+                return Calendar.TUESDAY;
+            case "quarta":
+                return Calendar.WEDNESDAY;
+            case "quinta":
+                return Calendar.THURSDAY;
+            case "sexta":
+                return Calendar.FRIDAY;
+            case "sabado":
+                return Calendar.SATURDAY;
+        }
+        
+        return 0;
     }
     
     
-
     
-    //AutoComplete----------------------------------------------------------------------------------------
-//    public List<Pessoa> completePessoa(String query) {
-//        
-//       query = query.toLowerCase();
-//        
-//        List<Pessoa> allPessoas = this.listarTodas();
-//        List<Pessoa> filteredPessoas = new ArrayList<>();
-//
-//        for (Pessoa p : allPessoas) {
-//            if (p.getNome().toLowerCase().startsWith(query)) {
-//                filteredPessoas.add(p);
-//            }
-//        }
-//        return filteredPessoas;
-//    }
-
-//    public List<Disciplina> completeDisciplina(String query) {
-//        List<Disciplina> allDisciplinas = this.listarTodas();
-//        List<Disciplina> filteredDisciplinas = new ArrayList<>();
-//
-//        for (int i = 0; i < allDisciplinas.size(); i++) {
-//            Disciplina d = allDisciplinas.get(i);
-//            if (d.getNome().toLowerCase().contains(query)) {
-//                filteredDisciplinas.add(d);
-//            }
-//        }
-//
-//        return filteredDisciplinas;
-//    }
-
-    //----------------------------------------------------------------------------------------------------
-
-    
-    
-    //---------------------------------------------------------------------------------------------------
-    
-//
-//    @FacesConverter(forClass = Pessoa.class)
-//    public static class PessoaControllerConverter implements Converter {
-//
-//        @Override
-//        public Object getAsObject(FacesContext facesContext, UIComponent component, String value) {
-//            if (value == null || value.length() == 0) {
-//                return null;
-//            }
-//            TurmaController controller = (TurmaController) facesContext.getApplication().getELResolver().
-//                    getValue(facesContext.getELContext(), null, "pessoaController");
-//            return controller.getPessoa(getKey(value));
-//        }
-//
-//        java.lang.Long getKey(String value) {
-//            java.lang.Long key;
-//            key = Long.valueOf(value);
-//            return key;
-//        }
-//
-//        String getStringKey(java.lang.Long value) {
-//            StringBuilder sb = new StringBuilder();
-//            sb.append(value);
-//            return sb.toString();
-//        }
-//
-//        @Override
-//        public String getAsString(FacesContext facesContext, UIComponent component, Object object) {
-//            if (object == null) {
-//                return null;
-//            }
-//            if (object instanceof Pessoa) {
-//                Pessoa d = (Pessoa) object;               
-//                return getStringKey(new BigDecimal(d.getID().toString()).setScale(0, BigDecimal.ROUND_HALF_UP).longValue());
-//
-//            } else {
-//                throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Pessoa.class.getName());
-//            }
-//        }
-//    }
-
+ 
 }

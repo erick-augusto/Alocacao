@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package facade;
 
 import controller.HibernateUtil;
@@ -5,7 +10,10 @@ import javax.ejb.Stateless;
 import model.Turma;
 import org.hibernate.SessionFactory;
 
-
+/**
+ *
+ * @author Juliana
+ */
 @Stateless
 public class TurmaFacade extends AbstractFacade<Turma>{
     
@@ -19,32 +27,4 @@ public class TurmaFacade extends AbstractFacade<Turma>{
         return HibernateUtil.getSessionFactory();
 
     }
-    
-//    public List<Disciplina> findByName(String nome){
-//        Session session = getSessionFactory().openSession();
-//        Criteria criteria = session.createCriteria(Disciplina.class);
-//        criteria.add(Restrictions.eq("nome", nome));
-//        
-//        List results = criteria.list();
-//        session.close();
-//        
-//        return results;
-//        
-//    }
-//    
-//    public Disciplina inicializarColecaoAfinidades(Disciplina d){
-//        
-//        Session session = getSessionFactory().openSession();
-//        session.refresh(d);
-//        Hibernate.initialize(d);
-//        Hibernate.initialize(d.getAfinidades());
-//        session.close();
-//        return d;
-//        
-//    }
-    
-    
-    
 }
-
-

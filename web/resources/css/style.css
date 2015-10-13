@@ -21,12 +21,32 @@ and open the template in the editor.
     padding: 0;
 }
 
+.ui-orderlist .ui-orderlist-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow:auto;
+    height:400px;
+    width:400px;
+}
+
+
+.ui-layout-unit-content{
+    background-image:url('resources/images/grey-back.jpg');
+}
+
+
 .a{
     width:500px;
 }
 
 .b{
     width:500px;
+}
+
+.colored {
+background-color: #FF0000;
+color: #FFFFFF;
 }
 
 root { 
@@ -276,4 +296,10 @@ padding: 10% 0;
     margin-left: -150px;
     margin-top: -100px;
   }
+  
+  .custom .ui-state-highlight {
+    background: transparent !important;
+    border: transparent !important;
+    
+}
 

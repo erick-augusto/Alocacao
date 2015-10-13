@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Editar disciplina</title>
+    </h:head>
+    <h:body>
+        <h:form>
+
+            <p:layout fullPage="true">
+
+                <p:layoutUnit style="text-align:center" position="north" size="60"  resizable="true" closable="true" collapsible="true" >  
+                    
+                    <h:commandLink value="Logout" style="position: relative; left: 650px; top: 10px; color: #2E8B57" 
+                                       action="#{loginBean.doLogout()}" immediate="true"/>
+                    <style type="text/css">
+                        .ui-widget{font-size:95% !important;}
+                    </style>
+                    <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Editar disciplina</div>
+
+                </p:layoutUnit> 
+
+                <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center" resizable="true"  >  
+
+                    <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/Cadastro/cadastro" immediate="true"/>
+                    <br/>
+                    
+                    <p:commandButton  value="Início" id="btnInicio"  style="width: 140px; position: relative; top: 10px"  action="/index" immediate="true"/>
+                    <br/>
+                </p:layoutUnit> 
+
+
+
+                <p:layoutUnit position="center">
+
+                    <p:panel header="Editar disciplina"  >
+                                <h:panelGrid columns="2" id="editarDisciplina">
+                                    <h:outputText value="Nome: "/>
+                                    <h:inputText value="#{disciplinaController.disciplina.nome}"  size="100"/>
+
+                                    <h:outputText value="Eixo: "/>
+                                    <p:autoComplete id="completeEixo" forceSelection="true" 
+                                                    value="#{disciplinaController.disciplina.eixo}" 
+                                                    completeMethod="#{disciplinaController.completeEixo}"  size="100"/>
+
+                                    <h:outputText value="Curso: "/>
+                                    <p:autoComplete id="completeCurso" forceSelection="true" 
+                                                    value="#{disciplinaController.disciplina.curso}" 
+                                                    completeMethod="#{disciplinaController.completeCurso}"  size="100"/>
+
+                                </h:panelGrid>
+                            <p:separator/>
+                            <p:commandButton style="width: 97px; height: 30px; font-size: small; position: relative; "  
+                                             ajax="true"  value="Editar" actionListener="#{disciplinaController.editar()}"
+                                             update="@(form:msgs),editarDisciplina" icon="ui-icon-disk"> 
+                            </p:commandButton>
+                            
+<!--                        </p:panel>-->
+
+                    </p:panel>
+
+                </p:layoutUnit>
+                
+                
+
+
+                <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="60"  resizable="true" closable="true" collapsible="true">  
+                    <p:messages id="msgs" showDetail="true"/>   
+                </p:layoutUnit>
+
+            </p:layout>
+        </h:form>
+    </h:body>
+</html>
