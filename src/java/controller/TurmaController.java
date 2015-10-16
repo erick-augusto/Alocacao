@@ -267,21 +267,13 @@ public class TurmaController implements Serializable {
     
     //Método para deletar turma selecionada
     public void excluirTurma(){
-        /*Turma t = (Turma) aux2.getObject();
-        Long idDocente = docente.getID();
+        FacesContext context = FacesContext.getCurrentInstance();
+        Turma t = (Turma) aux2.getObject();
         Long idTurma = t.getID();
-        TurmaDocente td = turmasEscolhidasFacade.TurmaSelecionada(idTurma,idDocente);
-        turmasEscolhidasFacade.remove(td);*/
-        System.out.println("Entrou no método");
-        //Turma t = (Turma) listaRequisicoes.getRowData();
-        Turma t = selectedTurma2;
-        Long idTurma = t.getID();
-        System.out.println("Selecionou a turma");
         Long idDocente = docente.getID();
         TurmaDocente td = turmasEscolhidasFacade.TurmaSelecionada(idTurma, idDocente);
-        System.out.println("Buscou a turma");
         turmasEscolhidasFacade.remove(td);
-        System.out.println("Excluiu a turma");
+        context.addMessage(null, new FacesMessage("Successful",  "Turma Deletada") );
     }    
 
     //Método para listar e preencher as turmas do Docente no Schedule
@@ -289,17 +281,19 @@ public class TurmaController implements Serializable {
         List<TurmaDocente> requisicoes = new ArrayList<TurmaDocente>();
         List<Turma> escolhidas = new ArrayList<Turma>();
         Turma t;
+        Long id = docente.getID();
         //Cria a lista de todas as requisições de turma
-        if (requisicoes == null) {
-            requisicoes = turmasEscolhidasFacade.findAll();
-        }
+        //if (requisicoes == null) {
+            requisicoes = turmasEscolhidasFacade.listTurmas(id);
+        //}
         //Cria a lista das solicitações do docente atual
         for (TurmaDocente atual : requisicoes) {
-            if (atual.getIdDocente() == docente.getID()) {
+            //if (atual.getIdDocente() == docente.getID()) {
                 t = turmaFacade.find(atual.getIdTurma());
                 escolhidas.add(t);
-            }
+            //}
         }
+        requisicoes = null;
         //Método para preencher o Schedule do Docente
         preencherRequisicoes(escolhidas);
     }
@@ -334,6 +328,7 @@ public class TurmaController implements Serializable {
     @PostConstruct
     public void init() {
         turmasSchedule = new DefaultScheduleModel();
+        docenteSchedule = new DefaultScheduleModel();
         //turmalazymodel = new TurmaLazyModel(TurmaFacade.listTurma());
         
 //        Calendar i = Calendar.getInstance();
@@ -404,9 +399,9 @@ public class TurmaController implements Serializable {
     
     //Salva solicitacoes no banco
     public void preencherRequisicoes(List<Turma> turma) {
-        List<Horario> horarios = new ArrayList<Horario>();
+        //List<Horario> horarios = new ArrayList<Horario>();
         for (Turma t : turma) {
-            horarios = t.getHorarios();
+            List<Horario> horarios = t.getHorarios();
             for (Horario h : horarios) {
                 int dia = conversorDia(h.getDia());
 
