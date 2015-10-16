@@ -27,4 +27,17 @@ public class TurmaFacade extends AbstractFacade<Turma>{
         return HibernateUtil.getSessionFactory();
 
     }
+    
+    public Turma listByID(Long id){ //Problema para referenciar em turma controller
+        
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Turma.class);
+        criteria.add(Restrictions.eq("ID", id));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        List<Turma> results = criteria.list();
+        session.close();
+
+        return results.get(0);
+    }
 }
