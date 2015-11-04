@@ -1,10 +1,10 @@
 package controller;
 
-//import facade.UsuarioFacade;
-//import facade.UsuarioFacade;
-import facade.UsuarioFacade;
+import facade.FaseFacade;
+import facade.PessoaFacade;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,9 +28,9 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import model.Usuario;
+import model.Fase;
+import model.Pessoa;
 import org.primefaces.context.RequestContext;
 
 @Named("loginBean")
@@ -38,31 +38,23 @@ import org.primefaces.context.RequestContext;
 public class LoginBean implements Serializable {
 
     @EJB
-    private UsuarioFacade usuarioFacade;
+    private PessoaFacade pessoaFacade;
 
-    private static Usuario usuario;
+    
+    //Guarda o usuário ativo após o login
+    private static Pessoa usuario;
 
-    public static Usuario getUsuario() {
+    public static Pessoa getUsuario() {
         return usuario;
     }
 
-    public static void setUsuario(Usuario usuario) {
+    public static void setUsuario(Pessoa usuario) {
         LoginBean.usuario = usuario;
     }
-    
-    private boolean adm;
 
-    public boolean isAdm() {
-        return usuario.isAdm();
-    }
-
-    public void setAdm(boolean adm) {
-        this.adm = adm;
-    }
-    
-    
     
 
+    //Login digitado pelo usuário para fazer o acesso
     private String username;
 
     public String getUsername() {
@@ -73,6 +65,7 @@ public class LoginBean implements Serializable {
         this.username = username;
     }
 
+    //Senha digitada pelo usuário para fazer o acesso
     private String password;
 
     public String getPassword() {
@@ -83,6 +76,7 @@ public class LoginBean implements Serializable {
         this.password = password;
     }
 
+    
     private boolean loggedIn;
 
     public boolean isLoggedIn() {
@@ -93,9 +87,60 @@ public class LoginBean implements Serializable {
         this.loggedIn = loggedIn;
     }
 
-    private String nome;
+//    private String nome;
 
     //Realiza o login caso de tudo certo 
+    public void doLogin() {
+
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage msg;
+        loggedIn = false;
+
+        this.username = this.username.trim();
+        this.password = this.password.trim();
+
+        LDAP ldap = new LDAP();
+
+        // Create the initial context
+        DirContext ctx = ldap.authenticate(username, password);
+
+        if (ctx != null) {
+
+            try {
+                Attributes attrs = ctx.getAttributes(ldap.makeDomainName(username));
+//                nome = (String) attrs.get("cn").get();
+                ctx.close();
+            } catch (NamingException ex) {
+                Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+//            if(usuario.getLogin().equals("elaine.konno")){
+//                loggedIn = true;
+//            }
+            
+
+            usuario = pessoaFacade.findByUsername(username);
+
+            if (usuario != null) {
+                loggedIn = true;
+                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem-vindo(a)!", usuario.getNome());
+            }
+            else{
+                loggedIn = false;
+                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Credenciais inválidas");
+            }
+
+        } else {
+
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Credenciais inválidas");
+        }
+
+    
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        context.addCallbackParam("loggedIn", loggedIn);
+
+    }
     
     public void doLogin2() {
 
@@ -106,7 +151,7 @@ public class LoginBean implements Serializable {
         this.username = this.username.trim();
         this.password = this.password.trim();
 
-        usuario = usuarioFacade.findByLogin(username);
+        usuario = pessoaFacade.findByUsername(username);
 
         if (usuario != null) {
             loggedIn = true;
@@ -121,79 +166,54 @@ public class LoginBean implements Serializable {
 
     }
     
-    public void doLogin() {
-
-        RequestContext context = RequestContext.getCurrentInstance();
-        FacesMessage msg;
-        loggedIn = false;
-
-        this.username = this.username.trim();
-        this.password = this.password.trim();
-        
-        usuario = usuarioFacade.findByLogin(username);
-        String senha = password;
-
-        LDAP ldap = new LDAP();
-
-        // Create the initial context
-        DirContext ctx = ldap.authenticate(username, password);
-
-        if (ctx != null) {
-
-            try {
-                Attributes attrs = ctx.getAttributes(ldap.makeDomainName(username));
-                nome = (String) attrs.get("cn").get();
-                ctx.close();
-            } catch (NamingException ex) {
-                Logger.getLogger(LoginBean.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-//            if(usuario.getLogin().equals("elaine.konno")){
-//                loggedIn = true;
-//            }
-            
-
-            usuario = usuarioFacade.findByLogin(username);
-
-            if (usuario != null) {
-                loggedIn = true;
-                msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem-vindo(a)!", nome);
-            }
-            else{
-                loggedIn = false;
-                msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid credentials");
-            }
-
-        }else if(usuario.getLogin().equals("adm") && senha.equals("ufabcreservas")){
-            loggedIn = true;
-            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem-vindo(a)!", "adm");
-        } 
-        else {
-
-            loggedIn = false;
-            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Invalid credentials");
-        }
-
-//        if(username.equals("elaine") && password.equals("elaine.konno")){
-//            loggedIn = true;
-//            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bem-vindo(a)!", null);
-//        }
-//        else{
-//            msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Credenciais inválidas");
-//        }
-//        
-        
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        context.addCallbackParam("loggedIn", loggedIn);
-
-    }
+    private Fase faseAtiva;
+    
+    @EJB 
+    private FaseFacade verificaFase;
 
     public String page() {
+        //Fase faseAtiva = new Fase();
         if (loggedIn) {
-            return "/Calendario";
-        } else {
-            return "/login";
+            //return "/Afinidades/DefinirAfinidade";
+            faseAtiva = verificaFase.achaMax();
+            if(faseAtiva == null){
+                return "/index";
+            }
+            if(faseAtiva.isAfinidades() == true){
+                return "/Afinidades/DefinirAfinidade";
+            }
+            if(faseAtiva.isFase1_quad1() == true){
+                return "/Disponibilidade/FaseIQuad1.xhtml";
+            }
+            if(faseAtiva.isFase1_quad2() == true){
+                return "/Disponibilidade/FaseIQuad2.xhtml";
+            }
+            if(faseAtiva.isFase1_quad3() == true){
+                return "/Disponibilidade/FaseIQuad3.xhtml";
+            }
+            if(faseAtiva.isFase2() == true){
+                return "/Disponibilidade/FaseII.xhtml";
+            }
+            /*if(faseAtiva.get(0).isAfinidades() == true){
+                return "/Afinidades/DefinirAfinidade";
+            }
+            if(faseAtiva.get(0).isFase1_quad1() == true){
+                return "/Disponibilidade/FaseIQuad1.xhtml";
+            }
+            if(faseAtiva.get(0).isFase1_quad2() == true){
+                return "/Disponibilidade/FaseIQuad2.xhtml";
+            }
+            if(faseAtiva.get(0).isFase1_quad3() == true){
+                return "/Disponibilidade/FaseIQuad3.xhtml";
+            }
+            if(faseAtiva.get(0).isFase2() == true){
+                return "/Disponibilidade/FaseII.xhtml";
+            }*/
+            else{
+                return "/index";
+            }
         }
+        return "/login";
     }
 
     public void isLogado() {
@@ -203,7 +223,7 @@ public class LoginBean implements Serializable {
                 
                 FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml?faces-redirect=true");
             } catch (IOException ex) {
-                Logger.getLogger(CalendarioController.class.getName()).log(Level.SEVERE, null, ex);
+//                Logger.getLogger(CalendarioController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 //        this.loggedIn = true;
@@ -211,60 +231,24 @@ public class LoginBean implements Serializable {
     }
 
     public String doLogout() {
-        
-        RequestContext context = RequestContext.getCurrentInstance();
+
+//        RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg;
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Logout efetuado", "");
         loggedIn = false;
         username = "";
         password = "";
         usuario = null;
-  
+
         FacesContext.getCurrentInstance().addMessage(null, msg);
-        
-//        HttpServletRequest  h = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-//    
-//        HttpSession session = h.getSession();
-//        
-//        if(session != null){
-//            session.invalidate();
-//        }
-
-
-        
-
-        
         ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
         HttpSession session = (HttpSession) ec.getSession(false);
         
         if (session != null) {
-//        System.out.println("invalidating session");
         session.invalidate();
     }
-        
-//        System.out.println(ec.getSessionMap());
-        
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("centroController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("calendarioController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("docenteController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("equipamentoController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("grupoReservaController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("operadorController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("pessoaController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("recursoController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("reservaController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("salaController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("servidorController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("tAController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("usuarioController");
-//        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("loginBean");
-//        
-//        
-////        UsuarioController u = (UsuarioController) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("usuarioController");
-////        u.setUsuarioDataModel(null);
-//        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-//        System.gc();
-        return "/login.xhtml?facesRedirect=true";
+
+        return "/login?faces-redirect=true";
 
     }
 
