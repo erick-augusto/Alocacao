@@ -44,6 +44,55 @@
 
                     <h:panelGrid columns="2" id="painelEscolha">
                         <p:panel id="panelTurma">
+
+                            <p:panel id="filtros" header="Filtros" toggleable="true" toggleSpeed="500" closeSpeed="500" 
+                                     widgetVar="panel" style="margin-bottom:20px; width: 400px; font-size: medium; " collapsed="true" closeTitle="Painel">
+
+                                <h:panelGrid columns="1"  cellspacing="10">
+
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel for="campus" value="Câmpus:" />
+                                        <p:selectOneRadio id="campus" value="#{turmaController.campus}">
+                                            <f:selectItem itemLabel="SA" itemValue="SA" />
+                                            <f:selectItem itemLabel="SBC" itemValue="SBC" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="2" cellpadding="5">
+                                        <p:outputLabel for="turno" value="Turno:" />
+                                        <p:selectOneRadio id="turno" value="#{turmaController.turno}">
+                                            <f:selectItem itemLabel="D" itemValue="D" />
+                                            <f:selectItem itemLabel="N" itemValue="N" />
+                                        </p:selectOneRadio>
+                                    </h:panelGrid>
+
+                                    <h:panelGrid columns="2">
+                                        <h:outputText value="Filtrar por afinidades: " />
+                                        <p:selectBooleanButton id="value2" value="#{turmaController.filtrarAfinidades}" 
+                                                               onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" 
+                                                               style="width:70px; height: 27px; text-align: center">
+                                        </p:selectBooleanButton>
+
+                                    </h:panelGrid>
+
+                                </h:panelGrid>
+
+                                <p:separator/>
+
+                                <h:panelGrid columns="2">
+                                    <p:commandButton    icon="ui-icon-search"  actionListener="#{turmaController.filtrar()}"
+                                                        update="@(form:turmasDataTable), @(form:filtros)"  style="width: 30px; height: 25px" title="Filtrar disciplinas">
+                                    </p:commandButton>
+
+                                    <p:commandButton    ajax="false"  actionListener="#{turmaController.limparFiltros()}"
+                                                        update="@(form:turmasDataTable)" icon="ui-icon-closethick" 
+                                                        style="width: 30px; height: 25px" title="Limpar filtros">
+                                    </p:commandButton>
+
+                                </h:panelGrid>
+
+                            </p:panel>
+
                             <p:dataTable id="turmasDataTable" 
                                          var="turma" value="#{turmaController.turmalazymodel}" 
                                          paginator="true" rows="20"
@@ -61,16 +110,16 @@
                                     <h:outputText value="#{turma.disciplina.nome}" />
                                 </p:column>
                                 <p:column style="width: 40px" headerText="Turma">
-                                    <h:outputText value=""/>
+                                    <h:outputText value="#{turma.codturma}"/>
                                 </p:column>
                                 <p:column style="width: 40px" headerText="Turno">
-                                    <h:outputText value=""/>
+                                    <h:outputText value="#{turma.turno}"/>
                                 </p:column>
                                 <p:column style="width: 50px" headerText="Campus">
-                                    <h:outputText value=""/>
+                                    <h:outputText value="#{turma.campus}"/>
                                 </p:column>
                                 <p:column style="width: 75px" headerText="Solicitações">
-                                    <h:outputText value=""/>
+                                    <h:outputText value="#{turmaController.solicitacoes(turma.ID)}"/>
                                 </p:column>
 
                             </p:dataTable>
@@ -80,7 +129,7 @@
                             <!--p:panelGrid columns="2"-->
                             <p:commandButton id="selectTurma" style="width: 110px; height: 25px; font-size: smaller"
                                              value="Incluir" action="#{turmaController.incluirTurma}"
-                                             update="growl, scheduleDocente" icon="ui-icon-disk" immediate="true">
+                                             update="growl, scheduleDocente, turmasDataTable" icon="ui-icon-disk" immediate="true">
                             </p:commandButton>
                             <p:spacer width="10"/>
                             <p:commandButton id="deleteTurma" style="width: 110px; height: 25px; font-size: smaller"
@@ -105,12 +154,11 @@
                                         rightHeaderTemplate="none" leftHeaderTemplate="none" allDaySlot="false" 
                                         view="agendaWeek" columnFormat="week: 'ddd'" style="width: 700px"
                                         styleClass="custom"
-                                        ignoreTimezone="true">
+                                        ignoreTimezone="false">
 
                             </p:schedule>
 
                             <br/>
-
 
                             <p:schedule id="scheduleDocente" value="#{turmaController.docenteSchedule}" 
                                         widgetVar="myscheduleD" timeZone="GMT-3"  minTime="8am"
@@ -118,7 +166,7 @@
                                         rightHeaderTemplate="none" leftHeaderTemplate="none" allDaySlot="false" 
                                         view="agendaWeek" columnFormat="week: 'ddd'" style="width: 700px"
                                         styleClass="custom"
-                                        ignoreTimezone="true">
+                                        ignoreTimezone="false">
 
                             </p:schedule>
 
@@ -173,22 +221,17 @@
 
                                 <p:commandButton id="Excluir" style="width: 95px; height: 30px; font-size: small"
                                                  value="Deletar" action="#{turmaController.excluirTurma}" process="@this" 
-                                                 update="growl,TableDialog, form:scheduleDocente" immediate="true" icon="ui-icon-trash" >
+                                                 update="growl,TableDialog, @(form:scheduleDocente), @(form:turmasDataTable)" immediate="true" icon="ui-icon-trash" >
                                 </p:commandButton>
                             </h:panelGrid>
                         </h:panelGroup>
-
 
                     </p:dialog>
 
                 </p:layoutUnit>  
             </p:layout>
 
-
-
-
         </h:form>
-
 
     </h:body>
 </html>
