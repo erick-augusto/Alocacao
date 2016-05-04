@@ -1,6 +1,7 @@
 package controller;
 
 import facade.CreditoFacade;
+import facade.DispFacade;
 import facade.DisponibilidadeFacade;
 import facade.OfertaDisciplinaFacade;
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import javax.inject.Named;
 import model.Afinidade;
 import model.Credito;
 import model.Disciplina;
+import model.Disp;
 import model.Disponibilidade;
 import model.Docente;
 import model.Pessoa;
@@ -23,8 +25,10 @@ import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.TabChangeEvent;
 import org.primefaces.event.UnselectEvent;
+import util.DispDataModel;
 import util.DisponibilidadeDataModel;
 import util.OfertaDisciplinaDataModel;
+import util.OfertaDisciplinaLazyModel;
 
 @Named(value = "disponibilidadeController")
 @SessionScoped
@@ -80,7 +84,8 @@ public class DisponibilidadeController implements Serializable {
         //Fazer as consultas de disponibilidades e ofertadisciplina e a contagem de tp
         //Busca de disponibilidades do docente no quadrimestre
         pessoa = docente;
-        List<Disponibilidade> quad = disponibilidadeFacade.findByDocenteQuad(pessoa, quadrimestre);
+        //List<Disponibilidade> quad = disponibilidadeFacade.findByDocenteQuad(pessoa, quadrimestre);
+        List<Disp> quad = dispFacade.findByDocenteQuad(pessoa, quadrimestre);
         //Busca de oferta de disciplinas no quadrimestre
         List<OfertaDisciplina> oferta = turmasFacade.findAllQuad(quadrimestre);
         //For para listar apenas as disciplinas planejadas pelo docente
@@ -88,7 +93,14 @@ public class DisponibilidadeController implements Serializable {
         long id_o = 0;
         long id_d = 0;
         for(OfertaDisciplina o : oferta){
-            for(Disponibilidade d : quad){
+            /*for(Disponibilidade d : quad){
+                id_o = o.getID();
+                id_d = d.getOfertaDisciplina().getID();
+                if(id_o == id_d){
+                    planejados.add(o);
+                }
+            }*/
+            for(Disp d : quad){
                 id_o = o.getID();
                 id_d = d.getOfertaDisciplina().getID();
                 if(id_o == id_d){
@@ -99,7 +111,22 @@ public class DisponibilidadeController implements Serializable {
         //Contagem de créditos
         int creditos=0;
         for(OfertaDisciplina o : planejados){
-            for(Disponibilidade d : quad){
+            /*for(Disponibilidade d : quad){
+                id_o = o.getID();
+                id_d = d.getOfertaDisciplina().getID();
+                if(id_o == id_d){
+                    if(d.getTp().equals("Teoria")){
+                        creditos += o.getT();
+                    }
+                    else if(d.getTp().equals("Pratica")){
+                        creditos += o.getP();
+                    }
+                    else{
+                        creditos += o.getP() + o.getT();
+                    }
+                }
+            }*/
+            for(Disp d : quad){
                 id_o = o.getID();
                 id_d = d.getOfertaDisciplina().getID();
                 if(id_o == id_d){
@@ -261,9 +288,10 @@ public class DisponibilidadeController implements Serializable {
     
 
     //Data Model das OfertaDisciplina da Etapa I
-    private OfertaDisciplinaDataModel dataModel;
+    //private OfertaDisciplinaDataModel dataModel;
+    private OfertaDisciplinaLazyModel dataModel;
 
-    public OfertaDisciplinaDataModel getDataModel() {
+    /*public OfertaDisciplinaDataModel getDataModel() {
 
         if (dataModel == null) {
             List<OfertaDisciplina> turmas = turmasFacade.findAll();
@@ -274,6 +302,20 @@ public class DisponibilidadeController implements Serializable {
     }
 
     public void setDataModel(OfertaDisciplinaDataModel dataModel) {
+        this.dataModel = dataModel;
+    }*/
+    
+    public OfertaDisciplinaLazyModel getDataModel() {
+
+        if (dataModel == null) {
+            List<OfertaDisciplina> turmas = turmasFacade.findAll();
+            dataModel = new OfertaDisciplinaLazyModel(turmas);
+        }
+
+        return dataModel;
+    }
+
+    public void setDataModel(OfertaDisciplinaLazyModel dataModel) {
         this.dataModel = dataModel;
     }
     
@@ -434,16 +476,167 @@ public class DisponibilidadeController implements Serializable {
         dispdataModel2 = null;
         
     }
+    
+    //Novo Disponibilidade-------------------------------------------------------
+    private DispDataModel dDataModel;
+    
+    private Disp dispo;
+    
+    @EJB
+    private DispFacade dispFacade;
+    
+    public DispDataModel getDDataModel() {
 
+        if (dDataModel == null) {
+
+            List<Disp> d = dispFacade.findByDocente(docente);
+
+            dDataModel = new DispDataModel(d);
+
+        }
+
+        return dDataModel;
+    }
+
+    public DispDataModel getDispDataModel(int quad) {
+
+        if (dDataModel == null) {
+
+            List<Disp> d = dispFacade.findByDocenteQuad(docente, quad);
+
+            dDataModel = new DispDataModel(d);
+
+        }
+
+        return dDataModel;
+    }
+
+    public void setDispdataModel(DispDataModel dDataModel) {
+        this.dDataModel = dDataModel;
+    }
+    
+    private DispDataModel dModel2;
+
+    public DispDataModel getDModel2() {
+        if (dModel2 == null) {
+
+            List<Disp> d = dispFacade.findByDocenteQuad(docente, quadrimestre);
+
+            dModel2 = new DispDataModel(d);
+
+        }
+
+        return dModel2;
+    }
+
+    public void setDModel2(DispDataModel dModel2) {
+        this.dModel2 = dModel2;
+    }    
+    
+    public void salvarDisp() {
+
+        for (OfertaDisciplina oferta : ofertasEtapa1) {
+
+            //Regarrega o objeto turma, inicializando a Colecao de Disponibilidades(Lazy)
+            oferta = turmasFacade.inicializarColecaoDisponibilidades(oferta);
+            String funcao = oferta.getFuncao(); 
+            if(funcao == null){
+                funcao = "T e P";
+            }            
+            dispo = new Disp("", funcao, docente, oferta);
+            dispFacade.save(dispo);
+        }
+        //Set<Disp> l = docente.getDispo();
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        //getOrdem();
+        ofertasEtapa1 = null;
+        dDataModel = null;
+        dModel2 = null;
+        //getDModel2();
+        //List<Disp> d = dispFacade.findByDocenteQuad(pessoa, quadrimestre);
+        //dModel2 = new DispDataModel(d);
+        context.addMessage(null, new FacesMessage("Successful", "Turmas salvas com Sucesso!") );
+    }
+    
+    //Row select----------------------------------------------------------------
+    private static SelectEvent aux;
+    
+    public void onRowSelect(SelectEvent event) {
+        aux = event; //Atribui a aux a disponibilidade selecionada
+        Disponibilidade d = (Disponibilidade) event.getObject();
+    }
+
+    public void onRowUnselect(UnselectEvent event) {
+
+    }
+    
+    //Disponibilidade que será selecionada para exclusao
+    //private List<Disponibilidade> selectedDisp;
+    private List<Disp> selectedDisp;
+
+    /*public List<Disponibilidade> getSelectedDisp() {
+        return selectedDisp;
+    }
+
+    public void setSelectedDisp(List<Disponibilidade> selectedDisp) {
+        this.selectedDisp = selectedDisp;
+    }*/
+    
+    public List<Disp> getSelectedDisp() {
+        return selectedDisp;
+    }
+
+    public void setSelectedDisp(List<Disp> selectedDisp) {
+        this.selectedDisp = selectedDisp;
+    }
+
+    //Apagar Disponibilidades
+    public void deleteEscolha(Disponibilidade d){
+        FacesContext context = FacesContext.getCurrentInstance();
+        //Disponibilidade d = (Disponibilidade) aux.getObject();
+       
+        disponibilidadeFacade.remove(d); 
+        dispdataModel2 = null;
+        
+        context.addMessage(null, new FacesMessage("Successful", "Disponibilidade Apagada com Sucesso!") );
+    }
+    
+    public void deleteDisp(Disp d){
+        FacesContext context = FacesContext.getCurrentInstance();
+        int ordem = Integer.parseInt(d.getOrdemPreferencia());
+        int ordem2 = 0;
+        String sub = "";
+        
+        dispFacade.remove(d);
+        
+        List<Disp> list = dispFacade.findByDocenteQuad(pessoa, quadrimestre);
+        for(Disp l : list){
+            ordem2 = Integer.parseInt(l.getOrdemPreferencia());
+            if(ordem2>ordem){
+                ordem2 -= 1;
+            }
+            sub = Integer.toString(ordem2);
+            l.setOrdemPreferencia(sub);
+            sub = l.getOrdemPreferencia();
+            dispFacade.merge(l);
+        }
+        
+        dDataModel = null;
+        dModel2 = null;
+        context.addMessage(null, new FacesMessage("Successful", "Disciplina Apagada com Sucesso!") );
+    }
     
     //Método para editar as escolhas de disponibilidade, definindo a ordem de preferencia e 
     //se prefere dar teoria ou prática ou ambos
     public void onCellEdit(CellEditEvent event) {
 
-        Disponibilidade d = (Disponibilidade) dispdataModel2.getRowData();
+        //Disponibilidade d = (Disponibilidade) dispdataModel2.getRowData();
 
-        disponibilidadeFacade.merge(d);
+        //disponibilidadeFacade.merge(d);
         
+        Disp d = (Disp) dModel2.getRowData();
+        dispFacade.merge(d);        
     }
 
     //Usado para ordem de preferência do docente na escolha da oferta de disciplina
@@ -453,8 +646,15 @@ public class DisponibilidadeController implements Serializable {
 
         int tamanho = 0;
 
-        for (Disponibilidade d : docente.getDisponibilidades()) {
+        /*for (Disponibilidade d : docente.getDisponibilidades()) {
 
+            if (d.getOfertaDisciplina().getQuadrimestre() == quadrimestre) {
+                tamanho++;
+            }
+        }*/
+        List<Disp> dp = dispFacade.findByDocenteQuad(pessoa, quadrimestre);
+        for (Disp d : dp) {
+            int quad = d.getOfertaDisciplina().getQuadrimestre();
             if (d.getOfertaDisciplina().getQuadrimestre() == quadrimestre) {
                 tamanho++;
             }
@@ -475,7 +675,14 @@ public class DisponibilidadeController implements Serializable {
 
         int tamanho = 0;
 
-        for (Disponibilidade d : docente.getDisponibilidades()) {
+        /*for (Disponibilidade d : docente.getDisponibilidades()) {
+
+            if (d.getOfertaDisciplina().getQuadrimestre() == (int) (long) quad) {
+                tamanho++;
+            }
+        }*/
+        
+        for (Disp d : docente.getDispo()) {
 
             if (d.getOfertaDisciplina().getQuadrimestre() == (int) (long) quad) {
                 tamanho++;
@@ -519,7 +726,25 @@ public class DisponibilidadeController implements Serializable {
     }
     
     //Usado para o docente definir se ele quer dar teoria, prática ou ambos 
-    public List<String> getTipoDisp(Disponibilidade d){
+    /*public List<String> getTipoDisp(Disponibilidade d){
+            
+            List<String> tp;
+            tp = new ArrayList<>();
+            tp.add("Selecione");
+            if(d.getOfertaDisciplina().getT() > 0){
+                tp.add("Teoria");
+            }
+            if(d.getOfertaDisciplina().getP() > 0){
+                tp.add("Prática");
+            }
+            if(d.getOfertaDisciplina().getP() > 0  && d.getOfertaDisciplina().getT() > 0 ){
+                tp.add("Teoria & Prática");
+            }
+            return tp;
+        
+    }*/
+    
+    public List<String> getTipoDisp(Disp d){
             
             List<String> tp;
             tp = new ArrayList<>();
@@ -541,7 +766,7 @@ public class DisponibilidadeController implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         ofertasEtapa1 = null;
         //JsfUtil.addSuccessMessage("Disponibilidades em turmas salvas com sucesso!");
-        context.addMessage(null, new FacesMessage("Successful",  "Turma Salva no Planejamento Quadrimestral!") );
+        context.addMessage(null, new FacesMessage("Successful", "Alterações salvas com Sucesso!") );
     }
 
 
@@ -584,27 +809,56 @@ public class DisponibilidadeController implements Serializable {
 
     public String prepareQuad1() {
 
-        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(1));
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(1));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(1));
         quadrimestre = 1;
-        return "/Disponibilidade/FaseIQuad";
+        dModel2 = null;
+        return "/Disponibilidade/Fae1Teste";
 
     }
     
     public String prepareQuad2() {
 
-        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(2));
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(2));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(2));
         quadrimestre = 2;
-        return "/Disponibilidade/FaseIQuad";
+        dModel2 = null;
+        return "/Disponibilidade/Fae1Teste";
 
     }
 
     public String prepareQuad3() {
 
-        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(3));
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(3));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(3));
         quadrimestre = 3;
-        return "/Disponibilidade/FaseIQuad";
+        dModel2 = null;
+        return "/Disponibilidade/Fae1Teste";
+    }
+    
+    public String preparePlanejamento1(){
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(1));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(1));
+        quadrimestre = 1;
+        dModel2 = null;
+        return "/Disponibilidade/Quadrimestre";
+    }
+    
+    public String preparePlanejamento2(){
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(2));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(2));
+        quadrimestre = 2;
+        dModel2 = null;
+        return "/Disponibilidade/Quadrimestre";
     }
 
+    public String preparePlanejamento3(){
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(3));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(3));
+        quadrimestre = 3;
+        dModel2 = null;
+        return "/Disponibilidade/Quadrimestre";
+    }
     
 //-------------------------------------------Filtros----------------------------------------------------------
     //Filtros para as turmas da Etapa I------------------------------------------------------------------------
@@ -625,7 +879,7 @@ public class DisponibilidadeController implements Serializable {
     private List<Disciplina> discEtapa1;
 
     private int quadrimestre;
-
+    
     public boolean isFiltrarAfinidades() {
         return filtrarAfinidades;
     }
@@ -687,8 +941,9 @@ public class DisponibilidadeController implements Serializable {
 
         Integer q = (int) (long) quad;
 
-        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, q));
-
+        //dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, q));
+        dataModel = new OfertaDisciplinaLazyModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, q));
+        
         filtrarAfinidades = false;
         turno = "";
         campus = "";
@@ -713,8 +968,9 @@ public class DisponibilidadeController implements Serializable {
 
         
 
-        dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, quadrimestre));
-
+        //dataModel = new OfertaDisciplinaDataModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, quadrimestre));
+        dataModel = new OfertaDisciplinaLazyModel(turmasFacade.filtrarAfinidTurnCampQuad(discAfinidades, turno, campus, quadrimestre));
+        
         filtrarAfinidades = false;
         turno = "";
         campus = "";
@@ -722,14 +978,18 @@ public class DisponibilidadeController implements Serializable {
 
     public void limparFiltroQuad(Long quad) {
 
-        dispdataModel = null;
-        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad((int) (long) quad));
+        //dispdataModel = null;
+        dDataModel = null;
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad((int) (long) quad));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad((int) (long) quad));
     }
     
     public void limparFiltroQuad() {
 
-        dispdataModel = null;
-        dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(quadrimestre));
+        //dispdataModel = null;
+        dDataModel = null;
+        //dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(quadrimestre));
+        dataModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(quadrimestre));
     }
 
     //Filtros para o Log das Disponibilidades da Etapa I-------------------------------------------------------
@@ -763,11 +1023,20 @@ public class DisponibilidadeController implements Serializable {
         this.disponibilidades = disponibilidades;
     }
 
-   
+    private List<Disp> displ;
+
+    public List<Disp> getDispl() {
+        return displ;
+    }
+
+    public void setDisp(List<Disp> displ) {
+        this.displ = displ;
+    }
 
     public void limparFiltroDisp() {
 
-        dispdataModel = null;
+        //dispdataModel = null;
+        dDataModel = null;
     }
 
    
