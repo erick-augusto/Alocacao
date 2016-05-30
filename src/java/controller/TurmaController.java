@@ -48,7 +48,7 @@ public class TurmaController implements Serializable {
     private TurmaFacade turmaFacade;
 
     //Cadastro-------------------------------------------------------------------------------------------
-    public void cadastrarTurmas() {
+    /*public void cadastrarTurmas() {
 
         String[] palavras;
 
@@ -106,7 +106,7 @@ public class TurmaController implements Serializable {
             System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
         }
 
-    }
+    }*/
 
     //Método de cadastro com novo arquivo (A ser difinido como olficial)
     //obs: ao apagar as turmas acontecem problemas para carregar a fase 2 devido à consulta por idTurma
@@ -215,9 +215,9 @@ public class TurmaController implements Serializable {
                     }
 
                     t.setCampus(campus);
-                    t.setCodturma(palavras[2]);
+                    t.setCodturma(codturma);
                     t.setTurno(turno);
-                    t.setCurso(palavras[12]);
+                    t.setCurso(curso);
                     turmaFacade.save(t);
 
                     linha = lerArq.readLine();
@@ -241,7 +241,7 @@ public class TurmaController implements Serializable {
     }
 
     //DataModel e LazyModel ---------------------------------------------------------------------------------
-    private TurmaDataModel turmaDataModel; // Não está mais sendo usado para a lista de turmas na Fase 2
+    /*private TurmaDataModel turmaDataModel; // Não está mais sendo usado para a lista de turmas na Fase 2
 
     public TurmaDataModel getTurmaDataModel() {
 
@@ -257,7 +257,7 @@ public class TurmaController implements Serializable {
 
     public void setTurmaDataModel(TurmaDataModel turmaDataModel) {
         this.turmaDataModel = turmaDataModel;
-    }
+    }*/
 
     private TurmaLazyModel turmalazymodel; //LazyModel para página de Cadastro e Turmas da Fase 2
 
@@ -369,18 +369,22 @@ public class TurmaController implements Serializable {
         filtrarAfinidades = false;
         campus = "";
         turno = "";
-        teste = null;
+        //teste = null;
+        docenteSchedule = null;
         atual = null;
-        getTeste();
+        //getTeste();
+        getDocenteSchedule();
     }
 
     public void limparFiltros() {
         turmalazymodel = null;
         List<Turma> turmas = turmaFacade.findAll();
         turmalazymodel = new TurmaLazyModel(turmas);
-        teste = null;
+        //teste = null;
+        docenteSchedule = null;
         atual = null;
-        getTeste();
+        //getTeste();
+        getDocenteSchedule();
     }
 
     //Fase II Disponibilidade -------------------------------------------------------------------------------
@@ -397,12 +401,14 @@ public class TurmaController implements Serializable {
 
     public void onRowSelect(SelectEvent event) {
         aux = event; //Atribui a aux a turma selecionada para ser usada por outros metodos
-        teste = null;
+        //teste = null;
+        docenteSchedule = null;
         atual = new ArrayList();
         Turma t = (Turma) event.getObject();
         atual.add(t);
         
-        getTeste();
+        //getTeste();
+        getDocenteSchedule();
         
         /*aux = event; //Atribui a aux a turma selecionada para ser usada por outros metodos
         turmasSchedule.clear();
@@ -424,20 +430,33 @@ public class TurmaController implements Serializable {
     }
 
     //Mostrara as turmas da disciplina selecionada
-    private ScheduleModel turmasSchedule;
+    //private ScheduleModel turmasSchedule;
 
     //Mostrara as turmas já selecionadas pelo docente
     private ScheduleModel docenteSchedule;
 
-    public ScheduleModel getTurmasSchedule() {
+    /*public ScheduleModel getTurmasSchedule() {
         return turmasSchedule;
     }
 
     public void setTurmasSchedule(ScheduleModel turmasSchedule) {
         this.turmasSchedule = turmasSchedule;
-    }
+    }*/
 
     public ScheduleModel getDocenteSchedule() {
+        docenteSchedule = new DefaultScheduleModel();
+        List<TurmaDocente> requisicoes = new ArrayList<TurmaDocente>();
+        List<Turma> escolhidas = new ArrayList<Turma>();
+        Turma t;
+        Long id = docente.getID();
+
+        requisicoes = turmasEscolhidasFacade.listTurmas(id);
+        for (TurmaDocente td : requisicoes) {
+            t = turmaFacade.find(td.getIdTurma());
+            escolhidas.add(t);
+        }
+        preencheDocente(escolhidas);  
+        
         return docenteSchedule;
     }
 
@@ -452,7 +471,7 @@ public class TurmaController implements Serializable {
             FacesContext context = FacesContext.getCurrentInstance();
             Turma t = (Turma) aux.getObject();
 
-            int testeaaa = 0;
+            //int testeaaa = 0;
             Long id = t.getID();
             Long docenteid = docente.getID();
             boolean conflito = verificar(t);
@@ -466,7 +485,8 @@ public class TurmaController implements Serializable {
                 turmasEscolhidasFacade.save(turmasEscolhidas);
                 //preecherSchedule();
                 atual = null;
-                getTeste();
+                //getTeste();
+                getDocenteSchedule();
                 context.addMessage(null, new FacesMessage("Successful", "Turma Requisitada Salva!"));
             }
         } catch (Exception e) {
@@ -531,13 +551,18 @@ public class TurmaController implements Serializable {
         listaRequisicoes = null;
         //preecherSchedule();
         atual = null;
-        getTeste();
+        //getTeste();
+        getDocenteSchedule();
         context.addMessage(null, new FacesMessage("Successful", "Turma Deletada"));
     }
 
     //Método para listar e preencher as turmas do Docente no Schedule
     public void preecherSchedule() {
-        docenteSchedule.clear();
+        docenteSchedule = null;
+        atual = null;
+        //getTeste();
+        getDocenteSchedule();
+        /*docenteSchedule.clear();
         List<TurmaDocente> requisicoes = new ArrayList<TurmaDocente>();
         List<Turma> escolhidas = new ArrayList<Turma>();
         Turma t;
@@ -555,7 +580,7 @@ public class TurmaController implements Serializable {
         }
         requisicoes = null;
         //Método para preencher o Schedule do Docente
-        preencherRequisicoes(escolhidas);
+        //preencherRequisicoes(escolhidas);*/
     }
 
     private static SelectEvent aux;
@@ -580,13 +605,13 @@ public class TurmaController implements Serializable {
 
     @PostConstruct
     public void init() {
-        turmasSchedule = new DefaultScheduleModel();
-        docenteSchedule = new DefaultScheduleModel();
-        teste = null;
+        //turmasSchedule = new DefaultScheduleModel();
+        docenteSchedule = null;
+        //teste = null;
         atual = null;
     }
 
-    public void preencherTurma(Turma turma) {
+    /*public void preencherTurma(Turma turma) {
 
         List<Horario> horarios = turma.getHorarios();
 
@@ -636,10 +661,10 @@ public class TurmaController implements Serializable {
 
         }
 
-    }
+    }*/
 
     //Salva solicitacoes no banco
-    public void preencherRequisicoes(List<Turma> turma) {
+    /*public void preencherRequisicoes(List<Turma> turma) {
         //List<Horario> horarios = new ArrayList<Horario>();
         for (Turma t : turma) {
             List<Horario> horarios = t.getHorarios();
@@ -688,9 +713,9 @@ public class TurmaController implements Serializable {
         }
         //eventoTurma();
         //docenteSchedule.addEvent(novo);
-    }
+    }*/
     
-    private ScheduleModel teste;
+    /*private ScheduleModel teste;
     
     public ScheduleModel getTeste(){
         teste = new DefaultScheduleModel();
@@ -710,7 +735,7 @@ public class TurmaController implements Serializable {
     
     public void setTeste(ScheduleModel teste){
         this.teste = teste;
-    }
+    }*/
     
     public void preencheDocente(List<Turma> turma){
         for (Turma t : turma) {
@@ -751,9 +776,9 @@ public class TurmaController implements Serializable {
 
                 String sigla = converterSigla(t);
                 //Preenche o Schdule do Docente
-                //docenteSchedule.addEvent(new DefaultScheduleEvent(sigla, inicio.getTime(), fim.getTime()));
                 DefaultScheduleEvent schedule = new DefaultScheduleEvent(sigla, inicio.getTime(), fim.getTime(), "darkgreen-event");
-                teste.addEvent(schedule);
+                //teste.addEvent(schedule);
+                docenteSchedule.addEvent(schedule);
             }
         }
         if(!(atual==null)){
@@ -795,9 +820,9 @@ public class TurmaController implements Serializable {
 
                 String sigla2 = converterSigla(ta);
                 //Preenche o Schdule do Docente
-                //docenteSchedule.addEvent(new DefaultScheduleEvent(sigla, inicio.getTime(), fim.getTime()));
                 DefaultScheduleEvent schedule2 = new DefaultScheduleEvent(sigla2, inicio2.getTime(), fim2.getTime(), "blue-event");
-                teste.addEvent(schedule2);
+                //teste.addEvent(schedule2);
+                docenteSchedule.addEvent(schedule2);
             }
         }
     }
@@ -806,7 +831,6 @@ public class TurmaController implements Serializable {
     private int conversorDia(String dia) {
 
         dia = dia.trim();
-
         switch (dia) {
             case "segunda":
                 return Calendar.MONDAY;
@@ -821,7 +845,6 @@ public class TurmaController implements Serializable {
             case "sabado":
                 return Calendar.SATURDAY;
         }
-
         return 0;
     }
 
@@ -833,6 +856,9 @@ public class TurmaController implements Serializable {
         int n = nome.length();
         for (int i = 0; i < n; i++) {
             if (nome.charAt(i) >= 'A' && nome.charAt(i) <= 'Z') {
+                sigla = sigla + nome.charAt(i);
+            }
+            else if(nome.charAt(i) == 'Á' || nome.charAt(i) == 'É' || nome.charAt(i) == 'Ó'){
                 sigla = sigla + nome.charAt(i);
             }
         }
