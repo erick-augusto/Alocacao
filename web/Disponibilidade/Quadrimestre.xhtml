@@ -14,7 +14,7 @@
             </f:facet>
         </h:head>
 
-        <h:body>
+        <h:body onload="#{disponibilidadeController.iniciarFiltro()};#{loginBean.isLogado()}">
             <h:outputStylesheet library="css" name="style.css" />
 
             <h:form id="form" >  
@@ -30,7 +30,7 @@
                                            action="/Afinidades/DefinirAfinidade" immediate="true"/>
                             <h:commandLink value="Ajuda" style="position: relative; right: 400px; color: #2E8B57"
                                            action="/Tutorial/Tutorial" target="_blank" immediate="true"/>
-
+                            <h:outputText value="#{loginBean.username}" style="position: relative; right: 100px; color: #2E8B57"/>
                             <h:outputLabel value="Fase I - Planejamento Anual" style="color: #2E8B57; font-family: 'Play'; font-size: 24px"/>
                             <h:commandLink value="Logout" style="position: relative; left: 460px; color: #2E8B57"
                                            action="#{loginBean.doLogout()}" immediate="true"/>
@@ -54,80 +54,76 @@
                     <p:layoutUnit position="center">
 
                         <p:growl id="growl" sticky="false" showDetail="true" life="3000" />
-                        
-                        <p:panel id="PainelCreditos" header="Planejamento de créditos do #{disponibilidadeController.quadrimestre}º Quadrimestre"
-                                 style="width: 650px">
-                            <h:panelGrid columns="4" cellpadding="5" class="ui-grid">
-                                <h:outputLabel value="Créditos Planejados: " />
-                                <p:spinner id="creditos" value="#{disponibilidadeController.creditosPlanejados}" 
-                                           min="0" max="30" />
-                                <h:outputLabel value="Créditos escolhidos: "/>
-                                <h:outputText value="#{disponibilidadeController.creditosEscolhidos}" 
-                                              style="#{disponibilidadeController.changeColor() eq true ? 'color:Red' : 'color:Green'}"
-                                              id="creditosEscolhidos" /> 
 
-                                <p:commandButton    icon="ui-icon-disk"  actionListener="#{disponibilidadeController.salvarCreditos()}"
-                                                    update="PainelCreditos, growl"  style="width: 100px; height: 25px" value="Salvar">
-                                </p:commandButton>
-                                <!--h:outputText value=""/>
-                                <h:outputText value=""/>
-                                <h:outputText value=""/-->
-                                <!--Introdução das labels no panel-->
-                            </h:panelGrid>
-                        </p:panel>
+                        <h:panelGrid columns="2">
+                            <p:panel id="PainelCreditos" header="Planejamento de créditos do #{disponibilidadeController.quadrimestre}º Quadrimestre"
+                                     style="width: 650px">
+                                <h:panelGrid columns="4" cellpadding="5" class="ui-grid">
+                                    <h:outputLabel value="Créditos Planejados: " />
+                                    <p:spinner id="creditos" value="#{disponibilidadeController.creditosPlanejados}" 
+                                               min="0" max="30" />
+                                    <h:outputLabel value="Créditos escolhidos: "/>
+                                    <h:outputText value="#{disponibilidadeController.creditosEscolhidos}" 
+                                                  style="#{disponibilidadeController.changeColor() eq true ? 'color:Red' : 'color:Green'}"
+                                                  id="creditosEscolhidos" /> 
 
-                        <!--br/-->
+                                    <p:commandButton    icon="ui-icon-disk"  actionListener="#{disponibilidadeController.salvarCreditos()}"
+                                                        update="PainelCreditos, growl"  style="width: 100px; height: 25px" value="Salvar">
+                                    </p:commandButton>
+                                    <!--h:outputText value=""/>
+                                    <h:outputText value=""/>
+                                    <h:outputText value=""/-->
+                                    <!--Introdução das labels no panel-->
+                                </h:panelGrid>
+                            </p:panel>
+                            <p:panel id="filtros" header="Filtros" widgetVar="panel" 
+                                     style="width: 400px; font-size: medium">
 
-                        <p:panel id="filtros" header="Filtros" toggleable="true" toggleSpeed="500" closeSpeed="500" 
-                                 widgetVar="panel" style="margin-bottom:85px; margin-top: -120px; margin-left: 675px; width: 400px; font-size: medium" 
-                                 collapsed="true" closeTitle="Painel">
+                                <!--h:panelGrid columns="1" cellspacing="10"-->
 
-                            <h:panelGrid columns="1" cellspacing="10">
-
-                                <h:panelGrid columns="2" cellpadding="5">
-                                    <p:outputLabel for="campus" value="Câmpus:" />
-                                    <p:selectOneRadio id="campus" value="#{disponibilidadeController.campus}">
+                                <h:panelGrid columns="2" cellpadding="5" style="margim-top: -15px">                                      
+                                    <p:outputLabel for="campus" value="Campus:"/>
+                                    <p:selectOneRadio id="campus" onchange="submit()" immediate="true" valueChangeListener="#{disponibilidadeController.onChangeCampus}"
+                                                      value="#{disponibilidadeController.campus}">
                                         <f:selectItem itemLabel="SA" itemValue="SA" />
                                         <f:selectItem itemLabel="SB" itemValue="SB" />
+                                        <f:selectItem itemLabel="Ambos" itemValue="Ambos"/>
                                     </p:selectOneRadio>
-                                </h:panelGrid>
 
-                                <h:panelGrid columns="2" cellpadding="5">
-                                    <p:outputLabel for="turno" value="Turno:" />
-                                    <p:selectOneRadio id="turno" value="#{disponibilidadeController.turno}">
+                                    <p:outputLabel for="turno" value="Turno:"/>
+                                    <p:selectOneRadio id="turno" onchange="submit()" immediate="true" valueChangeListener="#{disponibilidadeController.onChangeTurno}"
+                                                      value="#{disponibilidadeController.turno}">
                                         <f:selectItem itemLabel="D" itemValue="D" />
                                         <f:selectItem itemLabel="N" itemValue="N" />
+                                        <f:selectItem itemLabel="Ambos" itemValue="Ambos"/>
                                     </p:selectOneRadio>
+
+                                    <h:outputText value="Filtrar por afinidades:"/>
+                                    <p:selectOneRadio id="afinidade" onchange="submit()" immediate="true" valueChangeListener="#{disponibilidadeController.onChangeAfinidades}"
+                                                      value="#{disponibilidadeController.valor}">
+                                        <f:selectItem itemLabel="SIM" itemValue="sim" />
+                                        <f:selectItem itemLabel="NÃO" itemValue="nao" />
+                                    </p:selectOneRadio>
+                                    
+                                    <h:outputText value="Filtrar por Curso:"/>
+                                    <h:panelGrid id="selectCursos" columns="3" styleClass="panelGridCenter">
+                                        <p:selectCheckboxMenu value="#{disponibilidadeController.filtrosSelecCursos}" label="Cursos"
+                                                          filter="true" filterMatchMode="startsWith">
+                                            <f:selectItems value="#{disponibilidadeController.filtrosCursos}" />
+                                        </p:selectCheckboxMenu>
+                                        <p:commandButton id="bntCursos" value="Buscar" actionListener="#{disponibilidadeController.filtrarCursos()}"
+                                                         update="@(form:turmasTable)"/>
+                                        <p:commandButton id="btnLimpar" value="" icon="ui-icon-closethick" style="width: 30px; height: 25px; font-size: smaller"
+                                                         action="#{disponibilidadeController.limparFiltroQuad()}" update="@(form:turmasTable"/>
+                                    </h:panelGrid>
                                 </h:panelGrid>
 
-                                <h:panelGrid columns="2">
-                                    <h:outputText value="Filtrar por afinidades: " />
-                                    <p:selectBooleanButton id="value2" value="#{disponibilidadeController.filtrarAfinidades}" 
-                                                           onLabel="Sim" offLabel="Não" onIcon="ui-icon-check" offIcon="ui-icon-close" 
-                                                           style="width:70px; height: 27px; text-align: center">
-                                    </p:selectBooleanButton>
-                                </h:panelGrid>
+                                <!--/h:panelGrid-->
 
-                            </h:panelGrid>
+                            </p:panel>
+                        </h:panelGrid>
 
-                            <p:separator/>
-
-                            <h:panelGrid columns="2" cellpadding="10" class="ui-grid">
-                                <p:commandButton    icon="ui-icon-search"  actionListener="#{disponibilidadeController.filtrarTurmasQuad()}"
-                                                    update="@(form:turmasTable), @(form:filtros)" value="Aplicar Filtro"
-                                                    style="height: 25px" title="Filtrar disciplinas">
-                                </p:commandButton>
-
-                                <p:commandButton    ajax="false"  actionListener="#{disponibilidadeController.limparFiltroQuad()}"
-                                                    update="@(form:turmasTable)" icon="ui-icon-closethick" value="Remover Filtro"
-                                                    style="height: 25px" title="Limpar filtros">
-                                </p:commandButton>
-
-                            </h:panelGrid>
-
-                        </p:panel>
-
-                        <h:panelGrid id="painel" columns="1" style=" alignment-adjust: central" styleClass="panelGridCenter">
+                        <h:panelGrid id="painel" columns="1" style="alignment-adjust: central" styleClass="panelGridCenter">
 
                             <!--h:outputLabel value="Créditos planejados: "/>
                             <h:outputText value="#{disponibilidadeController.creditosPlanejados}" id="qtdCreditos"/-->
@@ -139,14 +135,14 @@
                             <!--Remover as labels de créditos sem afetar a página-->
                             <h:panelGrid columns="2">
                                 <p:commandButton id="buttonSe" style="width: 140px; height: 30px; font-size: smaller; position: relative"  
-                                                 value="Selecionar" actionListener="#{disponibilidadeController.salvarDisp()}"
-                                                 immediate="true" update="turmasTable, growl"> 
+                                                 value="Selecionar" action="#{disponibilidadeController.salvarDisp()}"
+                                                 update="@(form:turmasTable), @(form:grow)" immediate="true"> 
                                 </p:commandButton>
 
-                                <p:commandButton id="btnVer" style="width: 140px; height: 30px; font-size: smaller; position: relative"  
+                                <p:commandButton id="btnVer" style="width: 140px; height: 30px; font-size: smaller; position: relative" 
                                                  value="Visualizar" immediate="true" oncomplete="PF('dlg').show();" >                                                 
                                 </p:commandButton>
-                            </h:panelGrid><!--Probmelas na autalização da página, desabilita o visualiazar-->
+                            </h:panelGrid><!--Probmelas na autalização da página, desabilita os outros botões-->
                             <br/>
 
                             <p:dataTable var="turma" value="#{disponibilidadeController.dataModel}" 
@@ -195,7 +191,7 @@
                                 <p:column headerText="Turno" style="width: 6%" >
                                     <h:outputText value="#{turma.turno}" style="width: 6%" />
                                 </p:column>
-                                <p:column headerText="Câmpus" style="width: 6%">
+                                <p:column headerText="Campus" style="width: 8%">
                                     <h:outputText value="#{turma.campus}" style="width: 6%"/>
                                 </p:column>
                                 <p:column headerText="Qdt. turmas" style="width: 8%">
@@ -203,9 +199,8 @@
                                 </p:column>
                             </p:dataTable>
 
-                            <!--p:commandButton id="buttonSe" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                             value="Selecionar" actionListener="#{disponibilidadeController.salvarDisponibilidade()}"
-                                             immediate="true" oncomplete="PF('dlg').show();" > 
+                            <!--p:commandButton id="btnTeste" style="width: 140px; height: 30px; font-size: smaller; position: relative"  
+                                             value="Teste" update="@(form:turmasTable)" immediate="true"> 
                             </p:commandButton-->
 
                             <!--p:commandButton id="btnVoltar" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"
@@ -220,21 +215,28 @@
                 </p:layout>
 
                 <p:dialog header="Ordem de prioridade" widgetVar="dlg" dynamic="true"
-                          draggable="false" resizable="false" maximizable="true">
+                          resizable="false" maximizable="false" closable="false">
 
-                    <h:outputText escape="false" value="Defina a ordem de preferência das turmas escolhidas," /> <br/>
-                    <h:outputText escape="false" value=" clicando na célula para editar:"/>
+                    <h:outputText escape="false" value="Defina a ordem de preferência das turmas escolhidas:" /> <br/>
+                    <h:outputText escape="false" value="Clique sobre a linha da turma e arraste para a posição equivalente"/> <br/>
+                    <h:outputText value="#{disponibilidadeController.msg}" 
+                                  style="#{disponibilidadeController.verificarBCT() eq true ? 'color:Red' : 'color:Green'}"
+                                  id="aviso" />
                     <br/>
                     <br/>
 
-                    <p:dataTable var="disp" value="#{disponibilidadeController.DModel2}" 
-                                 style="margin-bottom:0; text-align: center; width: 700px"
+                    <p:dataTable var="disp" value="#{disponibilidadeController.DModel2}" draggableRows="true"
+                                 style="margin-bottom:0; text-align: center; width: 800px"
+                                 paginator="true" rows="10"
+                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 rowsPerPageTemplate="5,10,15"
                                  id="dispTable"
                                  editMode="cell"
                                  selection="#{disponibilidadeController.selectedDisp}"
                                  rowKey="#{disp.Id}" editable="true">
 
-                        <p:ajax event="cellEdit" listener="#{disponibilidadeController.onCellEdit}"/>                        
+                        <!--p:ajax event="cellEdit" listener="#{disponibilidadeController.onCellEdit}"/--> 
+                        <p:ajax event="rowReorder" listener="#{disponibilidadeController.onRowReorder}" update="dispTable"/>
 
                         <p:column headerText="Disciplina" style="width: 60%">
                             <h:outputText value="#{disp.ofertaDisciplina.disciplina.nome}"/>
@@ -244,11 +246,15 @@
                             <h:outputText value="#{disp.ofertaDisciplina.turno}"/>
                         </p:column>
 
-                        <p:column headerText="Câmpus" style="width: 20%">
+                        <p:column headerText="Campus" style="width: 20%">
                             <h:outputText value="#{disp.ofertaDisciplina.campus}"/>
                         </p:column>
-
+                        
                         <p:column headerText="Ordem" style="width:15%">
+                            <h:outputText value="#{disp.ordemPreferencia}"/>
+                        </p:column>
+
+                        <!--p:column headerText="Ordem" style="width:15%">
                             <p:cellEditor>
                                 <f:facet name="output"><h:outputText value="#{disp.ordemPreferencia}" /></f:facet>
                                 <f:facet name="input">
@@ -257,7 +263,15 @@
                                     </h:selectOneMenu>
                                 </f:facet>
                             </p:cellEditor>
-                        </p:column>
+                        </p:column-->
+
+                        <!--p:column headerText="Posicionar" style="width: 20%">
+                            <p:selectManyButton value="#{disponibilidadeController.posicao}">
+                                <p:ajax listener="#{disponibilidadeController.mover(disp)}" event="change" process="@this" update="dispTable"/>
+                                <f:selectItem itemLabel="↑" itemValue="UP"/>
+                                <f:selectItem itemLabel="↓" itemValue="DOWN"/>
+                            </p:selectManyButton>
+                        </p:column-->
 
                         <p:column headerText="Teoria/Pratica" style="width: 25%">
                             <h:outputText value="#{disp.tp}"/>
@@ -265,14 +279,14 @@
 
                         <p:column headerText="Deletar" style="width: 20%">
                             <p:commandButton id="deleteDisp" value="Deletar" action="#{disponibilidadeController.deleteDisp(disp)}"
-                                             update="@(form:growl)" process="@this"/>
+                                             update="dispTable"/>
                         </p:column>
 
                     </p:dataTable>
 
                     <br/>
 
-                    <p:commandButton id="closeB" value="Salvar" oncomplete="PF('dlg').hide();" 
+                    <p:commandButton id="closeB" value="Salvar" oncomplete="PF('dlg').hide();" process="@this"
                                      update="@(form:turmasTable), @(form:growl)" actionListener="#{disponibilidadeController.sucessoFase1()}"/>
                     <!--p:commandButton id="deleteDisponibilidade" value="Deletar"/-->
 
