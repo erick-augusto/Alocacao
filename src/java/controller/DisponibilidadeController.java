@@ -38,7 +38,7 @@ import util.OfertaDisciplinaLazyModel;
 
 @Named(value = "disponibilidadeController")
 @SessionScoped
-public class DisponibilidadeController implements Serializable {
+public class DisponibilidadeController extends Filtros implements Serializable {
 
     private ExternalContext externalContext;
     private LoginBean loginBean;
@@ -1009,6 +1009,8 @@ public class DisponibilidadeController implements Serializable {
     private String valor;
     
     private String curso;
+    
+    private List<String> cursos;
 
     private Set<Afinidade> afinidades;
 
@@ -1066,6 +1068,17 @@ public class DisponibilidadeController implements Serializable {
 
     public void setCurso(String curso) {
         this.curso = curso;
+    }
+    
+    public List<String> getCursos(){
+        if(cursos == null){
+            cursos = super.getFiltrosSelecCursos();           
+        }
+        return cursos;
+    }
+    
+    public void setCursos(List<String> cursos){
+        this.cursos = cursos;
     }
 
     public int getQuadrimestre() {
@@ -1149,7 +1162,7 @@ public class DisponibilidadeController implements Serializable {
         }
     }
     
-    public void onChangeCurso(ValueChangeEvent event){
+    /*public void onChangeCurso(ValueChangeEvent event){
         curso = event.getNewValue().toString();
         valor = "";
         turno = "";
@@ -1172,6 +1185,26 @@ public class DisponibilidadeController implements Serializable {
             filtrarAfinidades = false;
             limparFiltroQuad();
         }
+    }*/
+    
+    public void filtrarCursos(){
+        dataModel = null;
+        cursos = null;
+        cursos = super.getFiltrosSelecCursos();
+        //Falha ao fazer a busca no banco de dados
+        List<OfertaDisciplina> filtradas = turmasFacade.buscaCurso(cursos, quadrimestre);
+        List<Disp> salvas = dispFacade.findByDocenteQuad(pessoa, quadrimestre);
+        List<OfertaDisciplina> remover = new ArrayList();
+        for(Disp salva : salvas){
+            remover.add(salva.getOfertaDisciplina());
+        }
+        List<OfertaDisciplina> disponivel = new ArrayList();
+        for(OfertaDisciplina filtrada: filtradas){
+            if(!remover.contains(filtrada)){
+                disponivel.add(filtrada);
+            }
+        }
+        dataModel = new OfertaDisciplinaLazyModel(disponivel);
     }
 
     //Métodos dos filtros
