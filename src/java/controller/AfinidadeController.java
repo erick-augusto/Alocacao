@@ -190,7 +190,10 @@ public class AfinidadeController extends Filtros implements Serializable{
         eixos = null;
         cursos = super.getFiltrosSelecCursos();        
         eixos = super.getFiltrosSelecEixos();
-        String conteudo = cursos.get(0);
+        String conteudo = "";
+        if(cursos.size() > 0){
+            conteudo = cursos.get(0);
+        }
         //boolean bis = true;
         if(cursos.size() > 1){
             for (int i=0;i<cursos.size();i++) {
