@@ -41,13 +41,36 @@
                                           Cognição." style="font-size: 15px"/>
                         </p:panel>
 
-                        <!--p:panel id="pdf"> Abrir PDF - teste
-                            <h:outputLink value="/home/charles/Documentos/Erick/tutorial.pdf" target="_blank">Tutorial</h:outputLink>
-                        </p:panel-->
+                        <p:panel id="Historico" header="Planejamento Anual" style="position: relative; top: 75px">
+                            <p:dataTable var="disp" value="#{disponibilidadeController.DModel2}"
+                                         id="dispTable" rowKey="#{disp.Id}">
 
-                        <!--h3>PDF</h3><object type="application/pdf" data="/home/charles/Documentos/Erick/tutorial.pdf" height="300px" width="100%">
-                            <a href="/home/charles/Documentos/Erick/tutorial.pdf"></a>
-                        </object-->
+                                <p:column headerText="Disciplina" style="width: 60%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.disciplina.nome}"/>
+                                </p:column>  
+
+                                <p:column headerText="Turno" style="width: 15%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.turno}"/>
+                                </p:column>
+
+                                <p:column headerText="Campus" style="width: 20%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.campus}"/>
+                                </p:column>
+
+                                <p:column headerText="Ordem" style="width:15%; font-size: 12px">
+                                    <h:outputText value="#{disp.ordemPreferencia}"/>
+                                </p:column>
+
+                                <p:column headerText="Teoria/Pratica" style="width: 25%; font-size: 12px">
+                                    <h:outputText value="#{disp.tp}"/>
+                                </p:column>
+                                
+                                <p:column headerText="Quadrimestre" style="width: 15%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.quadrimestre}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:panel>
 
                     </p:layoutUnit>
 
