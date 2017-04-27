@@ -55,15 +55,12 @@ public class Credito implements Serializable {
     public void setDocente(Docente docente) {
         this.docente = docente;
     }
-    
-    
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (ID != null ? ID.hashCode() : 0);
         return hash;
-
     }
 
     @Override
@@ -79,12 +76,10 @@ public class Credito implements Serializable {
         }
 
         return true;
-
     }
 
     @Override
     public String toString() {
         return "Créditos: " + this.quantidade;
-    }
-    
+    }   
 }
