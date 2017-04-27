@@ -47,7 +47,6 @@ public class Docente extends Pessoa{
 
         Integer quadrimestre = (int) (long) quad;
         creditoQuad = 0;
-
 //        for (Iterator<Credito> iterator = creditos.iterator(); iterator.hasNext();) {
 //            if (iterator.next().getQuadrimestre() == quadrimestre) {
 //                creditoQuad = iterator.next().getQuantidade();
@@ -59,12 +58,10 @@ public class Docente extends Pessoa{
             for (Credito c : creditos) {
                 if (c.getQuadrimestre() == quadrimestre) {
                     creditoQuad = c.getQuantidade();
-
                 }
                 break;
             }
         }
-
 //        List<Credito> copia = creditos;
 //        for(Credito c: copia){
 //            if(c.getQuadrimestre() == quadrimestre){
@@ -79,10 +76,6 @@ public class Docente extends Pessoa{
     public void setCreditoQuad(double creditoQuad) {
         this.creditoQuad = creditoQuad;
     }
-    
-    
-
-    
 
     @Override
     public int hashCode() {
@@ -110,21 +103,15 @@ public class Docente extends Pessoa{
     }
 
     public double getCreditoQuad(int quadrimestre) {
-       
-        
+
         creditoQuad = 0;
-        
-        
+
             for (Credito c : creditos) {
                 if (c.getQuadrimestre() == quadrimestre) {
                     creditoQuad = c.getQuantidade();
                     break;
-
-                }
-                
+                }     
             }
-        
         return creditoQuad;
     }
- 
 }
