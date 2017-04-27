@@ -96,7 +96,6 @@ public class Turma implements Serializable {
         int hash = 0;
         hash += (ID != null ? ID.hashCode() : 0);
         return hash;
-
     }
 
     @Override
@@ -110,14 +109,11 @@ public class Turma implements Serializable {
         if ((this.ID == null && other.ID != null) || (this.ID != null && !(this.ID.equals(other.ID)))) {
             return false;
         }
-
         return true;
-
     }
 
     @Override
     public String toString() {
         return this.ID + "";
     }
-
 }
