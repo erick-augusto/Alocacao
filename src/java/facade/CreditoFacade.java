@@ -22,11 +22,10 @@ public class CreditoFacade extends AbstractFacade<Credito>{
 
     @Override
     protected SessionFactory getSessionFactory() {
-
         return HibernateUtil.getSessionFactory();
-
     }
     
+    //Retorna a quantidade de créditos do docente no quadrimestre passado como parâmetro
     public Credito creditoQuadrimestre(Docente docente, int quadrimestre){
             
         try {
@@ -47,11 +46,8 @@ public class CreditoFacade extends AbstractFacade<Credito>{
             }
         } catch (HibernateException e) {
             return null;
-        }
-        
-    }
-
-    
+        }   
+    } 
 }
 
 
