@@ -58,9 +58,9 @@
 
                         <p:growl id="growl" sticky="false" showDetail="true" life="3000" />
 
-                        <h:panelGrid columns="2">
+                        <h:panelGrid columns="3">
                             <p:panel id="PainelCreditos" header="Planejamento de créditos do #{disponibilidadeController.quadrimestre}º Quadrimestre"
-                                     style="width: 650px">
+                                     style="width: 600px">
                                 <h:panelGrid columns="4" cellpadding="5" class="ui-grid">
                                     <h:outputLabel value="Créditos Planejados: " />
                                     <p:spinner id="creditos" value="#{disponibilidadeController.creditosPlanejados}" 
@@ -77,7 +77,7 @@
                                     <h:outputText value=""/>
                                     <h:outputText value=""/-->
                                     <!--Introdução das labels no panel-->
-                                </h:panelGrid>
+                                </h:panelGrid>                                
                             </p:panel>
                             <p:panel id="filtros" header="Filtros" widgetVar="panel" 
                                      style="width: 400px; font-size: medium">
@@ -123,6 +123,20 @@
 
                                 <!--/h:panelGrid-->
 
+                            </p:panel>
+                            
+                            <p:panel id="Observacoes" header="Informações Adicionais">
+                                <p:selectOneRadio id="preferencias" value="#{disponibilidadeController.preferencias}">
+                                                  <f:selectItem itemLabel="Um dia e vários turnos" itemValue="1"/>
+                                                  <f:selectItem itemLabel="Vários dias e um turno" itemValue="2"/>
+                                                  <f:selectItem itemLabel="Vários dias e vários turnos" itemValue="3"/>
+                                </p:selectOneRadio>
+                                <p:inputTextarea rows="5" cols="50" counter="display" maxlength="250" counterTemplate="{0} characters remaining." autoResize="false" />
+                                <br/>
+                                <h:outputText id="display" />
+                                <p:separator/>
+                                <p:commandButton icon="ui-icon-disk" actionListener="#{disponibilidadeController.salvaPreferencias()}" update="growl"
+                                                 style="width: 100px; height: 25px" value="Salvar"/>
                             </p:panel>
                         </h:panelGrid>
 
