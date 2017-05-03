@@ -4,6 +4,7 @@ import facade.CreditoFacade;
 import facade.DispFacade;
 import facade.DisponibilidadeFacade;
 import facade.OfertaDisciplinaFacade;
+import facade.PreferenciasFacade;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import model.Disponibilidade;
 import model.Docente;
 import model.Pessoa;
 import model.OfertaDisciplina;
+import model.Preferencias;
 import org.primefaces.event.CellEditEvent;
 import org.primefaces.event.ReorderEvent;
 import org.primefaces.event.SelectEvent;
@@ -252,6 +254,43 @@ public class DisponibilidadeController extends Filtros implements Serializable {
         //Atualiza o usuário logado
         //LoginBean.setUsuario(docente);
 
+    }
+    
+    private int preferencias;
+    
+    private String informacoes;
+    
+    public int getPreferencias(){
+        return preferencias;
+    }
+    
+    public void setPreferencias(int preferencias){
+        this.preferencias = preferencias;
+    }
+    
+    public String getInformacoes(){
+        return informacoes;
+    }
+    
+    public void setInformacoes(String informacoes){
+        this.informacoes = informacoes;
+    }
+
+    @EJB
+    private PreferenciasFacade preferenciaFacade;
+    
+    //Método para salvar a preferência marcada pelo docente sobre a configuração de horários desejada
+    public void salvaPreferencias(){
+        Preferencias preferencia = new Preferencias();
+        preferencia.setPreferenciaHorarios(preferencias);
+        preferencia.setObservacoes(informacoes);
+        preferencia.setQuadrimestre(quadrimestre);
+        preferencia.setPessoa_id(pessoa.getID());
+        preferenciaFacade.save(preferencia);
+        
+        informacoes = null;
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,"Successful", "Informações salvas com Sucesso!"));
     }
 
     private List<OfertaDisciplina> ofertasEtapa1;
@@ -1096,6 +1135,8 @@ public class DisponibilidadeController extends Filtros implements Serializable {
         turno = "Ambos";
         curso = "nao";
         valor = "nao";
+        preferencias = 3;
+        informacoes = null;
         dModel2 = null;
         dataModel = null;
     }
