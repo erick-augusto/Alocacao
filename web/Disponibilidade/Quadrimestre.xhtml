@@ -131,12 +131,13 @@
                                                   <f:selectItem itemLabel="Vários dias e um turno" itemValue="2"/>
                                                   <f:selectItem itemLabel="Vários dias e vários turnos" itemValue="3"/>
                                 </p:selectOneRadio>
-                                <p:inputTextarea rows="5" cols="50" counter="display" maxlength="250" counterTemplate="{0} characters remaining." autoResize="false" />
+                                <p:inputTextarea value="#{disponibilidadeController.informacoes}" rows="5" cols="50" counter="display" maxlength="250" 
+                                                 counterTemplate="{0} characters remaining." autoResize="false" />
                                 <br/>
                                 <h:outputText id="display" />
                                 <p:separator/>
-                                <p:commandButton icon="ui-icon-disk" actionListener="#{disponibilidadeController.salvaPreferencias()}" update="growl"
-                                                 style="width: 100px; height: 25px" value="Salvar"/>
+                                <p:commandButton icon="ui-icon-disk" actionListener="#{disponibilidadeController.salvaPreferencias()}" 
+                                                 update="Observacoes, growl" style="width: 100px; height: 25px" value="Salvar"/>
                             </p:panel>
                         </h:panelGrid>
 
