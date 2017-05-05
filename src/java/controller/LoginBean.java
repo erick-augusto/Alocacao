@@ -98,7 +98,7 @@ public class LoginBean implements Serializable {
         this.loggedIn = loggedIn;
     }
     
-    private String teste;
+    /*private String teste;
     
     public String getTeste(){
         return teste;
@@ -106,7 +106,7 @@ public class LoginBean implements Serializable {
     
     public void setTeste(String teste){
         this.teste = teste;
-    }
+    }*/
 
 //    private String nome;
 
@@ -164,11 +164,12 @@ public class LoginBean implements Serializable {
         context.addCallbackParam("loggedIn", loggedIn);
     }
     
-    //Login sem verificar a senha pelo protocolo LDAP
-    //Verifica apenas se o usuário existe no banco de dados
-    //Deve ser usado para testar se o se o sistema ainda está funcionando caso o login não esteja autenticando com o LDAP
-    //Nesse caso, é provável que a porta do servidor LDAP não esteja com acesso permitido e é necessário verificar com 
-    //o NTI para eles permitirem o acesso novamente
+    /*Login sem verificar a senha pelo protocolo LDAP
+    *Verifica apenas se o usuário existe no banco de dados
+    *Deve ser usado para testar se o se o sistema ainda está funcionando caso o login não esteja autenticando com o LDAP
+    *Nesse caso, é provável que a porta do servidor LDAP não esteja com acesso permitido e é necessário verificar com 
+    *o NTI para eles permitirem o acesso novamente
+    */
     public void doLogin2() {
 
         RequestContext context = RequestContext.getCurrentInstance();
@@ -277,8 +278,8 @@ public class LoginBean implements Serializable {
         HttpSession session = (HttpSession) ec.getSession(false);
         
         if (session != null) {
-        session.invalidate();
-    }
+            session.invalidate();
+        }
         return "/login?faces-redirect=true";
     }
 
