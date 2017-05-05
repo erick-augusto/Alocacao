@@ -74,8 +74,6 @@ public class AfinidadeController extends Filtros implements Serializable{
     @EJB
     private DisciplinaFacade disciplinaFacade;
     
-    
-    
 //-------------------------------------------Definir afinidade-------------------------------------------------------------------------
     //Guarda a afinidade atual
     private Afinidade afinidade;
@@ -114,21 +112,18 @@ public class AfinidadeController extends Filtros implements Serializable{
     public List<Disciplina> getDisponiveis() {
         docente = loginBean.getDocente();
         Pessoa p = loginBean.getUsuario();
-        String teste = loginBean.getTeste();
+        //String teste = loginBean.getTeste();
 
         if (disponiveis == null) {
-            
             //Usuário que fez o logon
             //docente = LoginBean.getUsuario();
 
             //Todas as afinidades do usuario
             todasAfinidades = new ArrayList(docente.getAfinidades());
-            
             escolhidas = new ArrayList<>();
             
             //Adiciona ao array escolhidas as disciplinas que estao como "Adicionada" em afinidades
             for(Afinidade a: todasAfinidades){
-                
                 if(a.getEstado().equals("Adicionada")){
                     escolhidas.add(a.getDisciplina());
                 }        
@@ -184,7 +179,6 @@ public class AfinidadeController extends Filtros implements Serializable{
      * E atualiza as duas listas de disponíveis e escolhidas
      */
     public void filtrar() {
-        
         //Setando valores locais para manter os filtros;
         cursos = null;
         eixos = null;
@@ -219,7 +213,6 @@ public class AfinidadeController extends Filtros implements Serializable{
                 escolhidas.add(a.getDisciplina());
             }        
         }
-        
         for (Disciplina t : escolhidas) {
             disponiveis.remove(t);
         }
@@ -232,7 +225,6 @@ public class AfinidadeController extends Filtros implements Serializable{
      * Carrega todas as disciplinas disponiveis novamente
      */
     public void limparFiltro(){
-    
         disponiveis = null;
         cursos = null;
         eixos = null;
@@ -274,7 +266,6 @@ public class AfinidadeController extends Filtros implements Serializable{
                 afinidadeFacade.edit(a);
             }            
         }
-        
         disponiveis = null;
         paraRemover = null;
         paraAdicionar = null;                 
@@ -420,12 +411,10 @@ public class AfinidadeController extends Filtros implements Serializable{
             if (object instanceof Afinidade) {
                 Afinidade d = (Afinidade) object;               
                 return getStringKey(new BigDecimal(d.getId().toString()).setScale(0, BigDecimal.ROUND_HALF_UP).longValue());
-
             } else {
                 throw new IllegalArgumentException("object " + object + " is of type " + object.getClass().getName() + "; expected type: " + Afinidade.class.getName());
             }
         }
     }
-
 }
 
