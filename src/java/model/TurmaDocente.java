@@ -16,7 +16,7 @@ import javax.persistence.Table;
 
 /**
  *
- * @author Erick
+ * @author erick
  */
 
 //Carregará as turmas escolhidas pelo docente
@@ -105,6 +105,5 @@ public class TurmaDocente implements Serializable {
     @Override
     public String toString() {
         return "model.TurmaDocente[ id=" + id + " ]";
-    }
-    
+    }    
 }

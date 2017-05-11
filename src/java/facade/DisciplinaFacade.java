@@ -21,11 +21,10 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
 
     @Override
     protected SessionFactory getSessionFactory() {
-
         return HibernateUtil.getSessionFactory();
-
     }
     
+    //Busca a lista de afinidades da disciplina
     public Disciplina inicializarColecaoAfinidades(Disciplina d) {
 
         Session session = getSessionFactory().openSession();
@@ -34,7 +33,6 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         Hibernate.initialize(d.getAfinidades());
         session.close();
         return d;
-
     }
 
     /**
@@ -51,7 +49,6 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         session.close();
 
         return results;
-
     }
 
     
@@ -72,12 +69,9 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         
         if(!results.isEmpty()){
             return results.get(0);
-        }
-        
-        else{
+        } else{
             return null;
-        }
-        
+        }  
     }
 
     /**
@@ -91,7 +85,6 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
         List<Disciplina> disciplinas = new ArrayList<>();
 
         try {
-
             Session session = getSessionFactory().openSession();
 
             if (!eixos.isEmpty()) {
@@ -107,7 +100,6 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
 //                    List resultado = query.list();              
                 }
             }
-
             if (!cursos.isEmpty()) {
 
                 for (String curso : cursos) {
@@ -121,16 +113,11 @@ public class DisciplinaFacade extends AbstractFacade<Disciplina> {
 //                    List resultado = query.list();
 //                    disciplinas.addAll(resultado);
                 }
-
             }
-
             return disciplinas;
-
         } catch (HibernateException e) {
             return null;
         }
-
     }
-
 }
 

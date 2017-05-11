@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Fora do Período</title>
+    </h:head>
+    <h:body>
+        <h:outputStylesheet library="css" name="style.css" />
+
+        <f:view>
+
+            <h:form>
+
+                <p:layout fullPage="true">
+
+                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
+
+                        <p:panel style="height: 43px">
+                            <h:commandLink value="Afinidades" style="position: relative; right: 460px; color: #2E8B57"
+                                           action="#{disponibilidadeController.prepareAfinidades()}" immediate="true"/>
+                            <h:outputLabel value="Sistema de Alocação Didática" style="color: #2E8B57; font-family: 'Play'; font-size: 24px"/>
+                            <h:commandLink value="Logout" style="position: relative; left: 460px; color: #2E8B57"
+                                           action="#{loginBean.doLogout()}" immediate="true"/>
+                        </p:panel>
+
+
+                    </p:layoutUnit> 
+
+                    <p:layoutUnit position="center">
+
+                        <p:panel id="Info" header="Painel Informativo"
+                                 style="font-size: 17px; color: #2E8B57; position: relative; top: 50px; width: 1000px; margin-left: 200px">
+                            <h:outputText value="Informamos que o sistema se encontra indisponível para esta data,
+                                          sendo possível apenas o acesso à escolha de afinidades." style="font-size: 15px"/>
+                            <br/>
+                            <h:outputText value="As demais funções do sistema estarão operando novamente nas datas
+                                          previstas pelos coordenadores do Centro de Matemática, Computação e
+                                          Cognição." style="font-size: 15px"/>
+                        </p:panel>
+
+                        <p:panel id="Historico" header="Planejamento Anual" style="position: relative; top: 75px">
+                            <p:dataTable var="disp" value="#{disponibilidadeController.DModel2}"
+                                         id="dispTable" rowKey="#{disp.Id}">
+
+                                <p:column headerText="Disciplina" style="width: 60%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.disciplina.nome}"/>
+                                </p:column>  
+
+                                <p:column headerText="Turno" style="width: 15%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.turno}"/>
+                                </p:column>
+
+                                <p:column headerText="Campus" style="width: 20%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.campus}"/>
+                                </p:column>
+
+                                <p:column headerText="Ordem" style="width:15%; font-size: 12px">
+                                    <h:outputText value="#{disp.ordemPreferencia}"/>
+                                </p:column>
+
+                                <p:column headerText="Teoria/Pratica" style="width: 25%; font-size: 12px">
+                                    <h:outputText value="#{disp.tp}"/>
+                                </p:column>
+                                
+                                <p:column headerText="Quadrimestre" style="width: 15%; font-size: 12px">
+                                    <h:outputText value="#{disp.ofertaDisciplina.quadrimestre}"/>
+                                </p:column>
+
+                            </p:dataTable>
+                        </p:panel>
+
+                    </p:layoutUnit>
+
+                </p:layout>
+            </h:form>
+        </f:view>
+    </h:body>
+</html>

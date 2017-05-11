@@ -1,5 +1,6 @@
 package controller;
 
+import facade.DocenteFacade;
 import facade.FaseFacade;
 import facade.PessoaFacade;
 import java.io.IOException;
@@ -9,8 +10,9 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -29,30 +31,40 @@ import javax.naming.directory.SearchResult;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 import javax.servlet.http.HttpSession;
+import model.Docente;
 import model.Fase;
 import model.Pessoa;
 import org.primefaces.context.RequestContext;
 
-@Named("loginBean")
+//@Named("loginBean")
+@ManagedBean(name="loginBean")
 @SessionScoped
 public class LoginBean implements Serializable {
 
     @EJB
     private PessoaFacade pessoaFacade;
+    @EJB
+    private DocenteFacade docenteFacade;
 
-    
     //Guarda o usuário ativo após o login
-    private static Pessoa usuario;
+    private Pessoa usuario;
+    private Docente docente;
 
-    public static Pessoa getUsuario() {
+    public Pessoa getUsuario() {
         return usuario;
     }
 
-    public static void setUsuario(Pessoa usuario) {
-        LoginBean.usuario = usuario;
+    public void setUsuario(Pessoa usuario) {
+        this.usuario = usuario;
     }
-
     
+    public Docente getDocente(){
+        return docente;
+    }
+    
+    public void setDocente(Docente docente){
+        this.docente = docente;
+    }
 
     //Login digitado pelo usuário para fazer o acesso
     private String username;
@@ -76,7 +88,6 @@ public class LoginBean implements Serializable {
         this.password = password;
     }
 
-    
     private boolean loggedIn;
 
     public boolean isLoggedIn() {
@@ -86,10 +97,20 @@ public class LoginBean implements Serializable {
     public void setLoggedIn(boolean loggedIn) {
         this.loggedIn = loggedIn;
     }
+    
+    /*private String teste;
+    
+    public String getTeste(){
+        return teste;
+    }
+    
+    public void setTeste(String teste){
+        this.teste = teste;
+    }*/
 
 //    private String nome;
 
-    //Realiza o login caso de tudo certo 
+    //Realiza o login caso dê tudo certo 
     public void doLogin() {
 
         RequestContext context = RequestContext.getCurrentInstance();
@@ -104,7 +125,7 @@ public class LoginBean implements Serializable {
         // Create the initial context
         DirContext ctx = ldap.authenticate(username, password);
 
-        if (ctx != null) {
+        if (ctx != null) {           
 
             try {
                 Attributes attrs = ctx.getAttributes(ldap.makeDomainName(username));
@@ -117,9 +138,14 @@ public class LoginBean implements Serializable {
 //            if(usuario.getLogin().equals("elaine.konno")){
 //                loggedIn = true;
 //            }
-            
 
             usuario = pessoaFacade.findByUsername(username);
+            docente = docenteFacade.buscaDocente(usuario.getNome());
+            //docente = new Docente();
+            //docente.setNome("Erick");
+            //docente.setSiape("11111");
+            //docente.setAdm(true);
+            //teste = "teste";
 
             if (usuario != null) {
                 loggedIn = true;
@@ -129,19 +155,21 @@ public class LoginBean implements Serializable {
                 loggedIn = false;
                 msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Credenciais inválidas");
             }
-
         } else {
-
             loggedIn = false;
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Credenciais inválidas");
         }
 
-    
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("loggedIn", loggedIn);
-
     }
     
+    /*Login sem verificar a senha pelo protocolo LDAP
+    *Verifica apenas se o usuário existe no banco de dados
+    *Deve ser usado para testar se o se o sistema ainda está funcionando caso o login não esteja autenticando com o LDAP
+    *Nesse caso, é provável que a porta do servidor LDAP não esteja com acesso permitido e é necessário verificar com 
+    *o NTI para eles permitirem o acesso novamente
+    */
     public void doLogin2() {
 
         RequestContext context = RequestContext.getCurrentInstance();
@@ -152,6 +180,12 @@ public class LoginBean implements Serializable {
         this.password = this.password.trim();
 
         usuario = pessoaFacade.findByUsername(username);
+        docente = docenteFacade.buscaDocente(usuario.getNome());
+        //docente = new Docente();
+        //    docente.setNome("Erick");
+        //    docente.setSiape("11111");
+        //    docente.setAdm(true);
+        //    teste = "teste";
 
         if (usuario != null) {
             loggedIn = true;
@@ -160,10 +194,8 @@ public class LoginBean implements Serializable {
             loggedIn = false;
             msg = new FacesMessage(FacesMessage.SEVERITY_WARN, "Login Error", "Credenciais inválidas");
         }
-
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("loggedIn", loggedIn);
-
     }
     
     private Fase faseAtiva;
@@ -171,28 +203,29 @@ public class LoginBean implements Serializable {
     @EJB 
     private FaseFacade verificaFase;
 
+    //Verifica qual a fase ativa do sistema e direciona para a página correspondente
     public String page() {
         //Fase faseAtiva = new Fase();
         if (loggedIn) {
             //return "/Afinidades/DefinirAfinidade";
             faseAtiva = verificaFase.achaMax();
             if(faseAtiva == null){
-                return "/index";
+                return "/ForaDoPeriodo";
             }
-            if(faseAtiva.isAfinidades() == true){
-                return "/Afinidades/DefinirAfinidade";
+            if(faseAtiva.isFase1() == true){
+                return "/Disponibilidade/Planejamento";
             }
-            if(faseAtiva.isFase1_quad1() == true){
-                return "/Disponibilidade/FaseIQuad1.xhtml";
+            if(faseAtiva.isFase2_quad1() == true){
+                return "/Disponibilidade/FaseII";
             }
-            if(faseAtiva.isFase1_quad2() == true){
-                return "/Disponibilidade/FaseIQuad2.xhtml";
+            if(faseAtiva.isFase2_quad2() == true){
+                return "/Disponibilidade/FaseII";
             }
-            if(faseAtiva.isFase1_quad3() == true){
-                return "/Disponibilidade/FaseIQuad3.xhtml";
+            if(faseAtiva.isFase2_quad3() == true){
+                return "/Disponibilidade/FaseII";
             }
-            if(faseAtiva.isFase2() == true){
-                return "/Disponibilidade/FaseII.xhtml";
+            else{
+                return "/ForaDoPeriodo";
             }
             /*if(faseAtiva.get(0).isAfinidades() == true){
                 return "/Afinidades/DefinirAfinidade";
@@ -209,30 +242,30 @@ public class LoginBean implements Serializable {
             if(faseAtiva.get(0).isFase2() == true){
                 return "/Disponibilidade/FaseII.xhtml";
             }*/
-            else{
-                return "/index";
-            }
+            //else{
+                //return "/index";
+            //}
         }
         return "/login";
     }
 
+    //Verifica se o usuário está logado
     public void isLogado() {
 
         if (!loggedIn) {
             try {
-                
                 FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml?faces-redirect=true");
             } catch (IOException ex) {
 //                Logger.getLogger(CalendarioController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 //        this.loggedIn = true;
-
     }
 
+    //Faz o logout do usuário
     public String doLogout() {
 
-//        RequestContext context = RequestContext.getCurrentInstance();
+//      RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg;
         msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Logout efetuado", "");
         loggedIn = false;
@@ -245,11 +278,9 @@ public class LoginBean implements Serializable {
         HttpSession session = (HttpSession) ec.getSession(false);
         
         if (session != null) {
-        session.invalidate();
-    }
-
+            session.invalidate();
+        }
         return "/login?faces-redirect=true";
-
     }
 
     //Classe que contém as funcionalidades do LDAP
@@ -314,7 +345,5 @@ public class LoginBean implements Serializable {
 //        return "";
             return null;
         }
-
     }
-
 }

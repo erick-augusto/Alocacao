@@ -12,11 +12,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -32,8 +34,15 @@ import util.DisciplinaLazyModel;
 @SessionScoped
 public class DisciplinaController extends Filtros implements Serializable {
 
+    private ExternalContext externalContext;
+    private LoginBean loginBean;
+    private Pessoa docente;
+    
     public DisciplinaController() {
-
+        externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        loginBean = (LoginBean) sessionMap.get("loginBean");
+        docente = loginBean.getUsuario();
     }
 
     //Guarda a disciplina atual
@@ -46,12 +55,10 @@ public class DisciplinaController extends Filtros implements Serializable {
         }
 
         return disciplina;
-
     }
 
     private Disciplina getDisciplina(Long key) {
         return this.buscar(key);
-
     }
 
     public void setDisciplina(Disciplina disciplina) {
@@ -78,6 +85,7 @@ public class DisciplinaController extends Filtros implements Serializable {
         disciplinaLazyModel = new DisciplinaLazyModel(this.listarTodas());
     }
 
+    //Método para verificar a qual eixo a disciplina pertence com base na sigla
     private String converteEixo(String sigla) {
 
         char letra = sigla.charAt(2);
@@ -104,10 +112,10 @@ public class DisciplinaController extends Filtros implements Serializable {
                 return "Ciência, Tecnologia e Inovação";
             default:
                 return "Mais de um eixo";
-
         }
     }
 
+    //Método que verifica a qual curso a disciplina pertence com base na sigla
     private String converteCurso(String sigla) {
 
         switch (sigla.substring(0, 2)) {
@@ -186,14 +194,26 @@ public class DisciplinaController extends Filtros implements Serializable {
                     //Mudar
                     default:
                         return "";
-
                 }
         }
-
         return null;
-
+    }
+    
+    //Além dos eixos foi colocado o curso referente dos BI's para buscar por cursos nos filtros
+    private String converteBI(String sigla){
+        switch (sigla.substring(0, 2)) {
+            case "BI":
+                return "Comum aos BI's";
+            case "BC":
+                return "Bacharelado em Ciência e Tecnologia";
+            case "BH":
+                return "Bacharelado em Ciência e Humanidades";
+            default:
+                return "";
+        }
     }
 
+    //Método para o cadastro das disciplinas
     public void cadastrarDisciplinas() {
 
         String[] palavras;
@@ -212,33 +232,32 @@ public class DisciplinaController extends Filtros implements Serializable {
                     
                     palavras = linha.split(";");
                     
-                    List<Disciplina> disciplinaExist = disciplinaFacade.findByName(palavras[2]);
+                    List<Disciplina> disciplinaExist = disciplinaFacade.findByName(palavras[1]); //Antes 2
                     
                     if (disciplinaExist.isEmpty()) {
                         Disciplina d = new Disciplina();
-                        d.setNome(palavras[2]);
-                        d.setCodigo(palavras[1]);
+                        d.setNome(palavras[1]); //Antes 2
+                        d.setCodigo(palavras[0]); //Antes1
                         
                         if (palavras[0].substring(0, 2).equals("BC") || palavras[0].substring(0, 2).equals("BH")
                                 || palavras[0].substring(0, 2).equals("BI")) {
                             
                             eixo = converteEixo(palavras[0]);
                             d.setEixo(eixo);
+                            //Acréscimo do curso nos BI's
+                            curso = converteBI(palavras[0]);
+                            d.setCurso(curso);
                             
                         } else {
                             
                             curso = converteCurso(palavras[0]);
-                            d.setCurso(curso);
-                            
-                        }
-                        
+                            d.setCurso(curso);                           
+                        }                        
                         disciplinaFacade.save(d);
-                    }
-                    
+                    }                    
                     linha = lerArq.readLine();
                 }
             } //cabeçalho
-
         } catch (IOException e) {
             System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
         }
@@ -247,10 +266,10 @@ public class DisciplinaController extends Filtros implements Serializable {
         recriarModelo();
 
         JsfUtil.addSuccessMessage("Cadastro de disciplinas realizado com sucesso");
-
     }
     
-     public void deleteAll() {
+    //Método que deleta todas as turmas cadastradas
+    public void deleteAll() {
 
         try {
 
@@ -272,21 +291,14 @@ public class DisciplinaController extends Filtros implements Serializable {
                     //Atualizar o usuário atual caso a disciplina apagada tivesse
                     //alguma relação com ele
                     //Mudar depois
-                    if (docente.getNome().equals(LoginBean.getUsuario().getNome())) {
+                    /*if (docente.getNome().equals(LoginBean.getUsuario().getNome())) {
                         LoginBean.setUsuario(docente);
-                    }
-                    
+                    }      */              
                     afinidadesFacade.remove(a);
-
                 }
-
-                disciplinaFacade.remove(d);
-                
-                
-            }
-            
+                disciplinaFacade.remove(d);   
+            }            
             JsfUtil.addSuccessMessage("Disciplinas Deletadas");
-
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
         }
@@ -294,19 +306,18 @@ public class DisciplinaController extends Filtros implements Serializable {
         recriarModelo();
     }
 
+    //Carrega o lazymodel das disciplinas
     public DisciplinaLazyModel getDisciplinaLazyModel() {
 
         if (disciplinaLazyModel == null) {
             disciplinaLazyModel = new DisciplinaLazyModel(this.listarTodas());
         }
-
         return this.disciplinaLazyModel;
     }
 
     public void recriarModelo() {
 
         disciplinaLazyModel = null;
-
     }
 
     public Disciplina getDisciplinaSalvar() {
@@ -321,8 +332,7 @@ public class DisciplinaController extends Filtros implements Serializable {
     public void setDisciplinaSalvar(Disciplina disciplinaSalvar) {
         this.disciplinaSalvar = disciplinaSalvar;
     }
-    
-    
+        
 //------------------------------------------Resumo de Afinidades----------------------------------------------------
     
     private DisciplinaDataModel disciplinaDataModel;
@@ -364,16 +374,15 @@ public class DisciplinaController extends Filtros implements Serializable {
         List<Afinidade> afinidades;
         if (selecionada != null) {
             afinidades = new ArrayList<>(selecionada.getAfinidades());
-
         } else {
             afinidades = new ArrayList<>();
         }
 
         mostrarAdicionadas = false;
         afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
-
     }
 
+    //Retorna todas as disciplinas marcadas como adicionadas nas afinidades
     public void verSoAdicionadas() {
 
         List<Afinidade> afinidades = new ArrayList<>(selecionada.getAfinidades());
@@ -390,9 +399,9 @@ public class DisciplinaController extends Filtros implements Serializable {
         } else {
             afinidadesDaDisciplina = new AfinidadesLazyModel(afinidades);
         }
-
     }
     
+    //LImpa os datamodels
     public void limparSelecao() {
         selecionada = null;
         afinidadesDaDisciplina = null;
@@ -434,10 +443,10 @@ public class DisciplinaController extends Filtros implements Serializable {
     public void setSelecionada(Disciplina selecionada) {
         this.selecionada = selecionada;
     }
-
     
 //------------------------------------------Filtros de Disciplina-------------------------------------------
     
+    //Método para filtrar as discplinas
     public void filtrar() {
 
         List<Disciplina> disciplinasFiltradas = disciplinaFacade.findByEixoCurso(super.getFiltrosSelecEixos(), super.getFiltrosSelecCursos());
@@ -446,15 +455,11 @@ public class DisciplinaController extends Filtros implements Serializable {
         
         super.setFiltrosSelecEixos(null);
         super.setFiltrosSelecCursos(null);
-
     }
 
+    //Limpar o filtro de disciplinas
     public void limparFiltro() {
-
-        
-
         disciplinaDataModel = null;
-
     }
 
 //-------------------------------------------Metodos de CRUD--------------------------------------------------------------------------------
@@ -465,7 +470,6 @@ public class DisciplinaController extends Filtros implements Serializable {
             JsfUtil.addSuccessMessage("Disciplina " + disciplinaSalvar.getNome() + " cadastrada com sucesso!");
             disciplinaSalvar = null;
             disciplinaLazyModel = null;
-
         } catch (Exception e) {
             JsfUtil.addErrorMessage("Não foi possível cadastrar a disciplina");
         }
@@ -477,7 +481,6 @@ public class DisciplinaController extends Filtros implements Serializable {
             JsfUtil.addSuccessMessage("Disciplina " + disciplina.getNome() + " editada com sucesso!");
             disciplina = new Disciplina();
             disciplinaLazyModel = null;
-
         } catch (Exception e) {
             JsfUtil.addErrorMessage("Não foi possível editar a disciplina");
         }
@@ -499,13 +502,11 @@ public class DisciplinaController extends Filtros implements Serializable {
 //               disciplinaFacade.edit(disciplina);
                 pessoaFacade.edit(atual);
 
-                if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
+                /*if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
                     LoginBean.setUsuario(atual);
-                }
+                }*/
                 afinidadesFacade.remove(a);
-
             }
-
 //           OfertaController tpc = new OfertaController();
             disciplinaFacade.remove(disciplina);
             disciplina = null;

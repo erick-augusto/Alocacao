@@ -44,8 +44,7 @@ public class Afinidade implements Serializable{
         @Override
         public int hashCode(){
             return pessoaId.hashCode() + disciplinaId.hashCode();
-        }
-        
+        }        
     }
     
     @EmbeddedId

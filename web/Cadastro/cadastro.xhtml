@@ -13,10 +13,10 @@
             <p:layout fullPage="true">
 
                 <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
-                    
+
                     <h:commandLink value="Logout" style="position: relative; left: 650px; top: 10px; color: #2E8B57" 
-                                       action="#{loginBean.doLogout()}" immediate="true"/>
-                    
+                                   action="#{loginBean.doLogout()}" immediate="true"/>
+
                     <style type="text/css">
                         .ui-widget{font-size:95% !important;}
                     </style>
@@ -54,7 +54,7 @@
                                     <p:column headerText="Código"  style="width: 10%">
                                         <h:outputText value="#{disciplina.codigo}" />
                                     </p:column>
-                                    
+
                                     <p:column headerText="Nome"  sortBy="#{disciplina.nome}">
                                         <h:outputText value="#{disciplina.nome}" />
                                     </p:column>
@@ -105,7 +105,7 @@
                                                      value="Deletar disciplinas" update="disciplinaTable, @(form:msgs)" immediate="true">
                                     </p:commandButton>
                                 </h:panelGrid>
-                                
+
 
                             </h:panelGrid>
 
@@ -138,8 +138,8 @@
 
                         <p:tab title="Docentes">
                             <h:panelGrid columns="1" cellpadding="10">
-                               
-                                    <p:dataTable var="docente" value="#{docenteController.docenteLazyModel}" paginator="true" rows="5"
+
+                                <p:dataTable var="docente" value="#{docenteController.docenteLazyModel}" paginator="true" rows="5"
                                              paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                                              rowsPerPageTemplate="5,10,15" 
                                              selectionMode="single" 
@@ -190,13 +190,13 @@
 
 
                                 </p:dataTable>
-                                
+
 
                                 <p:commandButton icon="ui-icon-disk"  actionListener="#{docenteController.cadastrarDocentesCMCC()}"
                                                  style="width: 250px; height: 25px; font-size: small" 
                                                  value="Cadastrar docentes por .csv"  update="@all" immediate="true">
                                 </p:commandButton>
-                                
+
                             </h:panelGrid>
 
                             <p:panel header="Cadastrar Novo Docente"  >
@@ -211,7 +211,7 @@
                                     <p:autoComplete id="completeCentro" forceSelection="true" 
                                                     value="#{docenteController.docenteSalvar.centro}" 
                                                     completeMethod="#{pessoaController.completeCentro}" size="7" />
-                                    
+
                                     <h:outputText value="Área: "/>
                                     <p:autoComplete id="completeArea" forceSelection="true" 
                                                     value="#{docenteController.docenteSalvar.areaAtuacao}" 
@@ -233,7 +233,7 @@
 
 
                         </p:tab>
-                        
+
                         <p:tab title="Administradores">
                             <h:panelGrid columns="1" cellpadding="10">
 
@@ -459,18 +459,52 @@
                             </p:tabView>
 
                         </p:tab>
-                        
+
                         <p:tab title="Turmas">
                             <h:panelGrid columns="1" cellpadding="10">
 
-                                
-                                
-                                <p:commandButton icon="ui-icon-disk"  actionListener="#{turmaController.cadastrarTurmas()}" 
+                                <p:dataTable var="turma" value="#{turmaController.turmalazymodel}" paginator="true" rows="10"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             rowsPerPageTemplate="5,10,15" 
+                                             selectionMode="single" 
+                                             selection="#{turmaController.selectedTurma}" 
+                                             id="turmasTable" 
+                                             lazy="true"   rowKey="#{turma.ID}">
+
+                                    <p:column headerText="Disciplina"  sortBy="">
+                                        <h:outputText value="#{turma.disciplina.nome}" />
+                                    </p:column>
+                                    
+                                    <p:column headerText="Turma" style="width: 5%">
+                                        <h:outputText value="#{turma.codturma}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Câmpus" style="width: 7%">
+                                        <h:outputText value="#{turma.campus}"/>
+                                    </p:column>
+                                    
+                                    <p:column headerText="Turno" style="width: 5%">
+                                        <h:outputText value="#{turma.turno}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Horários"  >
+                                        <h:outputText value="#{turmaController.horariosTurma(turma.ID)}" />
+                                    </p:column>
+                                </p:dataTable>
+
+                                <h:panelGrid columns="2">
+
+                                    <p:commandButton icon="ui-icon-disk"  actionListener="#{turmaController.cadastrarTurmas2()}" 
                                                      style="width: 250px; height: 25px; font-size: small" title="Cadastrar turmas"
-                                                     value="Cadastrar turmas por .csv" update="@(form:msgs)" immediate="true">
+                                                     value="Cadastrar turmas por .csv" update="@(form:turmasTable)" immediate="true">
                                     </p:commandButton>
 
-                                 
+                                    <p:commandButton icon="ui-icon-closethick"  actionListener="#{turmaController.deleteTurmas()}" 
+                                                     style="width: 250px; height: 25px; font-size: small" title="Deletar turmas"
+                                                     value="Deletar turmas cadastradas" update="@(form:turmasTable)" immediate="true">
+                                    </p:commandButton>
+
+                                </h:panelGrid>
 
 
                             </h:panelGrid>

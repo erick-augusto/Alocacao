@@ -10,10 +10,18 @@
     </h:head>
     <h:body>
 
-        <h:form>  
+        <h:form> 
+            <h:outputLabel style="text-align: center">
+                <h:graphicImage name="images/AlocacaoLogo.png" style="position: relative; left: 350px; top: 20px"/>
+            </h:outputLabel>           
+            
+            <br/>
+            
+            <h:outputText value="Clique para Logar" style="position: relative; left: 300px; top: -50px;
+                          color: #2E8B57; font-family: 'Play', serif; font-size: 24px;"/>
 
             <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="login" 
-                          style="position: relative; left: 450px; top: 150px">
+                          style="position: relative; left: 300px; top: 100px">
                 <p:graphicImage name="images/login.jpg" />
             </h:outputLink>
 
@@ -28,7 +36,7 @@
                     <p:password id="password" value="#{loginBean.password}" required="true" label="password" />
 
                     <f:facet name="footer">
-                        <p:commandButton value="Login" update="growl" actionListener="#{loginBean.doLogin2()}"
+                        <p:commandButton value="Login" update="growl" actionListener="#{loginBean.doLogin()}"
                                          oncomplete="handleLoginRequest(xhr, status, args)" action="#{loginBean.page()}" />
                     </f:facet>  
                 </h:panelGrid>

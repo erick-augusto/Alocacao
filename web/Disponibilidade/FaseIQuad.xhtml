@@ -10,7 +10,7 @@
         <h:head>
             <f:facet name="first">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-                <title>Fase I Disponibilidade</title>
+                <title>Fase I Planejmento</title>
             </f:facet>
         </h:head>
 
@@ -23,35 +23,43 @@
                 <p:layout fullPage="true">
 
                     <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
-                        <h:commandLink value="Logout" style="position: relative; left: 650px; top: 10px; color: #2E8B57" 
-                                       action="#{loginBean.doLogout()}" immediate="true"/>
+                        
                         <style type="text/css">
                             .ui-widget{font-size:90% !important;}
                         </style>
-                        <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Fase I - Disponibilidade</div>
+                        <p:panel style="height: 43px">
+                                <h:commandLink value="Voltar" style="position: relative; right: 460px; color: #2E8B57"
+                                               action="/Disponibilidade/EscolhaQuad" immediate="true"/>
 
+                                <h:outputLabel value="Fase I - Planejamento Anual" style="color: #2E8B57; font-family: 'Play'; font-size: 24px"/>
+                                <h:commandLink value="Logout" style="position: relative; left: 460px; color: #2E8B57"
+                                               action="#{loginBean.doLogout()}" immediate="true"/>
+                        </p:panel>
+                        
                     </p:layoutUnit> 
-
-                    <p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
+                    
+                    <!--p:layoutUnit id="southPanel" position="south" style="text-align:center" size="100"  resizable="true" closable="true" collapsible="true">  
                         <p:messages id="msgs" showDetail="true" showSummary="false"/>   
-                    </p:layoutUnit>
+                    </p:layoutUnit-->
 
-                    <p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
+                    <!--p:layoutUnit position="west" size="150" header="Links Rápidos" style="text-align: center; font-size: small" resizable="true"  >  
                         <p:commandButton  value="Voltar" id="btnVoltar"  style="width: 140px; position: relative; top: 5px"  action="/Disponibilidade/EscolhaQuad" immediate="true"/>
                         <br/>
                         <p:commandButton  value="Início" id="btnInicio"  style="width: 140px; position: relative; top: 10px"  action="/index" immediate="true"/>
                         <br/>
-                    </p:layoutUnit> 
+                    </p:layoutUnit--> 
 
                     <p:layoutUnit position="center">
+                        
+                        <p:growl id="growl" sticky="false" showDetail="true" life="3000" />
 
-                        <p:panel id="PainelCreditos" header="Planejamento de créditos">
+                        <p:panel id="PainelCreditos" header="Planejamento de créditos do #{disponibilidadeController.quadrimestre}º Quadrimestre">
                             <h:panelGrid columns="2" cellpadding="5" class="ui-grid">
                                 <h:outputLabel value="Quantidade de créditos: " />
                                 <p:spinner id="creditos" value="#{disponibilidadeController.creditosPlanejados}" 
-                                           stepFactor="0.5" min="0" max="30" />
+                                           min="0" max="30" />
                                 <p:commandButton    icon="ui-icon-disk"  actionListener="#{disponibilidadeController.salvarCreditos()}"
-                                                    update="PainelCreditos, msgs, :form:qtdCreditos"  style="width: 100px; height: 25px" value="Salvar">
+                                                    update="PainelCreditos, growl, :form:qtdCreditos"  style="width: 100px; height: 25px" value="Salvar">
                                 </p:commandButton>
 
                             </h:panelGrid>
@@ -125,7 +133,7 @@
 
                             <h:outputLabel value="Créditos escolhidos: "/>
                             <h:outputText value="#{disponibilidadeController.creditosEscolhidos}" 
-                                          style="#{disponibilidadeController.changeColor() eq true ? 'color:Red;' : 'color:Green;'}"
+                                          style="#{disponibilidadeController.changeColor() eq true ? 'color:Red' : 'color:Green'}"
                                           id="creditosEscolhidos" />
 
 
@@ -185,6 +193,12 @@
                                              value="Selecionar" actionListener="#{disponibilidadeController.salvarDisponibilidade()}"
                                              immediate="true" oncomplete="PF('dlg').show();" > 
                             </p:commandButton>
+                            
+                            <!--p:commandButton id="btnVoltar" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"
+                                             value="Voltar" action="/Disponibilidade/EscolhaQuad" immediate="true">                                
+                            </p:commandButton-->
+                            
+                            <br/>
 
                         </h:panelGrid>
                     </p:layoutUnit>
@@ -245,7 +259,7 @@
                     <br/>
 
                     <p:commandButton id="closeB" value="Ok" oncomplete="PF('dlg').hide();" 
-                                     update="@(form:msgs), @(form:turmasTable)" actionListener="#{disponibilidadeController.sucessoFase1()}"/> 
+                                     update="@(form:turmasTable), @(form:growl)" actionListener="#{disponibilidadeController.sucessoFase1()}"/> 
 
 
                 </p:dialog>

@@ -1,0 +1,316 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:o="http://omnifaces.org/ui">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>Fase I Planejmento Anual</title>
+            </f:facet>
+        </h:head>
+
+        <h:body onload="#{disponibilidadeController.iniciarFiltro()};#{loginBean.isLogado()}">
+            <h:outputStylesheet library="css" name="style.css" />
+
+            <h:form id="form" >  
+
+                <p:layout fullPage="true">
+                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
+
+                        <style type="text/css">
+                            .ui-widget{font-size:90% !important;}
+                        </style>
+                        <p:panel style="height: 43px">
+                            <h:panelGrid columns="5" style=" width: 100%">
+                                <h:commandLink value="Ajuda" style="color: #2E8B57"
+                                               action="/Tutorial/Tutorial" target="_blank" immediate="true"/>
+                                <h:commandLink value="Afinidades" style="color: #2E8B57"
+                                               action="/Afinidades/DefinirAfinidade" immediate="true"/>
+                                
+                                <h:outputLabel value="Fase I - Planejamento Anual" style="color: #2E8B57; font-size: 24px; position: relative; left: 50px;"/>
+                                <h:outputText value="#{loginBean.username}" style="color: #2E8B57"/>
+                                <h:commandLink value="Logout" style="color: #2E8B57"
+                                               action="#{loginBean.doLogout()}" immediate="true"/>
+                            </h:panelGrid>
+                        </p:panel>
+
+                    </p:layoutUnit>  
+
+                    <p:layoutUnit position="west" size="140" header="Escolha de Quadrimestre" style="text-align: center; font-size: smaller" resizable="true">  
+                        <p:separator/>
+                        <p:commandButton value="Quadrimestre 1" id="btnQuad1" style="width: 130px; font-size: small" ajax="false"
+                                         action="#{disponibilidadeController.preparePlanejamento1()}" immediate="true"/>
+                        <p:separator/>
+                        <p:commandButton value="Quadrimestre 2" id="btnQuad2" style="width: 130px; font-size: small" ajax="false"
+                                         action="#{disponibilidadeController.preparePlanejamento2()}" immediate="true"/>
+                        <p:separator/>
+                        <p:commandButton value="Quadrimestre 3" id="btnQuad3" style="width: 130px; font-size: small" ajax="false"
+                                         action="#{disponibilidadeController.preparePlanejamento3()}" immediate="true"/>
+                        <p:separator/>
+                    </p:layoutUnit>
+
+                    <p:layoutUnit position="center">
+
+                        <p:growl id="growl" sticky="false" showDetail="true" life="3000" />
+
+                        <h:panelGrid columns="3">
+                            <p:panel id="PainelCreditos" header="Planejamento de créditos do #{disponibilidadeController.quadrimestre}º Quadrimestre"
+                                     style="width: 600px">
+                                <h:panelGrid columns="4" cellpadding="5" class="ui-grid">
+                                    <h:outputLabel value="Créditos Planejados: " />
+                                    <p:spinner id="creditos" value="#{disponibilidadeController.creditosPlanejados}" 
+                                               min="0" max="30" />
+                                    <h:outputLabel value="Créditos escolhidos: "/>
+                                    <h:outputText value="#{disponibilidadeController.creditosEscolhidos}" 
+                                                  style="#{disponibilidadeController.changeColor() eq true ? 'color:Red' : 'color:Green'}"
+                                                  id="creditosEscolhidos" /> 
+
+                                    <p:commandButton    icon="ui-icon-disk"  actionListener="#{disponibilidadeController.salvarCreditos()}"
+                                                        update="PainelCreditos, growl"  style="width: 100px; height: 25px" value="Salvar">
+                                    </p:commandButton>
+                                    <!--h:outputText value=""/>
+                                    <h:outputText value=""/>
+                                    <h:outputText value=""/-->
+                                    <!--Introdução das labels no panel-->
+                                </h:panelGrid>                                
+                            </p:panel>
+                            <p:panel id="filtros" header="Filtros" widgetVar="panel" 
+                                     style="width: 400px; font-size: medium">
+
+                                <!--h:panelGrid columns="1" cellspacing="10"-->
+
+                                <h:panelGrid columns="2" cellpadding="5" style="margim-top: -15px">                                      
+                                    <p:outputLabel for="campus" value="Campus:"/>
+                                    <p:selectOneRadio id="campus" onchange="submit()" immediate="true" valueChangeListener="#{disponibilidadeController.onChangeCampus}"
+                                                      value="#{disponibilidadeController.campus}">
+                                        <f:selectItem itemLabel="SA" itemValue="SA" />
+                                        <f:selectItem itemLabel="SB" itemValue="SB" />
+                                        <f:selectItem itemLabel="Ambos" itemValue="Ambos"/>
+                                    </p:selectOneRadio>
+
+                                    <p:outputLabel for="turno" value="Turno:"/>
+                                    <p:selectOneRadio id="turno" onchange="submit()" immediate="true" valueChangeListener="#{disponibilidadeController.onChangeTurno}"
+                                                      value="#{disponibilidadeController.turno}">
+                                        <f:selectItem itemLabel="D" itemValue="D" />
+                                        <f:selectItem itemLabel="N" itemValue="N" />
+                                        <f:selectItem itemLabel="Ambos" itemValue="Ambos"/>
+                                    </p:selectOneRadio>
+
+                                    <h:outputText value="Filtrar por afinidades:"/>
+                                    <p:selectOneRadio id="afinidade" onchange="submit()" immediate="true" valueChangeListener="#{disponibilidadeController.onChangeAfinidades}"
+                                                      value="#{disponibilidadeController.valor}">
+                                        <f:selectItem itemLabel="SIM" itemValue="sim" />
+                                        <f:selectItem itemLabel="NÃO" itemValue="nao" />
+                                    </p:selectOneRadio>
+                                    
+                                    <h:outputText value="Filtrar por Curso:"/>
+                                    <h:panelGrid id="selectCursos" columns="3" styleClass="panelGridCenter">
+                                        <p:selectCheckboxMenu value="#{disponibilidadeController.filtrosSelecCursos}" label="Cursos"
+                                                          filter="true" filterMatchMode="startsWith">
+                                            <f:selectItems value="#{disponibilidadeController.filtrosCursos}" />
+                                        </p:selectCheckboxMenu>
+                                        <p:commandButton id="bntCursos" value="Buscar" actionListener="#{disponibilidadeController.filtrarCursos()}"
+                                                         update="@(form:turmasTable)"/>
+                                        <p:commandButton id="btnLimpar" value="" icon="ui-icon-closethick" style="width: 30px; height: 25px; font-size: smaller"
+                                                         action="#{disponibilidadeController.limparFiltroQuad()}" update="@(form:turmasTable"/>
+                                    </h:panelGrid>
+                                </h:panelGrid>
+
+                                <!--/h:panelGrid-->
+
+                            </p:panel>
+                            
+                            <p:panel id="Observacoes" header="Informações Adicionais">
+                                <p:selectOneRadio id="preferencias" value="#{disponibilidadeController.preferencias}">
+                                                  <f:selectItem itemLabel="Um dia e vários turnos" itemValue="1"/>
+                                                  <f:selectItem itemLabel="Vários dias e um turno" itemValue="2"/>
+                                                  <f:selectItem itemLabel="Vários dias e vários turnos" itemValue="3"/>
+                                </p:selectOneRadio>
+                                <p:inputTextarea value="#{disponibilidadeController.informacoes}" rows="5" cols="50" counter="display" maxlength="250" 
+                                                 counterTemplate="{0} characters remaining." autoResize="false" />
+                                <br/>
+                                <h:outputText id="display" />
+                                <p:separator/>
+                                <p:commandButton icon="ui-icon-disk" actionListener="#{disponibilidadeController.salvaPreferencias()}" 
+                                                 update="Observacoes, growl" style="width: 100px; height: 25px" value="Salvar"/>
+                            </p:panel>
+                        </h:panelGrid>
+
+                        <h:panelGrid id="painel" columns="1" style="alignment-adjust: central" styleClass="panelGridCenter">
+
+                            <!--h:outputLabel value="Créditos planejados: "/>
+                            <h:outputText value="#{disponibilidadeController.creditosPlanejados}" id="qtdCreditos"/-->
+
+                            <!--h:outputLabel value="Créditos escolhidos: "/-->
+                            <!--h:outputText value="" 
+                                          style=""
+                                          id="creditosEscolhidos2" /-->
+                            <!--Remover as labels de créditos sem afetar a página-->
+                            <h:panelGrid columns="2">
+                                <p:commandButton id="buttonSe" style="width: 140px; height: 30px; font-size: smaller; position: relative"  
+                                                 value="Selecionar" action="#{disponibilidadeController.salvarDisp()}"
+                                                 update="@(form:turmasTable), @(form:grow)" immediate="true"> 
+                                </p:commandButton>
+
+                                <p:commandButton id="btnVer" style="width: 140px; height: 30px; font-size: smaller; position: relative" 
+                                                 value="Visualizar" immediate="true" oncomplete="PF('dlg').show();" >                                                 
+                                </p:commandButton>
+                            </h:panelGrid><!--Probmelas na autalização da página, desabilita os outros botões-->
+                            <br/>
+
+                            <p:dataTable var="turma" value="#{disponibilidadeController.dataModel}" 
+                                         paginator="true" rows="10"
+                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                         rowsPerPageTemplate="5,10,15"
+                                         selection="#{disponibilidadeController.ofertasEtapa1}" id="turmasTable"
+                                         rowKey="#{turma.ID}" lazy="true"
+                                         style="width: 1200px; margin-top: -15px">
+                                <!--scrollRows="20" scrollable="true"
+                                scrollHeight="331" 
+                                selection="#{disponibilidadeController.ofertasEtapa1}" id="turmasTable"
+                                rowKey="#{turma.ID}"
+                                style="width: 1200px"-->
+
+                                <p:ajax event="rowSelectCheckbox" listener="#{disponibilidadeController.adicionaCredito}" update=":form:creditosEscolhidos" />  
+                                <p:ajax event="rowUnselectCheckbox" listener="#{disponibilidadeController.removeCredito}" update=":form:creditosEscolhidos" /> 
+
+                                <p:column selectionMode="multiple" style="width:5%;text-align:center"/>
+
+                                <p:column headerText="Curso" style="width: 33%">
+                                    <h:outputText value="#{turma.curso}" style="width: 33%"/>
+                                </p:column>  
+                                <p:column headerText="Disciplina" style="width: 33%">
+                                    <h:outputText value="#{turma.disciplina.nome}" style="width: 33%"/>
+                                </p:column>
+                                <p:column headerText="Horas Teoria" style="width: 9%">
+                                    <h:outputText value="#{turma.t}" style="width: 9%"/>
+                                </p:column>
+                                <p:column headerText="Horas Prática" style="width: 9%">
+                                    <h:outputText value="#{turma.p}" style="width: 9%"/>
+                                </p:column>
+                                <p:column headerText="Escolha" style="width: 10%">
+                                    <p:selectManyButton value="#{disponibilidadeController.selectedOptions}" >
+
+                                        <p:ajax listener="#{disponibilidadeController.setFuncaoOferta(turma)}" event="change" 
+                                                process="@this" />
+                                        <f:selectItem itemLabel="T" itemValue="T"  />
+                                        <f:selectItem itemLabel="P" itemValue="P" />
+                                    </p:selectManyButton>
+                                </p:column>
+
+                                <p:column headerText="Periodicidade" style="width: 11%">
+                                    <h:outputText value="#{turma.periodicidade}" style="width: 10%"/>
+                                </p:column>
+                                <p:column headerText="Turno" style="width: 6%" >
+                                    <h:outputText value="#{turma.turno}" style="width: 6%" />
+                                </p:column>
+                                <p:column headerText="Campus" style="width: 8%">
+                                    <h:outputText value="#{turma.campus}" style="width: 6%"/>
+                                </p:column>
+                                <p:column headerText="Qdt. turmas" style="width: 8%">
+                                    <h:outputText value="#{turma.numTurmas}" style="width: 6%"/>
+                                </p:column>
+                            </p:dataTable>
+
+                            <!--p:commandButton id="btnTeste" style="width: 140px; height: 30px; font-size: smaller; position: relative"  
+                                             value="Teste" update="@(form:turmasTable)" immediate="true"> 
+                            </p:commandButton-->
+
+                            <!--p:commandButton id="btnVoltar" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"
+                                             value="Voltar" action="/Disponibilidade/EscolhaQuad" immediate="true">                                
+                            </p:commandButton-->
+
+                            <br/>
+
+                        </h:panelGrid>
+                    </p:layoutUnit>                    
+
+                </p:layout>
+
+                <p:dialog header="Ordem de prioridade" widgetVar="dlg" dynamic="true"
+                          resizable="false" maximizable="false" closable="false">
+
+                    <h:outputText escape="false" value="Defina a ordem de preferência das turmas escolhidas:" /> <br/>
+                    <h:outputText escape="false" value="Clique sobre a linha da turma e arraste para a posição equivalente"/> <br/>
+                    <h:outputText value="#{disponibilidadeController.msg}" 
+                                  style="#{disponibilidadeController.verificarBCT() eq true ? 'color:Red' : 'color:Green'}"
+                                  id="aviso" />
+                    <br/>
+                    <br/>
+
+                    <p:dataTable var="disp" value="#{disponibilidadeController.DModel2}" draggableRows="true"
+                                 style="margin-bottom:0; text-align: center; width: 800px"
+                                 paginator="true" rows="10"
+                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                 rowsPerPageTemplate="5,10,15"
+                                 id="dispTable"
+                                 editMode="cell"
+                                 selection="#{disponibilidadeController.selectedDisp}"
+                                 rowKey="#{disp.Id}" editable="true">
+
+                        <!--p:ajax event="cellEdit" listener="#{disponibilidadeController.onCellEdit}"/--> 
+                        <p:ajax event="rowReorder" listener="#{disponibilidadeController.onRowReorder}" update="dispTable"/>
+
+                        <p:column headerText="Disciplina" style="width: 60%">
+                            <h:outputText value="#{disp.ofertaDisciplina.disciplina.nome}"/>
+                        </p:column>  
+
+                        <p:column headerText="Turno" style="width: 15%">
+                            <h:outputText value="#{disp.ofertaDisciplina.turno}"/>
+                        </p:column>
+
+                        <p:column headerText="Campus" style="width: 20%">
+                            <h:outputText value="#{disp.ofertaDisciplina.campus}"/>
+                        </p:column>
+                        
+                        <p:column headerText="Ordem" style="width:15%">
+                            <h:outputText value="#{disp.ordemPreferencia}"/>
+                        </p:column>
+
+                        <!--p:column headerText="Ordem" style="width:15%">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{disp.ordemPreferencia}" /></f:facet>
+                                <f:facet name="input">
+                                    <h:selectOneMenu value="#{disp.ordemPreferencia}" style="width:100%">
+                                        <f:selectItems value="#{disponibilidadeController.ordem}" var="ordem" itemLabel="#{ordem}" itemValue="#{ordem}" />
+                                    </h:selectOneMenu>
+                                </f:facet>
+                            </p:cellEditor>
+                        </p:column-->
+
+                        <!--p:column headerText="Posicionar" style="width: 20%">
+                            <p:selectManyButton value="#{disponibilidadeController.posicao}">
+                                <p:ajax listener="#{disponibilidadeController.mover(disp)}" event="change" process="@this" update="dispTable"/>
+                                <f:selectItem itemLabel="↑" itemValue="UP"/>
+                                <f:selectItem itemLabel="↓" itemValue="DOWN"/>
+                            </p:selectManyButton>
+                        </p:column-->
+
+                        <p:column headerText="Teoria/Pratica" style="width: 25%">
+                            <h:outputText value="#{disp.tp}"/>
+                        </p:column>
+
+                        <p:column headerText="Deletar" style="width: 20%">
+                            <p:commandButton id="deleteDisp" value="Deletar" action="#{disponibilidadeController.deleteDisp(disp)}"
+                                             update="dispTable"/>
+                        </p:column>
+
+                    </p:dataTable>
+
+                    <br/>
+
+                    <p:commandButton id="closeB" value="Salvar" oncomplete="PF('dlg').hide();" process="@this"
+                                     update="@(form:turmasTable), @(form:growl)" actionListener="#{disponibilidadeController.sucessoFase1()}"/>
+                    <!--p:commandButton id="deleteDisponibilidade" value="Deletar"/-->
+
+                </p:dialog>
+
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

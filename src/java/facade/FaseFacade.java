@@ -17,33 +17,30 @@ import org.hibernate.criterion.Restrictions;
  * @author erick
  */
 @Stateless
-public class FaseFacade extends AbstractFacade<Fase>{
-    
-    public FaseFacade(){
+public class FaseFacade extends AbstractFacade<Fase> {
+
+    public FaseFacade() {
         super(Fase.class);
     }
-    
+
     @Override
     protected SessionFactory getSessionFactory() {
-
         return HibernateUtil.getSessionFactory();
-
     }
-    
-        public Fase achaMax(){
+
+    //Acha o último registro da tabela fase
+    public Fase achaMax() {
         try {
-                Session session = getSessionFactory().openSession();
-                Fase result = (Fase) session.createCriteria(Fase.class)
-                        .addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
-                /*Session session = getSessionFactory().openSession();
-                Query query = session.createQuery("Select * from Fase where id = ("
-                        + "select max(id) from Fase)");
-                List<Fase> resultado = query.list();*/
-                return result;
-
-            } catch (HibernateException e) {
-                return null;
-            }
+            Session session = getSessionFactory().openSession();
+            Fase result = (Fase) session.createCriteria(Fase.class)
+                    .addOrder(Order.desc("id")).setMaxResults(1).uniqueResult();
+            /*Session session = getSessionFactory().openSession();
+             Query query = session.createQuery("Select * from Fase where id = ("
+             + "select max(id) from Fase)");
+             List<Fase> resultado = query.list();*/
+            return result;
+        } catch (HibernateException e) {
+            return null;
+        }
     }
-        
 }

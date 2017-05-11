@@ -1,0 +1,29 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package facade;
+
+import controller.HibernateUtil;
+import javax.ejb.Stateless;
+import model.Preferencias;
+import org.hibernate.SessionFactory;
+
+/**
+ *
+ * @author erick
+ */
+
+@Stateless
+public class PreferenciasFacade extends AbstractFacade<Preferencias> {
+
+    public PreferenciasFacade() {
+        super(Preferencias.class);
+    }
+
+    @Override
+    protected SessionFactory getSessionFactory() {
+        return HibernateUtil.getSessionFactory();
+    }
+}

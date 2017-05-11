@@ -14,7 +14,7 @@
             </f:facet>
         </h:head>
 
-        <h:body>
+        <h:body onload="#{loginBean.isLogado()}">
 
             <h:outputStylesheet library="css" name="style.css"  />
 
@@ -24,14 +24,25 @@
 
                     <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" 
                                   closable="true" collapsible="true" >  
-                        <h:commandLink value="Logout" style="position: relative; left: 650px; top: 10px; color: #2E8B57" 
-                                       action="#{loginBean.doLogout()}" immediate="true"/>
+                        
                         <style type="text/css">
-                            .ui-widget{font-size:95% !important;}
+                            .ui-widget{font-size:90% !important;}
                         </style>
-                        <div style="color: #2E8B57 ;font-family: 'Play', serif;font-size: 24px; position: relative; top: 10px">Escolha de disciplinas com afinidade</div>
-
-                    </p:layoutUnit> 
+                        <p:panel style="height: 43px">
+                            <h:panelGrid columns="5" style=" width: 100%">
+                                <h:commandLink value="Ajuda" style="color: #2E8B57"
+                                               action="/Tutorial/Tutorial" target="_blank" immediate="true"/>
+                                <h:commandLink value="Voltar" style="color: #2E8B57"
+                                               action="#{loginBean.page()}" immediate="true"/>
+                                
+                                <h:outputLabel value="Definição de Afinidades" style="color: #2E8B57; font-size: 24px; position: relative; left: 50px;"/>
+                                <h:outputText value="#{loginBean.username}" style="color: #2E8B57"/>
+                                <h:commandLink value="Logout" style="color: #2E8B57"
+                                               action="#{loginBean.doLogout()}" immediate="true"/>
+                            </h:panelGrid>
+                        </p:panel>
+                        
+                    </p:layoutUnit>
 
                     <p:layoutUnit position="south" size="80" closable="true" collapsible="true" style="text-align:center">
 
@@ -53,7 +64,7 @@
                         <p:panel id="toggleable" header="Filtros" toggleable="true" toggleSpeed="550" closeSpeed="500" 
                                  widgetVar="panel" style="margin-bottom:20px; width: 350px; font-size: medium; " collapsed="true" closeTitle="Painel">
 
-                            <h:panelGrid columns="2"  cellspacing="10">
+                            <h:panelGrid columns="4"  cellspacing="10">
 
 
                                 <p:selectCheckboxMenu value="#{afinidadesController.filtrosSelecEixos}" label="Eixos"
@@ -65,15 +76,10 @@
                                                       filter="true" filterMatchMode="startsWith" panelStyle="width:350px">
                                     <f:selectItems value="#{afinidadesController.filtrosCursos}" />
                                 </p:selectCheckboxMenu>
-
-                            </h:panelGrid>
-
-                            <p:separator/>
-
-                            <h:panelGrid columns="2">
+                                
                                 <p:commandButton    icon="ui-icon-search"  actionListener="#{afinidadesController.filtrar()}"
-                                                    update="@(form:disponiveis)"  style="width: 30px; height: 25px" title="Filtrar disciplinas"
-                                                    >
+                                                    update="@(form:disponiveis)"  style="width: 30px; height: 25px" 
+                                                    title="Filtrar disciplinas">
                                 </p:commandButton>
 
                                 <p:commandButton    ajax="false"  actionListener="#{afinidadesController.limparFiltro()}"
@@ -81,22 +87,18 @@
                                                     style="width: 30px; height: 25px" title="Limpar filtros">
                                 </p:commandButton>
 
-
-
                             </h:panelGrid>
-
-
-
+ 
                         </p:panel>
 
 
                         <h:panelGrid id="painel" columns="2" columnClasses="a,b"  style=" alignment-adjust: central" styleClass="panelGridCenter">
 
 
-                            <h:outputText value="Disciplinas disponíveis"></h:outputText>
+                            <h:outputText value="Disciplinas Disponíveis"></h:outputText>
 
 
-                            <h:outputText value="Disciplinas selecionadas"></h:outputText>
+                            <h:outputText value="Disciplinas com Afinidade"></h:outputText>
 
                             <p:selectOneListbox id="disponiveis" value="#{afinidadesController.paraAdicionar}" filter="true" 
                                                 filterMatchMode="contains" style="width: 400px; height: 235px" >
@@ -115,7 +117,7 @@
                             </p:selectOneListbox>
 
                             <p:commandButton id="buttonS" style="width: 140px; height: 30px; font-size: smaller; position: relative; top: 10px"  
-                                             value="Selecionar" actionListener="#{afinidadesController.salvarAfinidade()}"
+                                             value="Incluir" actionListener="#{afinidadesController.salvarAfinidade()}"
                                              update ="selecionadas,disponiveis" icon="ui-icon-disk" > 
                             </p:commandButton>
 

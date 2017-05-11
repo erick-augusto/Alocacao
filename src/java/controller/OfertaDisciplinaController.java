@@ -11,11 +11,13 @@ import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIComponent;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
@@ -23,6 +25,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import model.Disciplina;
 import model.Disponibilidade;
+import model.Docente;
 import model.Pessoa;
 import model.OfertaDisciplina;
 import util.DisponibilidadeDataModel;
@@ -34,8 +37,15 @@ import util.OfertaDisciplinaLazyModel;
 @SessionScoped
 public class OfertaDisciplinaController extends Filtros implements Serializable {
     
+    private ExternalContext externalContext;
+    private LoginBean loginBean;
+    private Pessoa docente;
+    
     public OfertaDisciplinaController() {
-        
+        externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        Map<String, Object> sessionMap = externalContext.getSessionMap();
+        loginBean = (LoginBean) sessionMap.get("loginBean");
+        docente = loginBean.getUsuario();
     }
 
     @EJB
@@ -55,8 +65,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     private List<OfertaDisciplina> escolhidas;
     
     private OfertaDisciplinaDataModel dataModel;
-    
-    
+        
     //--------------------------------------Filtros----------------------------------------------------------
     
     private boolean filtrarAfinidades;
@@ -66,8 +75,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     private String turno;
     
     private int quadrimestre;
-    
-    
+        
     //-------------------------------------Getters e Setters--------------------------------------------------------
 
     public List<OfertaDisciplina> getEscolhidas() {
@@ -85,9 +93,8 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     public void setOferta(OfertaDisciplina oferta) {
         this.oferta = oferta;
     }
-    
-    
 
+    //Datamodel das ofertas de disciplinas
     public OfertaDisciplinaDataModel getDataModel() {
         
         if(dataModel == null){
@@ -141,7 +148,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     public void setDispDataModel(DisponibilidadeDataModel dispDataModel) {
         this.dispDataModel = dispDataModel;
     }
- 
+     
 //------------------------------------------Fase I---------------------------------------------------------------
     
     //Prepara as páginas de escolha de Oferta de Disciplina de acordo com o quadrimestre-------------------------
@@ -149,15 +156,13 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     public String prepareQuad1(){
         
         dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(1));
-        return "/Disponibilidade/FaseIQuad1";
-        
+        return "/Disponibilidade/FaseIQuad1";    
     }
     
     public String prepareQuad2(){
         
         dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(2));
-        return "/Disponibilidade/FaseIQuad2";
-        
+        return "/Disponibilidade/FaseIQuad2";    
     }
     
     public String prepareQuad3(){
@@ -165,12 +170,12 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         dataModel = new OfertaDisciplinaDataModel(this.listarTodasQuad(3));
         return "/Disponibilidade/FaseIQuad3";
     }
-    
-    
+
     private OfertaDisciplinaLazyModel ofertas1LazyModel;
     private OfertaDisciplinaLazyModel ofertas2LazyModel;
     private OfertaDisciplinaLazyModel ofertas3LazyModel;
     
+    //Inicia os lazymodel com todas as ofertas do quadrimestre
     @PostConstruct
     public void init() {
         ofertas1LazyModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(1));
@@ -178,12 +183,11 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         ofertas3LazyModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(3));
     }
 
-    public OfertaDisciplinaLazyModel getOfertas1LazyModel() {
-        
+    //Busca todas as disciplinas
+    public OfertaDisciplinaLazyModel getOfertas1LazyModel() { 
         if(ofertas1LazyModel == null){
             ofertas1LazyModel = new OfertaDisciplinaLazyModel(this.listarTodasQuad(1));
         }
-        
         return ofertas1LazyModel;
     }
 
@@ -212,8 +216,7 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     public void setOfertas3LazyModel(OfertaDisciplinaLazyModel ofertas3LazyModel) {
         this.ofertas3LazyModel = ofertas3LazyModel;
     }
-    
-    
+       
 //---------------------------------------Resumo Fase I-----------------------------------------------------------    
 
     /**
@@ -233,14 +236,12 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         turno = "";
         quadrimestre = 0;
         campus = "";
-
     }
 
     /**
      * Limpa os filtros e carrega todas as disponibilidades escolhidas
      */
-    public void limparFiltroOfertas() {
-     
+    public void limparFiltroOfertas() {     
         dataModel = null;
     }
     
@@ -253,34 +254,22 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
         
         if (oferta != null) {
             disponibilidades = new ArrayList<>(oferta.getDisponibilidades());
-
         } else {
             disponibilidades = new ArrayList<>();
-        }
- 
+        } 
         dispDataModel = new DisponibilidadeDataModel(disponibilidades);
-
     }
 
-    
-    
-    //---------------------------LazyData Model--------------------------------------------------------------------
-    
-    
-
-    
     //---------------------------------------------------CRUD-------------------------------------------------------
+    //Retorna todas as ofertas
     private List<OfertaDisciplina> listarTodas() {
         return ofertaDisciplinaFacade.findAll();
-
     }
     
     //Retorna as ofertas por quadrimestre
-    private List<OfertaDisciplina> listarTodasQuad(int quad){
-        
+    private List<OfertaDisciplina> listarTodasQuad(int quad){        
         return ofertaDisciplinaFacade.findAllQuad(quad);
     }
-
     
     public void salvarNoBanco() {
 
@@ -291,13 +280,10 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
 //            recriarModelo();
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência");
-
         }
-
     }
 
     public OfertaDisciplina buscar(Long id) {
-
         return ofertaDisciplinaFacade.find(id);
     }
 
@@ -308,7 +294,6 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
             oferta= null;
         } catch (Exception e) {
             JsfUtil.addErrorMessage(e, "Ocorreu um erro de persistência, não foi possível editar a oferta de disciplina: " + e.getMessage());
-
         }
     }
     
@@ -324,8 +309,8 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
 //        
 //    }
 
-
-        public void deleteAll(Long quad) {
+    //Deletar as ofertas de disciplina
+    public void deleteAll(Long quad) {
 
         List<OfertaDisciplina> ofertas = listarTodasQuad((int)(long)quad);
         
@@ -338,20 +323,18 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
                 atual = d.getPessoa();
                 atual.getDisponibilidades().remove(d);
                 pessoaFacade.edit(atual);
-                if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
+                /*if (atual.getNome().equals(LoginBean.getUsuario().getNome())) {
                     LoginBean.setUsuario(atual);
-                }
+                }*/
                 disponibilidadeFacade.remove(d);
-
             }
             ofertaDisciplinaFacade.remove(o);
-        }
-        
+        }    
         ofertas1LazyModel = null;
-        
     }
         
-        public void deleteAllQuad(Long quad) {
+    //Deletar as ofertas de disciplina
+    public void deleteAllQuad(Long quad) {
 
         Integer q = (int)(long) quad;    
         List<OfertaDisciplina> all = listarTodasQuad(q);
@@ -373,18 +356,17 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
             else{
                 ofertas3LazyModel = null;
             }
-        }
-        
+        }    
     }
-    
-    
-    
+
+    //Pega os itens selecionados
     public SelectItem[] getItemsAvaiableSelectOne() {
         return JsfUtil.getSelectItems(ofertaDisciplinaFacade.findAll(), true);
     }
 
     //Resumo Fase I--------------------------------------------------------------------------------------------------------------
 
+    //Quantidade de ofertas de disciplina do docente
     public int qdtDocentesDisponibilidade(OfertaDisciplina of){
         
         of = ofertaDisciplinaFacade.inicializarColecaoDisponibilidades(of);
@@ -396,24 +378,22 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
     
     private DisponibilidadeDataModel docentesPorDisciplina;
 
+    //Quantidade de docentes por disciplina
     public DisponibilidadeDataModel getDocentesPorDisciplina() {
         
         if(docentesPorDisciplina == null){
             docentesPorDisciplina = new DisponibilidadeDataModel();
         }
-        
         return docentesPorDisciplina;
     }
 
     public void setDocentesPorDisciplina(DisponibilidadeDataModel docentesPorDisciplina) {
         this.docentesPorDisciplina = docentesPorDisciplina;
     }
-    
-    
+
     //Cadastro-------------------------------------------------------------------------------------------
 
-    
-    //Cadastrar oferta primeiro quadrimestre
+    //Cadastrar oferta do primeiro quadrimestre
     public void cadastrarOfertasQuad1(){
         
         String[] palavras;
@@ -425,7 +405,6 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
                 String linha = lerArq.readLine(); //cabeçalho
                 
                 linha = lerArq.readLine();
-                
 
 //            linha = linha.replaceAll("\"", "");
                 while (linha != null) {
@@ -470,27 +449,22 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
                 }
             } //cabeçalho
                 ofertas1LazyModel = null;
-
             } catch (IOException e) {
                 System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
-            }
-        
+            }      
     }
     
-    //Cadastrar oferta 2 quadrimestre
+    //Cadastrar oferta do segundo quadrimestre
     public void cadastrarOfertasQuad2(){
         
        String[] palavras;
         
         //Primeiro quadrimestre
-            try {
-          
+        try {
             try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad2.csv"), "UTF-8"))) {
                 String linha = lerArq.readLine(); //cabeçalho
                 
                 linha = lerArq.readLine();
-                
-
 //            linha = linha.replaceAll("\"", "");
                 while (linha != null) {
 
@@ -534,26 +508,21 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
                 }
             } //cabeçalho
                 ofertas2LazyModel = null;
-
-            } catch (IOException e) {
-                System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
-            }
-        
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+        }
     }
     
-    //Cadastrar oferta 3 quadrimestre
+    //Cadastrar oferta do terceiro quadrimestre
     public void cadastrarOfertasQuad3(){
         String[] palavras;
         
         //Primeiro quadrimestre
-            try {
-          
+        try {
             try (BufferedReader lerArq = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\Juliana\\Documents\\NetBeansProjects\\alocacao\\Arquivos Alocação\\Arquivos CSV\\quad3.csv"), "UTF-8"))) {
                 String linha = lerArq.readLine(); //cabeçalho
                 
                 linha = lerArq.readLine();
-                
-
 //            linha = linha.replaceAll("\"", "");
                 while (linha != null) {
 
@@ -596,20 +565,14 @@ public class OfertaDisciplinaController extends Filtros implements Serializable 
 //                linha = linha.replaceAll("\"", "");
                 }
             } //cabeçalho
-                ofertas3LazyModel = null;
-
-            } catch (IOException e) {
-                System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
-            }
-        
+            ofertas3LazyModel = null;
+        } catch (IOException e) {
+            System.err.printf("Erro na abertura do arquivo: %s.\n", e.getMessage());
+        }
     }
-    
-    
 
     private OfertaDisciplina getTurma(Long key) {
-
-        return buscar(key);
-        
+        return buscar(key);    
     }
 
 //    @Override

@@ -60,6 +60,17 @@ public class OfertaDisciplina implements Serializable {
         this.disponibilidades = disponibilidades;
     }
     
+    @OneToMany(mappedBy = "ofertaDisciplina", cascade = CascadeType.ALL)
+    private Set<Disp> dispo;
+
+    public Set<Disp> getDispo() {
+        return dispo;
+    }
+
+    public void setDispo(Set<Disp> dispo) {
+        this.dispo = dispo;
+    }
+    
     public String getCurso() {
         return curso;
     }
@@ -141,7 +152,6 @@ public class OfertaDisciplina implements Serializable {
     }
 
     public String getFuncao() {
-        
         return funcao;
     }
 
@@ -154,7 +164,6 @@ public class OfertaDisciplina implements Serializable {
         int hash = 0;
         hash += (ID != null ? ID.hashCode() : 0);
         return hash;
-
     }
 
     @Override
@@ -168,14 +177,11 @@ public class OfertaDisciplina implements Serializable {
         if ((this.ID == null && other.ID != null) || (this.ID != null && !(this.ID.equals(other.ID)))) {
             return false;
         }
-
         return true;
-
     }
 
     @Override
     public String toString() {
         return this.disciplina.getNome() + " " + this.turno + " " + this.campus + " " + this.curso;
     }
-
 }

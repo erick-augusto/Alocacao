@@ -9,7 +9,6 @@ import model.Disciplina;
 import model.Docente;
 import util.DocenteDataModel;
 
-
 public class Filtros {
 
     public Filtros() {
@@ -50,7 +49,6 @@ public class Filtros {
         this.filtrosEixos = filtrosEixos;
     }
     
-    
     //Eixos escolhidos para filtrar
     private List<String> filtrosSelecEixos;
     
@@ -67,12 +65,17 @@ public class Filtros {
     
     public List<String> getFiltrosCursos() {
         filtrosCursos = new ArrayList<>();
-        filtrosCursos.add("Bacharelado em Ciencia da Computacao");
+        filtrosCursos.add("Bacharelado em Ciencia da Computacao");        
+        filtrosCursos.add("Bacharelado em Ciencia e Tecnologia");
+        filtrosCursos.add("Bacharelado em Ciencia e Humanidades");
         filtrosCursos.add("Bacharelado em Economia");
+        filtrosCursos.add("Bacharelado em Matematica");
+        filtrosCursos.add("Bacharelado em Neurociencia");
         filtrosCursos.add("Bacharelado em Planejamento Territorial");
         filtrosCursos.add("Bacharelado em Politicas Publicas");
         filtrosCursos.add("Bacharelado em Relacoes Internacionais");
         filtrosCursos.add("Ciencias Biologicas");
+        filtrosCursos.add("Comum aos BI's");
         filtrosCursos.add("Engenharia Aeroespacial");
         filtrosCursos.add("Engenharia Ambiental e Urbana");
         filtrosCursos.add("Engenharia Biomedica");
@@ -81,8 +84,10 @@ public class Filtros {
         filtrosCursos.add("Engenharia de Gestao");
         filtrosCursos.add("Engenharia de Informacao");
         filtrosCursos.add("Engenharia de Materiais");
+        filtrosCursos.add("Engenharias");
         filtrosCursos.add("Filosofia");
         filtrosCursos.add("Fisica");
+        filtrosCursos.add("Licenciatura em Matematica");
         filtrosCursos.add("Licenciaturas");
         filtrosCursos.add("Quimica");
         return filtrosCursos;
@@ -132,7 +137,7 @@ public class Filtros {
         this.filtrosSelecCentros = filtrosSelecCentros;
     }
     
-    //Todas as areas de atuacao dos docentes
+    //Todas as áreas de atuação dos docentes
     private List<String> filtrosAreaAtuacao;
     
     public List<String> getFiltrosAreaAtuacao() {
@@ -148,7 +153,7 @@ public class Filtros {
         this.filtrosAreaAtuacao = filtrosAreaAtuacao;
     }
     
-    //Areas escolhidas para filtrar
+    //Áreas escolhidas para filtrar
     private List<String> filtrosSelecAreaAtuacao;
 
     public List<String> getFiltrosSelecAreaAtuacao() {
@@ -159,8 +164,7 @@ public class Filtros {
         this.filtrosSelecAreaAtuacao = filtrosSelecAreaAtuacao;
     }
 
-    //Filtra os docentes de acordo com as areas de atuacao
-    //Por enquanto apenas do CMCC
+    //Filtra os docentes de acordo com as áreas de atuação
     public List<Docente> filtrarDocente(DocenteDataModel docenteDataModel, DocenteFacade docenteFacade) {
 
         if (!filtrosSelecAreaAtuacao.isEmpty()) {
@@ -172,20 +176,17 @@ public class Filtros {
         else{
             return new ArrayList<>();
         }
-
     }
     
     //Limpa os filtros dos docentes selecionados
     public void limparFiltroDocente(){
      
         filtrosSelecAreaAtuacao = null;
-        filtrosSelecCentros = null;
-        
+        filtrosSelecCentros = null;  
     }
 
 //----------------------------------------AutoComplete----------------------------------------------------------------------------------------
-    
-    
+  
 //Disciplina----------------------------------------------------------------------------------------------------------    
     public List<Disciplina> completeDisciplina(String query) {
         
@@ -214,8 +215,7 @@ public class Filtros {
                 filteredEixos.add(e);
             }
         }
-        return filteredEixos;
-        
+        return filteredEixos;   
     }
     
     //Curso-----------------------------------------------------------------------------------------------
@@ -231,16 +231,14 @@ public class Filtros {
             }
         }
         return filteredCursos;
-        
     }
     
-    //Area de atuacao do docente------------------------------------------------------------------------
+    //Área de atuação do docente------------------------------------------------------------------------
     
     public List<String> completeArea(String query){
         
         query = query.toLowerCase();
-        
-        
+
         List<String> filteredAreas = new ArrayList<>();
 
         for (String a : this.getFiltrosAreaAtuacao()) {
@@ -248,9 +246,6 @@ public class Filtros {
                 filteredAreas.add(a);
             }
         }
-        return filteredAreas;
-        
+        return filteredAreas;  
     }
-
-  
 }

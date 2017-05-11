@@ -22,6 +22,12 @@ public class Turma implements Serializable {
     private Long ID;
 
     private String curso;
+    
+    private String codturma;
+    
+    private String turno;
+    
+    private String campus;
   
     @ManyToOne
     private Disciplina disciplina;
@@ -61,14 +67,35 @@ public class Turma implements Serializable {
         this.horarios = horarios;
     }
 
+    public String getCodturma() {
+        return codturma;
+    }
 
+    public void setCodturma(String codturma) {
+        this.codturma = codturma;
+    }
+
+    public String getTurno() {
+        return turno;
+    }
+
+    public void setTurno(String turno) {
+        this.turno = turno;
+    }
+
+    public String getCampus() {
+        return campus;
+    }
+
+    public void setCampus(String campus) {
+        this.campus = campus;
+    }
     
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (ID != null ? ID.hashCode() : 0);
         return hash;
-
     }
 
     @Override
@@ -82,14 +109,11 @@ public class Turma implements Serializable {
         if ((this.ID == null && other.ID != null) || (this.ID != null && !(this.ID.equals(other.ID)))) {
             return false;
         }
-
         return true;
-
     }
 
     @Override
     public String toString() {
         return this.ID + "";
     }
-
 }

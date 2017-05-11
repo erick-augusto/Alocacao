@@ -63,7 +63,6 @@ public abstract class AbstractFacade<T> {
         transaction.commit();
         session.close();
         return entidade;
-
     }
 
     /**
@@ -111,7 +110,6 @@ public abstract class AbstractFacade<T> {
         session.close();
         return results;
     }
-    
 
     /**
      * Busca todas as entidades do banco de dados dentro de um range específico.
@@ -131,7 +129,7 @@ public abstract class AbstractFacade<T> {
     }
 
     /**
-     * Conta quanto itens dessa entidade possui o banco de dados.
+     * Conta quantos itens dessa entidade possui o banco de dados.
      *
      * @return A quantidade de itens que possui o banco
      */
@@ -142,5 +140,4 @@ public abstract class AbstractFacade<T> {
         session.close();
         return count;
     }
-
 }

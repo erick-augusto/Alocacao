@@ -1,9 +1,16 @@
 package model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -19,15 +26,29 @@ public class Fase implements Serializable {
 
     private Long id;
 
+    private boolean fase1;
+
     private boolean afinidades;
+
+    private boolean fase2_quad1;
+
+    private boolean fase2_quad2;
+
+    private boolean fase2_quad3;
+
+    private Date dataAtual;
+
+    public Fase() {
+    }
     
-    private boolean fase1_quad1;
-    
-    private boolean fase1_quad2;
-    
-    private boolean fase1_quad3;
-    
-    private boolean fase2;
+    public Fase(boolean afinidades, boolean fase2_quad1, boolean fase2_quad2, boolean fase2_quad3, boolean fase1, Date dataAtual) {
+        this.afinidades = afinidades;
+        this.fase1 = fase1;
+        this.fase2_quad1 = fase2_quad1;
+        this.fase2_quad2 = fase2_quad2;
+        this.fase2_quad3 = fase2_quad3;
+        this.dataAtual = dataAtual;
+    }
 
     public Long getId() {
         return id;
@@ -35,6 +56,14 @@ public class Fase implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDataAtual() {
+        return dataAtual;
+    }
+
+    public void setDataAtual(Date dataAtual) {
+        this.dataAtual = dataAtual;
     }
 
     public boolean isAfinidades() {
@@ -45,36 +74,36 @@ public class Fase implements Serializable {
         this.afinidades = afinidades;
     }
 
-    public boolean isFase1_quad1() {
-        return fase1_quad1;
+    public boolean isFase2_quad1() {
+        return fase2_quad1;
     }
 
-    public void setFase1_quad1(boolean fase1_quad1) {
-        this.fase1_quad1 = fase1_quad1;
+    public void setFase2_quad1(boolean fase2_quad1) {
+        this.fase2_quad1 = fase2_quad1;
     }
 
-    public boolean isFase1_quad2() {
-        return fase1_quad2;
+    public boolean isFase2_quad2() {
+        return fase2_quad2;
     }
 
-    public void setFase1_quad2(boolean fase1_quad2) {
-        this.fase1_quad2 = fase1_quad2;
+    public void setFase2_quad2(boolean fase2_quad2) {
+        this.fase2_quad2 = fase2_quad2;
     }
 
-    public boolean isFase1_quad3() {
-        return fase1_quad3;
+    public boolean isFase2_quad3() {
+        return fase2_quad3;
     }
 
-    public void setFase1_quad3(boolean fase1_quad3) {
-        this.fase1_quad3 = fase1_quad3;
+    public void setFase2_quad3(boolean fase2_quad3) {
+        this.fase2_quad3 = fase2_quad3;
     }
 
-    public boolean isFase2() {
-        return fase2;
+    public boolean isFase1() {
+        return fase1;
     }
 
-    public void setFase2(boolean fase2) {
-        this.fase2 = fase2;
+    public void setFase1(boolean fase1) {
+        this.fase1 = fase1;
     }
     
     @Override

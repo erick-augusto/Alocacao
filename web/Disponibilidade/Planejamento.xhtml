@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui" 
+      xmlns:o="http://omnifaces.org/ui">
+
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>Fase I Planejmento Anual</title>
+            </f:facet>
+        </h:head>
+
+        <h:body onload="#{loginBean.isLogado()}">
+            <h:outputStylesheet library="css" name="style.css" />
+
+            <h:form id="form" >  
+
+                <p:layout fullPage="true">
+                    <p:layoutUnit style="text-align:center" position="north" size="70"  resizable="true" closable="true" collapsible="true" >  
+
+                        <style type="text/css">
+                            .ui-widget{font-size:90% !important;}
+                        </style>
+                        <p:panel style="height: 43px">
+                            <h:panelGrid columns="5" style=" width: 100%">
+                                <h:commandLink value="Ajuda" style="color: #2E8B57"
+                                               action="/Tutorial/Tutorial" target="_blank" immediate="true"/>
+                                <h:commandLink value="Afinidades" style="color: #2E8B57"
+                                               action="/Afinidades/DefinirAfinidade" immediate="true"/>
+                                
+                                <h:outputLabel value="Fase I - Planejamento Anual" style="color: #2E8B57; font-size: 24px; position: relative; left: 50px;"/>
+                                <h:outputText value="#{loginBean.username}" style="color: #2E8B57"/>
+                                <h:commandLink value="Logout" style="color: #2E8B57"
+                                               action="#{loginBean.doLogout()}" immediate="true"/>
+                            </h:panelGrid>
+                        </p:panel>
+
+                    </p:layoutUnit> 
+
+                    <p:layoutUnit position="west" size="140" header="Escolha de Quadrimestre" style="text-align: center; font-size: smaller" resizable="true">  
+                        <p:separator/>
+                        <p:commandButton value="Quadrimestre 1" id="btnQuad1" style="width: 130px; font-size: small" ajax="false"
+                                         action="#{disponibilidadeController.preparePlanejamento1()}" immediate="true"/>
+                        <p:separator/>
+                        <p:commandButton value="Quadrimestre 2" id="btnQuad2" style="width: 130px; font-size: small" ajax="false"
+                                         action="#{disponibilidadeController.preparePlanejamento2()}" immediate="true"/>
+                        <p:separator/>
+                        <p:commandButton value="Quadrimestre 3" id="btnQuad3" style="width: 130px; font-size: small" ajax="false"
+                                         action="#{disponibilidadeController.preparePlanejamento3()}" immediate="true"/>
+                        <p:separator/>
+                    </p:layoutUnit>
+
+                    <p:layoutUnit position="center">
+
+                        <p:growl id="growl" sticky="false" showDetail="true" life="3000" />
+
+                        <p:panel header="Página para o Planejamento Anual de Créditos"
+                                 style="font-size: 20px; color: #2E8B57; width: 1000px; alignment-adjust: central; margin-top: 50px" styleClass="panelCenter">
+                            <h:outputText value="Escolha o Quadrimestre desejado no Menu na lateral esquerda 
+                                          da tela para iniciar o planejamento de créditos para cada 
+                                          quadrimestre do ano."
+                                          style="font-size: 15px"/>
+                        </p:panel>
+                        
+                    </p:layoutUnit>                    
+
+                </p:layout>
+                
+            </h:form>
+        </h:body>
+    </f:view>
+</html>

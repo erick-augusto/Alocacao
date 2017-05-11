@@ -20,9 +20,7 @@ public class DocenteFacade extends AbstractFacade<Docente>{
 
     @Override
     protected SessionFactory getSessionFactory() {
-
         return HibernateUtil.getSessionFactory();
-
     }
     
     /**
@@ -41,8 +39,19 @@ public class DocenteFacade extends AbstractFacade<Docente>{
         return results;        
     }
     
+    public Docente buscaDocente(String nome){
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Docente.class);
+        criteria.add(Restrictions.eq("nome", nome));
+        
+        List<Docente> results = criteria.list();
+        session.close();
+        
+        return results.get(0);        
+    }
+    
     /**
-     * Busca docentes de acordo com centros ou areas de atuação escolhidos
+     * Busca docentes de acordo com centros ou áreas de atuação escolhidos
      * @param centros lista de string
      * @param areas lista de string
      * @return lista de docentes de acordo com os critérios fornecidos
@@ -52,7 +61,6 @@ public class DocenteFacade extends AbstractFacade<Docente>{
         List<Docente> docentes = new ArrayList<>();
 
         try {
-
             Session session = getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Docente.class);
 
@@ -70,18 +78,14 @@ public class DocenteFacade extends AbstractFacade<Docente>{
 
                     }
                 } else {
-
                     for (String centro : centros) {
 
                         criteria.add(Restrictions.eq("centro", centro));
                         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                         List resultado = criteria.list();
                         docentes.addAll(resultado);
-
                     }
-
                 }
-
             } else {
                 if (!areas.isEmpty()) {
 
@@ -91,45 +95,35 @@ public class DocenteFacade extends AbstractFacade<Docente>{
                         List resultado = criteria.list();
                         docentes.addAll(resultado);
                     }
-
                 }
             }
-
             return docentes;
-
         } catch (HibernateException e) {
             return null;
         }
-
     }
     
     /**
-     * Busca docentes de acordo com as areas de atuação informadas
+     * Busca docentes de acordo com as áreas de atuação informadas
      * @param areas lista de string
      * @return lista de docentes de acordo com os critérios especificados
      */
     public List<Docente> findByArea(List<String> areas) {
 
         List<Docente> docentes = new ArrayList<>();
-
+        
         try {
-
             Session session = getSessionFactory().openSession();
             Criteria criteria = session.createCriteria(Docente.class);
-
                 for (String area : areas) {
                     criteria.add(Restrictions.eq("areaAtuacao", area));
                     criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
                     List resultado = criteria.list();
                     docentes.addAll(resultado);
                 }
-
             return docentes;
-
         } catch (HibernateException e) {
             return null;
         }
-
     }
-
 }
