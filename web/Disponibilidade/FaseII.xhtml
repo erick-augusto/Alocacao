@@ -45,6 +45,8 @@
                 </p:layoutUnit--> 
 
                 <p:layoutUnit position="center" >  
+                    
+                    <p:growl id="growl" sticky="true" showDetail="true" life="300" />
 
                     <p:growl id="growl" sticky="false" showDetail="true" life="3000" />
 
@@ -158,11 +160,66 @@
                                             styleClass="custom"
                                             ignoreTimezone="false" resizable="false">
                                 </p:schedule>
-
                             </p:panel>
                         </p:outputPanel>
 
                     </h:panelGrid>
+                    
+                    <p:dialog  id="dialogTurmas" header="Turmas Escolhidas" widgetVar="turmasDialog" dynamic="true"
+                            draggable="false" resizable="false" maximizable="true" showEffect="fade">
+                        <h:panelGroup id="dialog">
+                            
+                            <h:panelGrid columns="1">
+                                <b>Turmas Selecionadas pelo Docente:</b>
+                                <h:outputText value="#{turmaController.docente.nome}" />
+                                <br/>
+                                <p:dataTable id="TableDialog" 
+                                     var="TurmasRequisitadas" value="#{turmaController.listaRequisicoes}" 
+                                     paginator="true" rows="10"
+                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                     rowsPerPageTemplate="5,10,15"
+                                     style="width: 800px"
+                                     selectionMode="single" 
+                                     selection="#{turmaController.selectedTurma2}" 
+                                     lazy="true" rowKey="#{TurmasRequisitadas.ID}">
+                                         <!--var="TurmasRequisitadas" value="#{turmaController.listaRequisicoes}" 
+                                             paginator="true" rows="10"
+                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                             rowsPerPageTemplate="5,10,15"
+                                             style="width: 800px"
+                                             selectionMode="single"                                              
+                                             lazy="true"
+                                             rowKey="#{TurmasRequisitadas.ID}"-->
+                                             
+                                    <p:ajax event="rowSelect" listener="#{turmaController.onRowSelect2}" 
+                                    update="TableDialog"/>
+                                    <p:ajax event="rowUnselect" listener="#{turmaController.onRowUnselect2}"/>
+                                    
+                                    <p:column headerText="Disciplina">
+                                        <h:outputText value="#{TurmasRequisitadas.disciplina.nome}" />
+                                    </p:column>
+                                    <p:column headerText="Horários">
+                                        <h:outputText value="#{TurmasRequisitadas.horarios}" />
+                                    </p:column>
+                                    <!--p:column headerText="Deletar">
+                                        <center>
+                                        <p:commandButton style="width: 95px;height: 30px; font-size: small"
+                                                         value="Deletar" action="#{turmaController.excluirTurma}" immediate="true" 
+                                                         update="" icon="ui-icon-trash">
+                                        </p:commandButton>
+                                        </center>
+                                    </p:column-->
+                                </p:dataTable>
+                            
+                                <p:commandButton id="Excluir" style="width: 95px; height: 30px; font-size: small"
+                                                 value="Deletar" action="#{turmaController.excluirTurma}" process="@this" 
+                                                         update="growl,TableDialog" immediate="true" icon="ui-icon-trash" >
+                                </p:commandButton>
+                            </h:panelGrid>
+                        </h:panelGroup>
+                            
+                        
+                        </p:dialog>
 
                     <p:dialog  id="dialogTurmas" header="Turmas Escolhidas" widgetVar="turmasDialog" dynamic="true"
                                draggable="false" resizable="false" maximizable="false" showEffect="fade">

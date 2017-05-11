@@ -25,7 +25,6 @@ public class FaseFacade extends AbstractFacade<Fase> {
 
     @Override
     protected SessionFactory getSessionFactory() {
-
         return HibernateUtil.getSessionFactory();
     }
 

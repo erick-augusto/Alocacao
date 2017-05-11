@@ -65,7 +65,7 @@ public class Fase implements Serializable {
     public void setDataAtual(Date dataAtual) {
         this.dataAtual = dataAtual;
     }
-    
+
     public boolean isAfinidades() {
         return afinidades;
     }

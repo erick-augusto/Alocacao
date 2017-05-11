@@ -63,5 +63,18 @@ public class TurmaFacade extends AbstractFacade<Turma> {
             return null;
         }
     }
+
     //Método para criar lista de horários com base no ID da turma para visualizar no cadastro
+    public Turma listByID(Long id){ //Problema para referenciar em turma controller
+        
+        Session session = getSessionFactory().openSession();
+        Criteria criteria = session.createCriteria(Turma.class);
+        criteria.add(Restrictions.eq("ID", id));
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        List<Turma> results = criteria.list();
+        session.close();
+
+        return results.get(0);
+    }
 }

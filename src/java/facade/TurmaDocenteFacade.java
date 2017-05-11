@@ -30,7 +30,6 @@ public class TurmaDocenteFacade extends AbstractFacade<TurmaDocente>{
     
     //Lista turmas do Docente
     public List<TurmaDocente> listTurmas(Long id){ 
-        
         Session session = getSessionFactory().openSession();
         Criteria criteria = session.createCriteria(TurmaDocente.class);
         criteria.add(Restrictions.eq("idDocente", id));
@@ -55,7 +54,7 @@ public class TurmaDocenteFacade extends AbstractFacade<TurmaDocente>{
 
         return results.get(0);
     }
-    
+
     //Contagem de Solicitações da Turma selecionada
     public int totalSolicitacoes(Long id){ 
         Session session = getSessionFactory().openSession();

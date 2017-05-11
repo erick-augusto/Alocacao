@@ -398,7 +398,7 @@ public class TurmaController implements Serializable {
     public void setFiltrarAfinidades(boolean filtrarAfinidades) {
         this.filtrarAfinidades = filtrarAfinidades;
     }
-    
+
     //Métodos que atualizam os filtros no evento de Clique
     public void onChangeCampus(ValueChangeEvent event) {
         campus = event.getNewValue().toString();
@@ -503,6 +503,38 @@ public class TurmaController implements Serializable {
 
     //Fase II Disponibilidade -------------------------------------------------------------------------------
     //Turma que será selecionada para visualização
+    private TurmaLazyModel turmalazymodel; //LazyModel para página de Cadastro e Turmas da Fase 2
+    
+    public TurmaLazyModel getTurmalazymodel(){
+        if(turmalazymodel == null){
+            
+            List<Turma> turmas = turmaFacade.findAll();
+            turmalazymodel = new TurmaLazyModel(turmas);           
+        }
+        return turmalazymodel;
+    }
+    
+    private TurmaLazyModel listaRequisicoes; //DataModel para o docente administrar suas turmas na Fase 2
+    
+    public TurmaLazyModel getListaRequisicoes(){
+            List<Turma> requisicoes = new ArrayList<>();
+            Long id = docente.getID();
+            List<TurmaDocente> salvas = new ArrayList<>();            
+            //Método para buscar turmas do docente em TurmaDocenteFacade
+            if(listaRequisicoes == null){
+                salvas = turmasEscolhidasFacade.listTurmas(id);
+                for(TurmaDocente d : salvas){
+                    Turma t = turmaFacade.listByID(d.getIdTurma());
+                    requisicoes.add(t);
+                }
+                listaRequisicoes = new TurmaLazyModel(requisicoes);
+            }            
+            return listaRequisicoes;
+    }
+    
+    //Fase II Disponibilidade -------------------------------------------------------------------------------
+    
+    //Turma que sera selecionada para visualizacao
     private Turma selectedTurma;
 
     public Turma getSelectedTurma() {
@@ -578,8 +610,49 @@ public class TurmaController implements Serializable {
 
     public void setDocenteSchedule(ScheduleModel docenteSchedule) {
         this.docenteSchedule = docenteSchedule;
+    }   
+    
+    //Método para salvar turmas selecionadas
+    public void incluirTurma() {
+        try {
+            FacesContext context = FacesContext.getCurrentInstance();
+            //docenteSchedule = turmasSchedule;
+            Turma t = (Turma) aux.getObject();
+            Long id = t.getID();
+            Long docenteid = docente.getID();
+            //turmasEscolhidas.setTurma("x");
+            TurmaDocente turmasEscolhidas = new TurmaDocente();           
+            turmasEscolhidas.setIdTurma(id);
+            turmasEscolhidas.setIdDocente(docenteid);            
+            turmasEscolhidasFacade.save(turmasEscolhidas);
+            preecherSchedule();
+            //JsfUtil.addSuccessMessage("Solicitação de turma feita com sucesso!");
+            context.addMessage(null, new FacesMessage("Successful",  "Turma Requisitada Salva!") );
+        } catch (Exception e) {
+            //JsfUtil.addErrorMessage("Não foi possível concluir a solicitação de turma");
+            FacesContext context = FacesContext.getCurrentInstance();
+            context.addMessage(null, new FacesMessage("Error",  "Turma Requisitada não pode ser Salva!") );
+        }
+    }
+    
+    //Turma que sera selecionada para exclusao
+    private Turma selectedTurma2;
+
+    public Turma getSelectedTurma2() {
+        return selectedTurma;
     }
 
+    public void setSelectedTurma2(Turma selectedTurma) {
+        this.selectedTurma = selectedTurma;
+    }
+    
+    public void onRowSelect2(SelectEvent event) {
+        aux2 = event; //Atribui a aux a turma selecionada para ser usada por outros metodos
+        turmasSchedule.clear();
+        Turma t = (Turma) event.getObject();
+        preencherTurma(t);
+    }
+  
     //Método para salvar turmas selecionadas
     public void incluirTurma() {
         try {
@@ -947,10 +1020,9 @@ public class TurmaController implements Serializable {
             }
         }
     }
-
+  
     //Método para converter o dia para Calendar
     private int conversorDia(String dia) {
-
         dia = dia.trim();
         switch (dia) {
             case "segunda":
@@ -968,6 +1040,7 @@ public class TurmaController implements Serializable {
         }
         return 0;
     }
+
 
     //Método para transformar o nome da disciplina em sigla
     private String converterSigla(Turma t) {
